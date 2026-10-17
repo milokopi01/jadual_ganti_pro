@@ -106,7 +106,6 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  table{font-size:15px}th,td{padding:8px 6px}.upload{padding:18px}
 }
 .masa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}.masa-item{display:flex;align-items:center;gap:8px}.masa-item b{width:70px}.masa-item input{font:inherit;font-size:16px;padding:8px;border:2px solid #cfd8d3;border-radius:10px;width:100%}.masa{display:block;font-size:.78em;font-weight:500;color:var(--kelabu);white-space:nowrap}.grid th .masa{color:#fff;opacity:.9}
-.drive-baris{margin-top:12px}.drive-baris input{flex:1;min-width:220px;font:inherit;padding:12px 14px;border:2px solid #cfd8d3;border-radius:12px}
 @media print{
  header,.langkah:not(#hasil),.tiada-cetak,.toast{display:none!important}
  body{background:#fff;font-size:13px}.langkah{box-shadow:none;padding:0}
@@ -134,11 +133,6 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <div style="font-size:42px">📂</div>
   <div><b>Tekan di sini</b> untuk pilih fail DATA ASC (.xlsx)</div>
  </label>
- <div class="baris drive-baris">
-  <input id="pautanDrive" placeholder="🔗 Atau tampal pautan fail Google Drive di sini" aria-label="Pautan Google Drive">
-  <button class="kedua" id="btnDrive">☁️ Ambil dari Google Drive</button>
- </div>
- <p class="bantu" style="margin-top:8px;font-size:15px">Di telefon, butang di atas juga boleh terus pilih fail dari aplikasi Google Drive. Pastikan fail Drive dikongsi “Sesiapa yang ada pautan”.</p>
  <div id="statusData" class="status tersembunyi"></div>
 </section>
 
@@ -344,20 +338,6 @@ function muatBuffer(buf){
       }catch(err){ console.error(err); tunjukStatus('❌ Fail tidak dapat dibaca: '+err,true); }
     },50);
 }
-/* ---------- Google Drive ---------- */
-function idDrive(u){ u=norm(u); const m=u.match(/\/d\/([\w-]{20,})/)||u.match(/[?&]id=([\w-]{20,})/); return m?m[1]:(/^[\w-]{20,}$/.test(u)?u:null); }
-$('btnDrive').onclick=async()=>{
-  const id=idDrive($('pautanDrive').value); if(!id) return toast('Pautan Google Drive tidak sah');
-  tunjukStatus('⏳ Sedang mengambil fail dari Google Drive...');
-  if(DALAM_GAS){
-    google.script.run.withSuccessHandler(b64=>{ const bin=atob(b64),u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i); muatBuffer(u.buffer); })
-      .withFailureHandler(e=>tunjukStatus('❌ Gagal ambil dari Drive: '+e.message,true)).ambilFailDrive(id);
-    return;
-  }
-  const urls=['https://drive.google.com/uc?export=download&id='+id,'https://docs.google.com/spreadsheets/d/'+id+'/export?format=xlsx'];
-  for(const u of urls){ try{ const r=await fetch(u); if(r.ok){ const b=await r.arrayBuffer(); if(b.byteLength>1000) return muatBuffer(b); } }catch{} }
-  tunjukStatus('❌ Google Drive tidak membenarkan fail diambil terus dari pelayar. Buka pautan, muat turun fail, kemudian tekan kotak di atas untuk pilih fail tersebut. (Jika app dijalankan melalui Google Apps Script, fungsi ini berfungsi terus.)',true);
-};
 function tunjukStatus(m,ralat){const s=$('statusData'); s.textContent=m; s.className='status'+(ralat?' ralat':'');}
 function paparData(){
   tunjukStatus(`✅ ${DATA.guru.length} guru, ${DATA.kelas.length} slot mengajar dimuatkan (${DATA.dimuat}). Tekan kotak di atas untuk tukar fail.`);
@@ -505,7 +485,9 @@ function lukisGrid(){
         return `<div class="c-perlu ${b.pengganti?'ok':''} ${slotAktif===i?'aktif':''}" data-slot="${i}" style="height:46px;display:flex;flex-direction:column;justify-content:center;border-radius:6px" title="Tekan untuk pilih">${b.kelas}<br><small>${b.pengganti||'?'}</small></div>`;}).join('')+'</td>';
     }).join('')+'</tr>';
   });
-  DATA.guru.filter(g=>!tak.includes(g.singkat)).forEach(g=>{
+  const baki=DATA.guru.filter(g=>!tak.includes(g.singkat));
+  const sejuk=baki.filter(g=>tetapan.freeze.includes(g.singkat));
+  [...sejuk,...baki.filter(g=>!tetapan.freeze.includes(g.singkat))].forEach(g=>{
     html+=`<tr><td class="nama" title="${esc(g.nama)}">${tetapan.freeze.includes(g.singkat)?'❄️ ':''}${esc(g.singkat)}</td>`+W.map(w=>{
       const rel=barisRelef.map((b,i)=>i).find(i=>barisRelef[i].waktu===w&&barisRelef[i].pengganti===g.singkat);
       if(rel!==undefined) return `<td class="c-relef" data-batal="${rel}" title="Tekan untuk batal">RELEF<br>${barisRelef[rel].kelas}</td>`;
