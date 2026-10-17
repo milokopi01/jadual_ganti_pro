@@ -80,6 +80,8 @@ td select{width:100%;font-size:17px;padding:10px}
 .c-ajar{background:#f4a9a3;color:#5a1610}
 .c-free{background:#ffe46b;cursor:pointer}
 .c-free:hover{outline:3px solid var(--hijau)}
+.c-klik{cursor:pointer}
+.c-klik:hover{outline:3px solid var(--hijau)}
 .c-relef{background:#5fd3e8;color:#073b45;font-weight:700;cursor:pointer}
 .c-perlu{background:#7a1f17;color:#fff;font-weight:700;cursor:pointer}
 .c-perlu.ok{background:#2c8a6e}
@@ -419,7 +421,8 @@ $('kecemasan').onchange=()=>{sembunyiHasil();};
 /* ================== MASA WAKTU ================== */
 function jamTeks(v){ v=norm(v); if(!v) return ''; if(/^\d*\.\d+$/.test(v)){ const m=Math.round(parseFloat(v)*1440); v=Math.floor(m/60)+':'+String(m%60).padStart(2,'0'); }
   const m=v.match(/(\d{1,2})[:.](\d{2})/); return m?String(+m[1]).padStart(2,'0')+':'+m[2]:''; }
-function masaWaktu(w){ const t=(tetapan.masa||{})[w]||DATA?.masa?.[w]; return t&&t.mula&&t.tamat?t.mula+' – '+t.tamat:''; }
+function jam12(v){ const m=/^(\d{1,2}):(\d{2})$/.exec(v); if(!m) return v; const h=+m[1]; return (h%12||12)+'.'+m[2]+(h>=12?' PT':' PG'); }
+function masaWaktu(w){ const t=(tetapan.masa||{})[w]||DATA?.masa?.[w]; return t&&t.mula&&t.tamat?jam12(t.mula)+' – '+jam12(t.tamat):''; }
 function semuaWaktu(){ return [...new Set(Object.values(DATA?.waktu||{}).flat())].sort((a,b)=>a-b); }
 function lukisMasa(){
   const W=semuaWaktu(); if(!W.length){ $('senaraiMasa').innerHTML='<p class="bantu">Muatkan jadual dahulu.</p>'; return; }
@@ -495,13 +498,13 @@ function lukisGrid(){
       if(a.length) return `<td class="c-ajar">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;
       if((hariStatus()[g.singkat]?.blocked||[]).includes(w)) return '<td class="c-tiada" title="Sekatan waktu">SEKAT</td>';
       if((DATA.free[h+'|'+w]||[]).includes(g.singkat)) return `<td class="c-free" data-guru="${g.singkat}" data-w="${w}" title="${tetapan.freeze.includes(g.singkat)?'Guru freeze · pilih secara manual':'Free'}">${tetapan.freeze.includes(g.singkat)?'❄️':''}</td>`;
-      return '<td class="c-tiada" title="Tidak bertugas"></td>';
+      return `<td class="c-tiada c-klik" data-guru="${g.singkat}" data-w="${w}" title="Tidak bertugas · tekan untuk letak relef secara manual"></td>`;
     }).join('')+'</tr>';
   });
   $('grid').innerHTML=html;
   $('arahanGrid').innerHTML = slotAktif!==null
     ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b style="background:#ffe46b;padding:0 6px">kuning</b> pada lajur yang sama.`
-    : 'Tekan petak merah tua (kelas perlu relef), kemudian tekan petak kuning guru yang free. Atau terus tekan petak kuning pada lajur merah.';
+    : 'Tekan petak merah tua (kelas perlu relef), kemudian tekan petak kuning guru yang free. Petak kelabu berjalur juga boleh ditekan untuk letak relef secara manual. Atau terus tekan petak kuning pada lajur merah.';
 }
 $('grid').addEventListener('click',e=>{
   const t=e.target.closest('[data-slot],[data-guru],[data-batal]'); if(!t) return;

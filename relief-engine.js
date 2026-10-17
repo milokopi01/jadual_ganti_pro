@@ -60,7 +60,7 @@ function manualCandidates(ctx,row,rows,ignore=-1){
  const {data,day,absent=[],status={}}=ctx;
  return data.guru.map(g=>g.singkat).filter(g=>
   (data.waktu[day]||[]).includes(row.waktu)&&
-  (data.free[day+'|'+row.waktu]||[]).includes(g)&&
+  // Manual only: teachers off the free list (tidak bertugas) may be placed by hand, never by the auto engine.
   !data.kelas.some(k=>k.hari===day&&k.waktu===row.waktu&&k.guru===g)&&
   !absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&
   !(status[g]?.blocked||[]).includes(row.waktu)&&
