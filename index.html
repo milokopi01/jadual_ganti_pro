@@ -105,6 +105,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  .grid td.nama{min-width:96px;font-size:14px;padding:4px 6px}.tiket-grid{grid-template-columns:1fr}
  table{font-size:15px}th,td{padding:8px 6px}.upload{padding:18px}
 }
+.masa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}.masa-item{display:flex;align-items:center;gap:8px}.masa-item b{width:70px}.masa-item input{font:inherit;font-size:16px;padding:8px;border:2px solid #cfd8d3;border-radius:10px;width:100%}.masa{display:block;font-size:.78em;font-weight:500;color:var(--kelabu);white-space:nowrap}.grid th .masa{color:#fff;opacity:.9}
 .drive-baris{margin-top:12px}.drive-baris input{flex:1;min-width:220px;font:inherit;padding:12px 14px;border:2px solid #cfd8d3;border-radius:12px}
 @media print{
  header,.langkah:not(#hasil),.tiada-cetak,.toast{display:none!important}
@@ -152,6 +153,11 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <select id="mingguSekolah"><option value="auto">Automatik ikut jadual</option><option value="sunday">Ahad–Khamis</option><option value="monday">Isnin–Jumaat</option></select>
  </div>
  <div id="statusMinggu" class="status" role="status"></div>
+ <details class="status-harian" id="kotakMasa">
+  <summary>⏰ Masa mula &amp; tamat setiap waktu</summary>
+  <p class="bantu" style="margin-top:10px;font-size:15px">Diambil automatik dari fail aSc jika ada. Anda boleh ubah di sini — disimpan dalam peranti ini.</p>
+  <div id="senaraiMasa" class="masa-grid"></div>
+ </details>
 </section>
 
 <section class="langkah" id="langkah3">
@@ -311,7 +317,13 @@ function hurai(wb){
   const unik={}; const kelas=kelasSlot.filter(k=>{const key=[k.hari,k.waktu,k.kelas,k.subjek,k.guru].join('|'); if(unik[key])return false; return unik[key]=1;});
   Object.values(waktu).forEach(a=>a.sort((a,b)=>a-b));
   if(!guru.length||!hari.length) throw 'Data guru / jadual kosong.';
-  return {guru,hari,waktu,free,kelas,dimuat:new Date().toLocaleString('ms-MY')};
+  const masa={};
+  wb.SheetNames.filter(n=>/period|bell|waktu|masa/i.test(n)).forEach(n=>{ const rows=S(n);
+    for(let i=0;i<Math.min(rows.length,15);i++){ const r=rows[i].map(c=>norm(c).toLowerCase());
+      const cs=r.findIndex(c=>/start|mula/.test(c)), ce=r.findIndex(c=>/end|tamat|akhir/.test(c)); if(cs<0||ce<0) continue;
+      const cp=r.findIndex(c=>/^(period|short|waktu|no\.?|name)$/.test(c));
+      rows.slice(i+1).forEach((x,k)=>{ const w=parseInt(norm(x[cp>=0?cp:0]))||k+1; const a=jamTeks(x[cs]),b=jamTeks(x[ce]); if(a&&b) masa[w]={mula:a,tamat:b}; }); break; } });
+  return {guru,hari,waktu,free,kelas,masa,dimuat:new Date().toLocaleString('ms-MY')};
 }
 
 $('fail').addEventListener('change', e=>{
@@ -349,7 +361,7 @@ $('btnDrive').onclick=async()=>{
 function tunjukStatus(m,ralat){const s=$('statusData'); s.textContent=m; s.className='status'+(ralat?' ralat':'');}
 function paparData(){
   tunjukStatus(`✅ ${DATA.guru.length} guru, ${DATA.kelas.length} slot mengajar dimuatkan (${DATA.dimuat}). Tekan kotak di atas untuk tukar fail.`);
-  lukisGuru(); lukisTetapan(); lukisMinggu();
+  lukisGuru(); lukisTetapan(); lukisMinggu(); lukisMasa();
 }
 
 /* ================== TARIKH & GURU ================== */
@@ -424,6 +436,19 @@ $('senaraiTetapan').onchange=e=>{
 $('kecemasan').onchange=()=>{sembunyiHasil();};
 
 
+/* ================== MASA WAKTU ================== */
+function jamTeks(v){ v=norm(v); if(!v) return ''; if(/^\d*\.\d+$/.test(v)){ const m=Math.round(parseFloat(v)*1440); v=Math.floor(m/60)+':'+String(m%60).padStart(2,'0'); }
+  const m=v.match(/(\d{1,2})[:.](\d{2})/); return m?String(+m[1]).padStart(2,'0')+':'+m[2]:''; }
+function masaWaktu(w){ const t=(tetapan.masa||{})[w]||DATA?.masa?.[w]; return t&&t.mula&&t.tamat?t.mula+' – '+t.tamat:''; }
+function semuaWaktu(){ return [...new Set(Object.values(DATA?.waktu||{}).flat())].sort((a,b)=>a-b); }
+function lukisMasa(){
+  const W=semuaWaktu(); if(!W.length){ $('senaraiMasa').innerHTML='<p class="bantu">Muatkan jadual dahulu.</p>'; return; }
+  $('senaraiMasa').innerHTML=W.map(w=>{ const t=(tetapan.masa||{})[w]||DATA?.masa?.[w]||{};
+    return `<label class="masa-item"><b>Waktu ${w}</b><input type="time" data-masa="${w}" data-k="mula" value="${t.mula||''}" aria-label="Mula waktu ${w}">–<input type="time" data-masa="${w}" data-k="tamat" value="${t.tamat||''}" aria-label="Tamat waktu ${w}"></label>`; }).join('');
+}
+$('senaraiMasa').onchange=e=>{ const t=e.target; if(!t.dataset.masa) return; tetapan.masa ||= {}; const w=t.dataset.masa;
+  tetapan.masa[w]={...(DATA?.masa?.[w]||{}),...(tetapan.masa[w]||{}),[t.dataset.k]:t.value}; simpanTetapan(); if(!$('hasil').classList.contains('tersembunyi')) lukisJadual(); };
+
 /* ================== SUSUN RELEF ================== */
 function freeWaktu(h,w,tak){ return (DATA.free[h+'|'+w]||[]).filter(g=>!tak.includes(g)); }
 function nama(s){ return (DATA.guru.find(g=>g.singkat===s)||{}).nama||s; }
@@ -458,7 +483,7 @@ function lukisJadualLama(){
       const calon = calonSlot(b,i);
       if(b.pengganti&&!calon.includes(b.pengganti)) calon.unshift(b.pengganti);
       const opt = ['<option value="">— Pilih guru —</option>'].concat(calon.map(g=>`<option value="${g}" ${g===b.pengganti?'selected':''}>${nama(g)}</option>`));
-      return `<tr class="${b.pengganti?'':'tiada'}"><td><b>${b.waktu}</b></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td>
+      return `<tr class="${b.pengganti?'':'tiada'}"><td><b>${b.waktu}</b><span class="masa">${masaWaktu(b.waktu)}</span></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td>
         <td><select data-i="${i}">${opt.join('')}</select>${calon.length?'':'<div class="kecil" style="color:var(--merah)">Tiada guru tersedia pada waktu ini</div>'}</td></tr>`;
     }).join('');
   const diisi=barisRelef.filter(b=>b.pengganti).length;
@@ -471,7 +496,7 @@ function lukisGrid(){
   const perluW=new Set(barisRelef.map(b=>b.waktu));
   const ajar=(g,w)=>DATA.kelas.filter(k=>k.hari===h&&k.waktu===w&&k.guru===g);
   if(slotAktif!==null && !barisRelef[slotAktif]) slotAktif=null;
-  let html='<tr><th>Guru</th>'+W.map(w=>`<th class="${perluW.has(w)?'perlu':''}">${w}</th>`).join('')+'</tr>';
+  let html='<tr><th>Guru</th>'+W.map(w=>`<th class="${perluW.has(w)?'perlu':''}">${w}<span class="masa">${masaWaktu(w)}</span></th>`).join('')+'</tr>';
   tak.forEach(g=>{
     html+=`<tr class="absen"><td class="nama">✖ ${g}</td>`+W.map(w=>{
       const idx=barisRelef.map((b,i)=>i).filter(i=>barisRelef[i].waktu===w&&barisRelef[i].guruAsal===g);
@@ -512,7 +537,7 @@ function lukisTiket(){
   const e=Object.entries(kumpul);
   $('tiket').innerHTML = e.length ? e.map(([g,l])=>`<div class="tiket"><div class="kepala">Tiket Relef · ${tarikh}</div>
     <h3>${nama(g)}</h3><div class="bantu" style="margin:0;font-size:14px">Cikgu diminta masuk kelas berikut:</div>
-    <table><tr><th>Waktu</th><th>Kelas</th><th>Subjek</th><th>Ganti</th></tr>${l.sort((a,b)=>a.waktu-b.waktu).map(b=>`<tr><td><b>${b.waktu}</b></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td></tr>`).join('')}</table>
+    <table><tr><th>Waktu</th><th>Kelas</th><th>Subjek</th><th>Ganti</th></tr>${l.sort((a,b)=>a.waktu-b.waktu).map(b=>`<tr><td><b>${b.waktu}</b><span class="masa">${masaWaktu(b.waktu)}</span></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td></tr>`).join('')}</table>
     <div class="ttd">Jumlah: <b>${l.length}</b> waktu &nbsp;·&nbsp; Tandatangan guru: ____________________</div></div>`).join('')
     : '<p class="bantu">Belum ada guru ganti dipilih.</p>';
 }
@@ -525,7 +550,7 @@ function janaGambar(){
   gambarBlob=null; const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
   const e=Object.entries(kumpul); if(!e.length) return;
   const L=labelTarikh(); gambarNama=L.fail;
-  const W=1080,P=48,RH=50; let H=260; e.forEach(([,l])=>H+=150+l.length*RH); H+=90;
+  const ada=barisRelef.some(b=>masaWaktu(b.waktu)), W=1080,P=48,RH=ada?72:50; let H=260; e.forEach(([,l])=>H+=174+l.length*RH); H+=90;
   const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
   const F=(w,s)=>`${w} ${s}px Lexend, system-ui, sans-serif`;
   x.fillStyle='#faf6ec'; x.fillRect(0,0,W,H);
@@ -535,12 +560,13 @@ function janaGambar(){
   x.fillStyle='#e8a33d'; x.fillRect(P,172,140,8);
   let y=250;
   e.forEach(([g,l])=>{
-    l.sort((a,b)=>a.waktu-b.waktu); const h=110+l.length*RH;
+    l.sort((a,b)=>a.waktu-b.waktu); const h=110+l.length*RH+(ada?24:0);
     x.fillStyle='#fff'; x.strokeStyle='#0f5c4a'; x.lineWidth=3; x.setLineDash([12,8]);
     x.beginPath(); x.roundRect(P,y,W-2*P,h,20); x.fill(); x.stroke(); x.setLineDash([]);
     x.fillStyle='#0f5c4a'; x.font=F(700,34); x.fillText(nama(g),P+28,y+50);
     x.fillStyle='#5f6f68'; x.font=F(600,22); x.fillText('WAKTU',P+28,y+92); x.fillText('KELAS',P+170,y+92); x.fillText('SUBJEK',P+430,y+92); x.fillText('GANTI',P+640,y+92);
     l.forEach((b,i)=>{ const yy=y+92+(i+1)*RH; x.fillStyle='#1d2b26'; x.font=F(700,28); x.fillText(String(b.waktu),P+28,yy);
+      if(masaWaktu(b.waktu)){ x.fillStyle='#5f6f68'; x.font=F(500,19); x.fillText(masaWaktu(b.waktu).replace(' – ','–'),P+28,yy+26); x.fillStyle='#1d2b26'; }
       x.font=F(500,26); const fit=(t,m)=>{t=String(t);while(x.measureText(t).width>m&&t.length>2)t=t.slice(0,-2)+'…';return t;};
       x.fillText(fit(b.kelas,240),P+170,yy); x.fillText(fit(b.subjek,190),P+430,yy); x.fillText(fit(nama(b.guruAsal),300),P+640,yy); });
     y+=h+40;
@@ -572,7 +598,7 @@ $('btnReset').onclick=()=>{ tidakHadir.clear();Object.values(hariStatus()).forEa
 /* ================== WHATSAPP / SIMPAN ================== */
 $('btnWA').onclick=()=>{
   let t=`*${$('tajukHasil').textContent.toUpperCase()}*\n\n`;
-  barisRelef.forEach(b=>{ t+=`⏰ Waktu ${b.waktu} | ${b.kelas} | ${b.subjek}\n   Ganti: *${b.pengganti?nama(b.pengganti):'BELUM ADA'}* (guru asal: ${nama(b.guruAsal)})\n`; });
+  barisRelef.forEach(b=>{ t+=`⏰ Waktu ${b.waktu}${masaWaktu(b.waktu)?' ('+masaWaktu(b.waktu)+')':''} | ${b.kelas} | ${b.subjek}\n   Ganti: *${b.pengganti?nama(b.pengganti):'BELUM ADA'}* (guru asal: ${nama(b.guruAsal)})\n`; });
   t+='\nTerima kasih atas kerjasama cikgu. 🙏';
   navigator.clipboard.writeText(t).then(()=>toast('📋 Disalin! Tampal dalam WhatsApp')).catch(()=>prompt('Salin teks ini:',t));
 };
