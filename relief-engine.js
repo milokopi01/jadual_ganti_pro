@@ -20,14 +20,24 @@ function weeklyCounts(records,date,startDay=1){
  records.filter(r=>r.tarikh>=start&&r.tarikh<date&&r.pengganti).forEach(r=>counts[r.pengganti]=(counts[r.pengganti]||0)+1);
  return counts;
 }
+// Precomputed lookups per context: avoids rescanning every lesson on each call (was freezing the browser).
+const PREP=new WeakMap();
+function prep(ctx){
+ let p=PREP.get(ctx); if(p) return p;
+ const {data,day}=ctx, teach=new Set(), per={};
+ data.kelas.forEach(k=>{if(k.hari===day){teach.add(k.guru+'|'+k.waktu);(per[k.guru]||=new Set()).add(k.waktu);}});
+ const loads=Object.fromEntries(data.guru.map(g=>[g.singkat,per[g.singkat]?.size||0]));
+ const free={}; (data.waktu[day]||[]).forEach(w=>free[w]=new Set(data.free[day+'|'+w]||[]));
+ p={teach,loads,max:Math.max(0,...Object.values(loads)),free,periods:new Set(data.waktu[day]||[])};
+ PREP.set(ctx,p); return p;
+}
 function candidates(ctx,row,rows,ignore=-1){
  const {data,day,absent,frozen,emergency,status={},weekly={}}=ctx;
- const periods=data.waktu[day]||[], assigned=rows.filter((r,i)=>i!==ignore&&r.pengganti);
- const loads=Object.fromEntries(data.guru.map(g=>[g.singkat,new Set(data.kelas.filter(k=>k.hari===day&&k.guru===g.singkat).map(k=>k.waktu)).size]));
- const max=Math.max(0,...Object.values(loads));
+ const P=prep(ctx), periods=[...P.periods], assigned=rows.filter((r,i)=>i!==ignore&&r.pengganti);
+ const loads=P.loads, max=P.max;
  const counts={}; assigned.forEach(r=>counts[r.pengganti]=(counts[r.pengganti]||0)+1);
- const available=(g,w)=>periods.includes(w)&&(data.free[day+'|'+w]||[]).includes(g)&&
-  !data.kelas.some(k=>k.hari===day&&k.waktu===w&&k.guru===g)&&
+ const available=(g,w)=>P.periods.has(w)&&!!P.free[w]?.has(g)&&
+  !P.teach.has(g+'|'+w)&&
   !(status[g]?.blocked||[]).includes(w)&&!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&
   !assigned.some(r=>r.waktu===w&&r.pengganti===g);
  const base=data.guru.map(g=>g.singkat).filter(g=>!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&loads[g]<max);
@@ -58,12 +68,13 @@ function manualCandidates(ctx,row,rows,ignore=-1){
  ).sort((a,b)=>a.localeCompare(b));
 }
 function assign(ctx,rows){
+ ctx={...ctx};
  const result=rows.map(r=>({...r,pengganti:''}));
  // Repeat to reconsider an earlier unfilled slot after all teachers reach their first relief.
  for(let pass=0;pass<result.length;pass++){
   let changed=false;
-  const pending=result.map((r,i)=>({r,i})).filter(x=>!x.r.pengganti)
-   .sort((a,b)=>candidates(ctx,a.r,result).length-candidates(ctx,b.r,result).length||a.r.waktu-b.r.waktu);
+  const pending=result.map((r,i)=>({r,i,n:r.pengganti?0:candidates(ctx,r,result).length})).filter(x=>!x.r.pengganti)
+   .sort((a,b)=>a.n-b.n||a.r.waktu-b.r.waktu);
   for(const {r} of pending){const list=candidates(ctx,r,result);if(list.length){r.pengganti=list[0];changed=true;}}
   if(!changed) break;
  }

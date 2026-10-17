@@ -305,7 +305,7 @@ $('fail').addEventListener('change', e=>{
       try{
         const wb = XLSX.read(new Uint8Array(ev.target.result),{type:'array',dense:true});
         DATA = hurai(wb);
-        localStorage.setItem(KUNCI_DATA, JSON.stringify(DATA));
+        simpanData(DATA);
         if(DALAM_GAS) google.script.run.simpanDataAsc(JSON.stringify(DATA));
         paparData(); toast('✅ Jadual berjaya dimuatkan');
       }catch(err){ console.error(err); tunjukStatus('❌ Fail tidak dapat dibaca: '+err,true); }
@@ -485,8 +485,13 @@ function lukisTiket(){
 }
 function cetak(mod){ document.body.classList.add(mod); setTimeout(()=>{ window.print(); document.body.classList.remove(mod); },50); }
 $('jadual').addEventListener('change',e=>{ if(e.target.dataset.i!==undefined){ const i=+e.target.dataset.i,g=e.target.value;if(g&&!calonSlot(barisRelef[i],i).includes(g)){toast('Guru tidak tersedia pada waktu ini');return lukisJadual();}barisRelef[i].pengganti=g;lukisJadual(); }});
-$('btnAuto').onclick=()=>bina(true);
-$('btnManual').onclick=()=>bina(false);
+function binaSelamat(auto){
+  const b=$(auto?'btnAuto':'btnManual'), asal=b.textContent;
+  b.disabled=true; b.textContent='⏳ Sedang menyusun...';
+  setTimeout(()=>{ try{ bina(auto); }catch(err){ console.error(err); toast('❌ Gagal menyusun: '+(err.message||err)); } finally{ b.disabled=false; b.textContent=asal; } },30);
+}
+$('btnAuto').onclick=()=>binaSelamat(true);
+$('btnManual').onclick=()=>binaSelamat(false);
 function sembunyiHasil(){ $('hasil').classList.add('tersembunyi'); }
 $('btnReset').onclick=()=>{ tidakHadir.clear();Object.values(hariStatus()).forEach(s=>s.reason='Hadir');simpanTetapan();lukisTetapan();lukisGuru(); sembunyiHasil(); window.scrollTo({top:0,behavior:'smooth'}); };
 
@@ -520,21 +525,39 @@ $('btnBackup').onclick=()=>{
 $('btnPulih').onclick=()=>$('failPulih').click();
 $('failPulih').onchange=e=>{ const f=e.target.files[0]; if(!f) return; f.text().then(t=>{ try{ const j=JSON.parse(t);
   if(j.tetapan){tetapan=j.tetapan;tetapan.freeze ||= [];tetapan.harian ||= {};simpanTetapan();}tidakHadir.clear();statusHarianKePilihan();
-  if(j.data){DATA=j.data; localStorage.setItem(KUNCI_DATA,JSON.stringify(DATA)); paparData();}
+  if(j.data){DATA=j.data; simpanData(DATA); paparData();}
   if(j.rekod) localStorage.setItem(KUNCI_REKOD,JSON.stringify(j.rekod)); lukisStat(); lukisMinggu(); sembunyiHasil(); toast('✅ Backup dipulihkan');
  }catch{ toast('❌ Fail backup tidak sah'); } }); };
+
+/* ================== SIMPAN DATA ASC KEKAL (IndexedDB) ==================
+   Data kekal sehingga fail ASC baru dimuat naik atau backup lain dipulihkan. */
+function bukaDB(){ return new Promise((ok,gagal)=>{ const r=indexedDB.open('relef_guru_db',1);
+  r.onupgradeneeded=()=>r.result.createObjectStore('data'); r.onsuccess=()=>ok(r.result); r.onerror=()=>gagal(r.error); }); }
+async function simpanData(d){
+  try{ const db=await bukaDB(); await new Promise((ok,gagal)=>{ const t=db.transaction('data','readwrite'); t.objectStore('data').put(d,'asc'); t.oncomplete=ok; t.onerror=()=>gagal(t.error); }); }
+  catch(e){ console.warn('IndexedDB gagal',e); }
+  try{ localStorage.setItem(KUNCI_DATA,JSON.stringify(d)); }catch(e){ try{localStorage.removeItem(KUNCI_DATA);}catch{} }
+}
+async function bacaData(){
+  try{ const db=await bukaDB(); const d=await new Promise((ok,gagal)=>{ const r=db.transaction('data').objectStore('data').get('asc'); r.onsuccess=()=>ok(r.result); r.onerror=()=>gagal(r.error); });
+    if(d) return d; }catch(e){ console.warn('IndexedDB gagal',e); }
+  try{ const s=localStorage.getItem(KUNCI_DATA); if(s){ const d=JSON.parse(s); simpanData(d); return d; } }catch{}
+  return null;
+}
 
 /* ================== MULA ================== */
 (function mula(){
   const d=new Date(); $('tarikh').value = [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
   statusHarianKePilihan();
   $('namaHari').textContent = hariDipilih();
-  const s=localStorage.getItem(KUNCI_DATA);
-  if(s){ DATA=JSON.parse(s); paparData(); lukisStat(); }
-  else if(DALAM_GAS){
-    google.script.run.withSuccessHandler(j=>{ if(j){ DATA=JSON.parse(j); localStorage.setItem(KUNCI_DATA,j); paparData(); lukisStat(); } }).ambilDataAsc();
-  }
   lukisFreeze();lukisMinggu();
+  if(navigator.storage?.persist) navigator.storage.persist().catch(()=>{});
+  bacaData().then(d=>{
+    if(d){ DATA=d; paparData(); lukisStat(); }
+    else if(DALAM_GAS){
+      google.script.run.withSuccessHandler(j=>{ if(j){ DATA=JSON.parse(j); simpanData(DATA); paparData(); lukisStat(); } }).ambilDataAsc();
+    }
+  });
   $('tarikh').addEventListener('change',lukisStat);
   if('serviceWorker' in navigator && location.protocol==='https:' && !DALAM_GAS && !location.hostname.includes('googleusercontent')){
     navigator.serviceWorker.register('sw.js').catch(()=>{});

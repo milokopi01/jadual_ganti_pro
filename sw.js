@@ -1,10 +1,10 @@
 // Service worker Sistem Relef Guru — halaman: network-first, fail lain: cache-first
-const CACHE = 'relef-guru-v2.3.0';
+const CACHE = 'relef-guru-v2.4.0';
 const ASET = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
   './xlsx.full.min.js', './relief-engine.js'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASET)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c => Promise.allSettled(ASET.map(a => c.add(a)))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {
