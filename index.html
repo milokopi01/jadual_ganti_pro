@@ -159,6 +159,8 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <div id="senaraiMasa"></div>
 
   <button class="kedua" id="btnTambahSesi" style="margin-top:10px">➕ Tambah sesi</button>
+  <button class="kedua" data-bmasa="backup" style="margin-top:10px">💾 Backup masa</button>
+  <button class="kedua" data-bmasa="restore" style="margin-top:10px">📂 Restore masa</button>
  </details>
 </section>
 
@@ -245,6 +247,10 @@ const KUNCI_DATA = 'relef_data_asc_v1', KUNCI_REKOD = 'relef_rekod_v1';
 const KUNCI_TETAPAN='relef_tetapan_v2';
 let tetapan; try{tetapan=JSON.parse(localStorage.getItem(KUNCI_TETAPAN))||{freeze:[],harian:{}};}catch{tetapan={freeze:[],harian:{}};}
 tetapan.freeze ||= []; tetapan.harian ||= {};
+const KUNCI_MASA='relef_masa_kekal_v1';
+// Saved session times win over anything from a new ASC file or app backup.
+try{ const m=JSON.parse(localStorage.getItem(KUNCI_MASA)); if(Array.isArray(m)&&m.length) tetapan.sesi=m; }catch{}
+try{ navigator.storage?.persist?.(); }catch{}
 const tidakHadir=new Set();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DALAM_GAS = typeof google !== 'undefined' && google.script && google.script.run;
@@ -378,7 +384,7 @@ $('senaraiGuru').addEventListener('change',e=>{ if(e.target.type==='checkbox'){ 
 $('cari').addEventListener('input',lukisGuru);
 const guruTakHadir = ()=>[...tidakHadir];
 function hariStatus(){const date=$('tarikh').value; return tetapan.harian[date] ||= {};}
-function simpanTetapan(){localStorage.setItem(KUNCI_TETAPAN,JSON.stringify(tetapan));}
+function simpanTetapan(){localStorage.setItem(KUNCI_TETAPAN,JSON.stringify(tetapan)); if(Array.isArray(tetapan.sesi)) localStorage.setItem(KUNCI_MASA,JSON.stringify(tetapan.sesi));}
 function statusHarianKePilihan(){Object.entries(hariStatus()).forEach(([g,s])=>{if(s.reason&&s.reason!=='Hadir') tidakHadir.add(g);});}
 function mingguAktif(){return ReliefEngine.schoolWeek(DATA?.hari||[],tetapan.mingguSekolah||'auto');}
 function lukisMinggu(){
@@ -455,10 +461,15 @@ function lukisMasa(){
   $('senaraiMasa').innerHTML=L.map((se,si)=>`<div class="sesi-kad"><div class="baris"><input data-sesi="${si}" data-f="nama" value="${esc(se.nama)}" aria-label="Nama sesi" style="flex:1;min-width:140px">
     <input data-sesi="${si}" data-f="kelas" value="${esc(se.kelas||'')}" placeholder="Kelas: cth 1,2,3 (kosong = lain-lain)" aria-label="Awalan kelas" style="flex:1;min-width:160px">
     ${L.length>1?`<button class="kedua" data-padam="${si}">🗑</button>`:''}</div>
+    ${pilihKelasHtml(se,si)}
     <div class="masa-grid" style="margin-top:10px">${W.map(w=>{ const t=masaSesi(se,w)||se.masa?.[w]||{};
     return `<label class="masa-item"><b>Waktu ${w}</b><input type="time" data-sesi="${si}" data-masa="${w}" data-k="mula" value="${t.mula||''}">–<input type="time" data-sesi="${si}" data-masa="${w}" data-k="tamat" value="${t.tamat||''}"></label>`;}).join('')}</div></div>`).join('');
 }
+function senaraiKelasUnik(){ const s=new Set(); (DATA?.kelas||[]).forEach(k=>String(k.kelas||'').split(',').map(x=>x.trim()).filter(Boolean).forEach(x=>s.add(x))); return [...s].sort((a,b)=>a.localeCompare(b,'ms',{numeric:true})); }
+function pilihKelasHtml(se,si){ const K=senaraiKelasUnik(); if(!K.length) return ''; const pil=awalan(se.kelas);
+  return `<details style="margin-top:8px"><summary>🏫 Pilih kelas yang guna masa ini (${pil.length} dipilih)</summary><div class="baris" style="flex-wrap:wrap;gap:6px;margin-top:8px">${K.map(k=>`<label style="border:1px solid #cfd8d3;border-radius:8px;padding:4px 8px"><input type="checkbox" data-sesi="${si}" data-kls="${esc(k)}" ${pil.includes(k.toUpperCase())?'checked':''}> ${esc(k)}</label>`).join('')}</div></details>`; }
 function ubahMasa(t){ const se=senaraiSesi()[+t.dataset.sesi]; if(!se) return false;
+  if(t.dataset.kls){ const k=t.dataset.kls.toUpperCase(); let a=awalan(se.kelas).filter(x=>x!==k); if(t.checked) a.push(k); se.kelas=a.join(', '); simpanTetapan(); lukisMasa(); const d=$('senaraiMasa').querySelectorAll('.sesi-kad details')[+t.dataset.sesi]; if(d) d.open=true; if(DATA&&!$('hasil').classList.contains('tersembunyi')) lukisJadual(); return true; }
   if(t.dataset.f){ se[t.dataset.f]=t.value; }
   else if(t.dataset.masa){ const w=t.dataset.masa; se.masa||={}; se.masa[w]={...(masaSesi(se,w)||{}),...(se.masa[w]||{}),[t.dataset.k]:t.value}; }
   else return false;
@@ -473,6 +484,13 @@ function bukaMasa(w){ $('dlgW').textContent=w;
 $('dlgIsi').oninput=e=>{ if(ubahMasa(e.target)) lukisMasa(); };
 $('dlgIsi').onchange=e=>{ if(ubahMasa(e.target)) lukisMasa(); };
 $('dlgTutup').onclick=()=>$('dlgMasa').close();
+function backupMasa(){ const b=new Blob([JSON.stringify({jenis:'relef-masa',versi:1,tarikh:new Date().toISOString(),sesi:senaraiSesi()},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='backup-masa-waktu-'+new Date().toISOString().slice(0,10)+'.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),30000); toast('💾 Backup masa dimuat turun'); }
+function restoreMasa(){ const i=document.createElement('input'); i.type='file'; i.accept='.json,application/json';
+  i.onchange=async()=>{ try{ const j=JSON.parse(await i.files[0].text()); const L=Array.isArray(j)?j:j.sesi; if(!Array.isArray(L)||!L.length) throw 0;
+    tetapan.sesi=L; simpanTetapan(); lukisMasa(); if(DATA&&!$('hasil').classList.contains('tersembunyi')) lukisJadual(); toast('✅ Masa waktu dipulihkan'); }catch{ toast('❌ Fail backup masa tidak sah'); } };
+  i.click(); }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-bmasa]'); if(!b) return; e.stopPropagation(); b.dataset.bmasa==='backup'?backupMasa():restoreMasa(); });
 function labelHeader(w){ const L=senaraiSesi();
   if(L.length<2) return `<span class="masa">${masaWaktu(w)||'＋ masa'}</span>`;
   return L.map(se=>{ const t=masaSesi(se,w); return `<span class="masa">${esc(se.nama.slice(0,6))}: ${t?jam12(t.mula).replace(/ P[GT]/,'')+'–'+jam12(t.tamat):'—'}</span>`; }).join(''); }
@@ -524,7 +542,7 @@ function lukisGrid(){
   const perluW=new Set(barisRelef.map(b=>b.waktu));
   const ajar=(g,w)=>DATA.kelas.filter(k=>k.hari===h&&k.waktu===w&&k.guru===g);
   if(slotAktif!==null && !barisRelef[slotAktif]) slotAktif=null;
-  let html='<tr><th>Guru</th>'+W.map(w=>`<th data-thw="${w}" title="Tekan untuk isi masa" class="${perluW.has(w)?'perlu':''}">${w}${labelHeader(w)}</th>`).join('')+'</tr>';
+  let html='<tr><th>Guru</th>'+W.map(w=>`<th data-thw="${w}" title="Tekan untuk isi masa" class="${perluW.has(w)?'perlu':''}">${w}${labelHeader(w)}</th>`).join('')+'<th class="th-backup"><button class="kedua" data-bmasa="backup" title="Backup semua masa waktu">💾 Backup</button><button class="kedua" data-bmasa="restore" title="Restore masa dari fail backup" style="margin-top:4px">📂 Restore</button></th></tr>';
   tak.forEach(g=>{
     html+=`<tr class="absen"><td class="nama">✖ ${g}</td>`+W.map(w=>{
       const idx=barisRelef.map((b,i)=>i).filter(i=>barisRelef[i].waktu===w&&barisRelef[i].guruAsal===g);
@@ -721,7 +739,7 @@ $('btnBackup').onclick=()=>{
 };
 $('btnPulih').onclick=()=>$('failPulih').click();
 $('failPulih').onchange=e=>{ const f=e.target.files[0]; if(!f) return; f.text().then(t=>{ try{ const j=JSON.parse(t);
-  if(j.tetapan){tetapan=j.tetapan;tetapan.freeze ||= [];tetapan.harian ||= {};simpanTetapan();}tidakHadir.clear();statusHarianKePilihan();
+  if(j.tetapan){const sesiKekal=tetapan.sesi;tetapan=j.tetapan;if(sesiKekal?.length)tetapan.sesi=sesiKekal;tetapan.freeze ||= [];tetapan.harian ||= {};simpanTetapan();}tidakHadir.clear();statusHarianKePilihan();
   if(j.data){DATA=j.data; simpanData(DATA); paparData();}
   if(j.rekod) localStorage.setItem(KUNCI_REKOD,JSON.stringify(j.rekod)); lukisStat(); lukisMinggu(); sembunyiHasil(); toast('✅ Backup dipulihkan');
  }catch{ toast('❌ Fail backup tidak sah'); } }); };
