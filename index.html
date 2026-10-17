@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistem Relef Guru</title>
+<meta name="theme-color" content="#0f5c4a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--hijau:#0f5c4a;--hijau2:#e3efe9;--kuning:#e8a33d;--krim:#faf6ec;--teks:#1d2b26;--kelabu:#5f6f68;--merah:#b3392f;--merah2:#fbe7e4;--putih:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:Lexend,system-ui,sans-serif;background:var(--krim);color:var(--teks);font-size:19px;line-height:1.5}
+header{background:var(--hijau);color:var(--putih);padding:18px 20px;display:flex;align-items:center;gap:14px}
+header img{width:48px;height:48px;border-radius:10px}
+header h1{margin:0;font-size:24px}
+header small{display:block;opacity:.85;font-size:15px}
+main{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+.langkah{background:var(--putih);border-radius:18px;padding:22px;margin-bottom:20px;box-shadow:0 2px 0 #e6dfcc}
+.langkah h2{margin:0 0 6px;font-size:22px;display:flex;align-items:center;gap:12px}
+.no{background:var(--kuning);color:var(--teks);width:38px;height:38px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.bantu{color:var(--kelabu);margin:0 0 14px;font-size:17px}
+button,.btn{font:inherit;font-weight:600;border:0;border-radius:14px;padding:14px 22px;cursor:pointer;background:var(--hijau);color:var(--putih);font-size:19px}
+button.kedua{background:var(--hijau2);color:var(--hijau)}
+button.amaran{background:var(--merah2);color:var(--merah)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.baris{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+input[type=date],select{font:inherit;font-size:19px;padding:12px 14px;border:2px solid #cfd8d3;border-radius:12px;background:var(--putih);color:var(--teks)}
+.upload{border:3px dashed #b9cbc2;border-radius:16px;padding:26px;text-align:center;cursor:pointer;background:#f6faf8}
+.upload b{color:var(--hijau)}
+.status{margin-top:12px;padding:12px 16px;border-radius:12px;background:var(--hijau2);color:var(--hijau);font-weight:600}
+.status.ralat{background:var(--merah2);color:var(--merah)}
+.guru-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.guru{display:flex;align-items:center;gap:12px;padding:14px;border:2px solid #dde5e0;border-radius:14px;cursor:pointer;background:var(--putih);user-select:none}
+.guru input{width:26px;height:26px;accent-color:var(--merah)}
+.guru.pilih{border-color:var(--merah);background:var(--merah2)}
+.guru .kecil{font-size:14px;color:var(--kelabu)}
+.cari{width:100%;font:inherit;padding:12px 14px;border:2px solid #cfd8d3;border-radius:12px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:17px}
+th,td{padding:12px 10px;border-bottom:1px solid #e6e1d3;text-align:left;vertical-align:middle}
+th{background:var(--hijau);color:var(--putih);position:sticky;top:0}
+tr.tiada td{background:var(--merah2)}
+td select{width:100%;font-size:17px;padding:10px}
+.tag{display:inline-block;background:var(--hijau2);color:var(--hijau);padding:2px 10px;border-radius:20px;font-size:15px;font-weight:600}
+.ringkas{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.ringkas div{background:var(--hijau2);border-radius:14px;padding:12px;text-align:center}
+.ringkas b{display:block;font-size:30px;color:var(--hijau)}
+.tersembunyi{display:none}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--teks);color:var(--putih);padding:14px 22px;border-radius:14px;font-weight:600;display:none;z-index:9}
+.cetak-tajuk{display:none}
+@media print{
+ header,.langkah:not(#hasil),.tiada-cetak,.toast{display:none!important}
+ body{background:#fff;font-size:13px}.langkah{box-shadow:none;padding:0}
+ .cetak-tajuk{display:block;text-align:center}
+ td select{border:0;appearance:none;-webkit-appearance:none;padding:0;font-size:13px}
+ th{background:#ddd;color:#000}
+}
+</style>
+</head>
+<body>
+<header>
+ <img src="icon-192.png" alt="" onerror="this.style.display='none'">
+ <div><h1>Sistem Relef Guru</h1><small>Pilih tarikh, tanda guru tidak hadir, sistem susun guru ganti.</small></div>
+</header>
+<main>
+
+<section class="langkah" id="langkah1">
+ <h2><span class="no">1</span> Masukkan fail jadual aSc</h2>
+ <p class="bantu">Buat sekali sahaja. Sistem akan ingat jadual ini. Tukar fail bila jadual baharu dikeluarkan.</p>
+ <label class="upload" id="kotakUpload">
+  <input type="file" id="fail" accept=".xlsx,.xls" hidden>
+  <div style="font-size:42px">📂</div>
+  <div><b>Tekan di sini</b> untuk pilih fail DATA ASC (.xlsx)</div>
+ </label>
+ <div id="statusData" class="status tersembunyi"></div>
+</section>
+
+<section class="langkah" id="langkah2">
+ <h2><span class="no">2</span> Pilih tarikh</h2>
+ <div class="baris">
+  <input type="date" id="tarikh">
+  <span id="namaHari" class="tag" style="font-size:19px"></span>
+ </div>
+</section>
+
+<section class="langkah" id="langkah3">
+ <h2><span class="no">3</span> Tanda guru yang tidak hadir</h2>
+ <p class="bantu">Tekan pada nama guru. Kotak bertukar merah bila dipilih.</p>
+ <input class="cari" id="cari" placeholder="🔎 Cari nama guru...">
+ <div class="guru-grid" id="senaraiGuru"><p class="bantu">Sila masukkan fail jadual dahulu.</p></div>
+</section>
+
+<section class="langkah" id="langkah4">
+ <h2><span class="no">4</span> Susun jadual relef</h2>
+ <p class="bantu">Tekan <b>Susun Automatik</b> — sistem pilih guru yang free dan paling kurang relef. Anda masih boleh tukar guru ganti secara manual dalam jadual.</p>
+ <div class="baris">
+  <button id="btnAuto">⚡ Susun Automatik</button>
+  <button id="btnManual" class="kedua">✋ Pilih Sendiri (Manual)</button>
+ </div>
+</section>
+
+<section class="langkah tersembunyi" id="hasil">
+ <div class="cetak-tajuk"><h2>JADUAL RELEF GURU</h2></div>
+ <h2><span class="no tiada-cetak">5</span> <span id="tajukHasil">Jadual Relef</span></h2>
+ <div class="ringkas tiada-cetak" id="ringkasan"></div>
+ <div style="overflow-x:auto"><table id="jadual"></table></div>
+ <div class="baris tiada-cetak" style="margin-top:16px">
+  <button onclick="window.print()">🖨️ Cetak</button>
+  <button class="kedua" id="btnWA">📋 Salin untuk WhatsApp</button>
+  <button class="kedua" id="btnSimpan">✔ Simpan Rekod</button>
+  <button class="amaran" id="btnReset">↺ Mula Semula</button>
+ </div>
+</section>
+
+<section class="langkah tiada-cetak" id="seksyenStat">
+ <h2>📊 Jumlah relef guru (bulan ini)</h2>
+ <p class="bantu">Dikira daripada rekod yang disimpan dalam peranti / Google Sheet ini.</p>
+ <div id="statRelef" class="bantu">Belum ada rekod.</div>
+</section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================== TETAPAN ================== */
+const HARI_JS = {0:'AHAD',1:'ISNIN',2:'SELASA',3:'RABU',4:'KHAMIS',5:'JUMAAT',6:'SABTU'};
+const KUNCI_DATA = 'relef_data_asc_v1', KUNCI_REKOD = 'relef_rekod_v1';
+const DALAM_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+
+let DATA = null;          // {guru:[{nama,singkat}], hari:[], waktu:{}, free:{hari|waktu:[singkat]}, kelas:[{hari,waktu,kelas,subjek,guru}]}
+let barisRelef = [];      // [{hari,waktu,kelas,subjek,guruAsal,pengganti}]
+const $ = id => document.getElementById(id);
+const norm = s => String(s ?? '').replace(/\s+/g,' ').trim();
+const toast = m => { const t=$('toast'); t.textContent=m; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',2600); };
+
+/* ================== BACA FAIL ASC ================== */
+function cariBarisTajuk(rows, kata){
+  for (let i=0;i<Math.min(rows.length,15);i++){
+    const j = rows[i].findIndex(c => norm(c).toLowerCase()===kata.toLowerCase());
+    if (j>=0) return {r:i,c:j};
+  }
+  return null;
+}
+function hurai(wb){
+  const S = n => wb.Sheets[n] ? XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:false}) : null;
+
+  // 1) Senarai guru (nama penuh + singkatan)
+  const tg = S('Teachers'); if(!tg) throw 'Helaian "Teachers" tidak dijumpai.';
+  const h = cariBarisTajuk(tg,'Name'), cS = tg[h.r].findIndex(c=>norm(c)==='Short');
+  const guru=[];
+  for (let i=h.r+1;i<tg.length;i++){ const n=norm(tg[i][h.c]); if(n) guru.push({nama:n,singkat:norm(tg[i][cS])||n}); }
+  const namaKeSingkat={}, singkatKeNama={};
+  guru.forEach(g=>{namaKeSingkat[g.nama]=g.singkat; singkatKeNama[g.singkat]=g.nama;});
+
+  // 2) Guru free setiap hari/waktu
+  const av = S('Available teachers 2') || S('Available teachers'); if(!av) throw 'Helaian "Available teachers" tidak dijumpai.';
+  const free={}, hari=[], waktu={};
+  av.forEach(r=>{
+    const d=norm(r[0]).toUpperCase(), w=norm(r[1]); if(!d||!w||isNaN(+w)) return;
+    if(!hari.includes(d)) hari.push(d);
+    (waktu[d]=waktu[d]||[]).includes(+w)||waktu[d].push(+w);
+    free[d+'|'+w] = norm(r[2]).split(',').map(x=>{x=norm(x);return namaKeSingkat[x]||x;}).filter(Boolean);
+  });
+
+  // 3) Kelas yang diajar (Lessons): guru + kelas + subjek
+  const ls = S('Lessons') || [];
+  const hl = cariBarisTajuk(ls,'Teacher')||{r:0,c:0};
+  const kol = k => ls[hl.r]?.findIndex(c=>norm(c)===k);
+  const cT=kol('Teacher'),cK=kol('Class'),cSub=kol('Subject');
+  const pelajaran=[];
+  for(let i=hl.r+1;i<ls.length;i++){
+    const t=norm(ls[i][cT]), k=norm(ls[i][cK]), s=norm(ls[i][cSub]); if(!t||!s) continue;
+    let gurus = namaKeSingkat[t] ? [t] : t.split(',').map(norm).filter(x=>namaKeSingkat[x]);
+    gurus.forEach(g=>pelajaran.push({guru:namaKeSingkat[g],kelas:k.split(',').map(norm),subjek:s}));
+  }
+
+  // 4) Subjek: nama penuh -> singkatan
+  const sb = S('Subjects')||[]; const hs=cariBarisTajuk(sb,'Subject')||{r:0,c:1};
+  const cSS = sb[hs.r]?.findIndex(c=>norm(c)==='Short');
+  const subjek=[]; for(let i=hs.r+1;i<sb.length;i++){const n=norm(sb[i][hs.c]).toUpperCase(); if(n) subjek.push({penuh:n,singkat:norm(sb[i][cSS])});}
+
+  // 5) Helaian setiap subjek (Day/Lesson + kelas)
+  const kelasSlot=[];
+  wb.SheetNames.forEach(nm=>{
+    const asas = nm.replace(/\d+$/,'').replace(/\.$/,'').trim().toUpperCase();
+    const sj = subjek.find(x=>x.penuh===asas) || subjek.find(x=>x.penuh.startsWith(asas) && asas.length>3);
+    if(!sj) return;
+    const rows=S(nm); const hd=cariBarisTajuk(rows,'Day'); if(!hd) return;
+    for(let i=hd.r+1;i<rows.length;i++){
+      const d=norm(rows[i][hd.c]).toUpperCase(), w=norm(rows[i][hd.c+1]); if(!d||!w) continue;
+      const fr = free[d+'|'+w]||[];
+      for(let j=hd.c+2;j<rows[i].length;j++){
+        const sel=norm(rows[i][j]); if(!sel) continue;
+        const kls = sel.split(',').map(norm);
+        // guru yang mengajar subjek+kelas ini DAN tidak free waktu ini
+        const calon = [...new Set(pelajaran.filter(p=>p.subjek===sj.singkat && p.kelas.some(k=>kls.includes(k))).map(p=>p.guru))]
+                      .filter(g=>!fr.includes(g));
+        calon.forEach(g=>kelasSlot.push({hari:d,waktu:+w,kelas:kls.join(', '),subjek:sj.singkat,guru:g}));
+      }
+    }
+  });
+  // buang pendua
+  const unik={}; const kelas=kelasSlot.filter(k=>{const key=[k.hari,k.waktu,k.kelas,k.subjek,k.guru].join('|'); if(unik[key])return false; return unik[key]=1;});
+  Object.values(waktu).forEach(a=>a.sort((a,b)=>a-b));
+  if(!guru.length||!hari.length) throw 'Data guru / jadual kosong.';
+  return {guru,hari,waktu,free,kelas,dimuat:new Date().toLocaleString('ms-MY')};
+}
+
+$('fail').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  tunjukStatus('⏳ Sedang membaca fail... sila tunggu sebentar (fail besar mungkin ambil 10-30 saat).');
+  const rd=new FileReader();
+  rd.onload = ev=>{
+    setTimeout(()=>{
+      try{
+        const wb = XLSX.read(new Uint8Array(ev.target.result),{type:'array',dense:true});
+        DATA = hurai(wb);
+        localStorage.setItem(KUNCI_DATA, JSON.stringify(DATA));
+        if(DALAM_GAS) google.script.run.simpanDataAsc(JSON.stringify(DATA));
+        paparData(); toast('✅ Jadual berjaya dimuatkan');
+      }catch(err){ console.error(err); tunjukStatus('❌ Fail tidak dapat dibaca: '+err,true); }
+    },50);
+  };
+  rd.readAsArrayBuffer(f);
+});
+function tunjukStatus(m,ralat){const s=$('statusData'); s.textContent=m; s.className='status'+(ralat?' ralat':'');}
+function paparData(){
+  tunjukStatus(`✅ ${DATA.guru.length} guru, ${DATA.kelas.length} slot mengajar dimuatkan (${DATA.dimuat}). Tekan kotak di atas untuk tukar fail.`);
+  lukisGuru();
+}
+
+/* ================== TARIKH & GURU ================== */
+function hariDipilih(){ const v=$('tarikh').value; if(!v) return null; return HARI_JS[new Date(v+'T00:00:00').getDay()]; }
+$('tarikh').addEventListener('change',()=>{ const h=hariDipilih(); $('namaHari').textContent=h||''; lukisGuru(); sembunyiHasil(); });
+
+function lukisGuru(){
+  if(!DATA) return;
+  const h=hariDipilih(), q=$('cari').value.toLowerCase();
+  const pilih = new Set([...document.querySelectorAll('.guru input:checked')].map(i=>i.value));
+  $('senaraiGuru').innerHTML = DATA.guru.filter(g=>(g.nama+g.singkat).toLowerCase().includes(q)).map(g=>{
+    const n = h? DATA.kelas.filter(k=>k.hari===h&&k.guru===g.singkat).length : 0;
+    const on = pilih.has(g.singkat);
+    return `<label class="guru ${on?'pilih':''}"><input type="checkbox" value="${g.singkat}" ${on?'checked':''}>
+      <span><b>${g.nama}</b><br><span class="kecil">${g.singkat}${h?` · ${n} waktu mengajar hari ${h}`:''}</span></span></label>`;
+  }).join('') || '<p class="bantu">Tiada guru dijumpai.</p>';
+  if(h && !DATA.hari.includes(h)) $('senaraiGuru').insertAdjacentHTML('afterbegin',`<p class="status ralat" style="grid-column:1/-1">Hari ${h} tiada dalam jadual sekolah.</p>`);
+}
+$('senaraiGuru').addEventListener('change',e=>{ if(e.target.type==='checkbox'){ e.target.closest('.guru').classList.toggle('pilih',e.target.checked); sembunyiHasil(); }});
+$('cari').addEventListener('input',lukisGuru);
+const guruTakHadir = ()=>[...document.querySelectorAll('.guru input:checked')].map(i=>i.value);
+
+/* ================== SUSUN RELEF ================== */
+function freeWaktu(h,w,tak){ return (DATA.free[h+'|'+w]||[]).filter(g=>!tak.includes(g)); }
+function nama(s){ return (DATA.guru.find(g=>g.singkat===s)||{}).nama||s; }
+function jumlahRelefBulan(){ const r=bacaRekod(), bln=($('tarikh').value||'').slice(0,7), c={}; r.filter(x=>x.tarikh.slice(0,7)===bln).forEach(x=>{ if(x.pengganti) c[x.pengganti]=(c[x.pengganti]||0)+1; }); return c; }
+
+function bina(auto){
+  if(!DATA) return toast('Sila masukkan fail jadual dahulu');
+  const h=hariDipilih(); if(!h) return toast('Sila pilih tarikh dahulu');
+  const tak=guruTakHadir(); if(!tak.length) return toast('Sila tanda guru yang tidak hadir');
+  barisRelef = DATA.kelas.filter(k=>k.hari===h && tak.includes(k.guru))
+    .sort((a,b)=>a.waktu-b.waktu||a.kelas.localeCompare(b.kelas))
+    .map(k=>({...k,guruAsal:k.guru,pengganti:''}));
+  if(auto){
+    const bulan=jumlahRelefBulan(), hariIni={};
+    const beban = g => DATA.kelas.filter(k=>k.hari===h&&k.guru===g).length;
+    barisRelef.forEach(b=>{
+      const dipakai = barisRelef.filter(x=>x.waktu===b.waktu&&x.pengganti).map(x=>x.pengganti);
+      const calon = freeWaktu(h,b.waktu,tak).filter(g=>!dipakai.includes(g));
+      calon.sort((a,c)=>(hariIni[a]||0)-(hariIni[c]||0) || (bulan[a]||0)-(bulan[c]||0) || beban(a)-beban(c) || Math.random()-.5);
+      if(calon[0]){ b.pengganti=calon[0]; hariIni[calon[0]]=(hariIni[calon[0]]||0)+1; }
+    });
+  }
+  lukisJadual(); $('hasil').classList.remove('tersembunyi'); $('hasil').scrollIntoView({behavior:'smooth'});
+}
+function lukisJadual(){
+  const h=hariDipilih(), tak=guruTakHadir();
+  $('tajukHasil').textContent = `Jadual Relef — ${h}, ${new Date($('tarikh').value).toLocaleDateString('ms-MY',{day:'numeric',month:'long',year:'numeric'})}`;
+  document.querySelector('.cetak-tajuk h2').textContent = 'JADUAL RELEF GURU — '+$('tajukHasil').textContent.replace('Jadual Relef — ','');
+  if(!barisRelef.length){ $('jadual').innerHTML='<tr><td>Guru yang ditanda tiada kelas pada hari ini. Tiada relef diperlukan. 🎉</td></tr>'; $('ringkasan').innerHTML=''; return; }
+  $('jadual').innerHTML = `<tr><th>Waktu</th><th>Kelas</th><th>Subjek</th><th>Guru Tidak Hadir</th><th>Guru Ganti</th></tr>` +
+    barisRelef.map((b,i)=>{
+      const dipakai = barisRelef.filter((x,j)=>j!==i&&x.waktu===b.waktu&&x.pengganti).map(x=>x.pengganti);
+      const calon = freeWaktu(h,b.waktu,tak).filter(g=>!dipakai.includes(g));
+      const opt = ['<option value="">— Pilih guru —</option>'].concat(calon.map(g=>`<option value="${g}" ${g===b.pengganti?'selected':''}>${nama(g)}</option>`));
+      return `<tr class="${b.pengganti?'':'tiada'}"><td><b>${b.waktu}</b></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td>
+        <td><select data-i="${i}">${opt.join('')}</select>${calon.length?'':'<div class="kecil" style="color:var(--merah)">Tiada guru free</div>'}</td></tr>`;
+    }).join('');
+  const diisi=barisRelef.filter(b=>b.pengganti).length;
+  $('ringkasan').innerHTML = `<div><b>${tak.length}</b>Guru tidak hadir</div><div><b>${barisRelef.length}</b>Waktu perlu relef</div><div><b>${diisi}</b>Sudah ada ganti</div><div><b>${barisRelef.length-diisi}</b>Belum ada ganti</div>`;
+}
+$('jadual').addEventListener('change',e=>{ if(e.target.dataset.i!==undefined){ barisRelef[+e.target.dataset.i].pengganti=e.target.value; lukisJadual(); }});
+$('btnAuto').onclick=()=>bina(true);
+$('btnManual').onclick=()=>bina(false);
+function sembunyiHasil(){ $('hasil').classList.add('tersembunyi'); }
+$('btnReset').onclick=()=>{ document.querySelectorAll('.guru input:checked').forEach(i=>i.checked=false); lukisGuru(); sembunyiHasil(); window.scrollTo({top:0,behavior:'smooth'}); };
+
+/* ================== WHATSAPP / SIMPAN ================== */
+$('btnWA').onclick=()=>{
+  let t=`*${$('tajukHasil').textContent.toUpperCase()}*\n\n`;
+  barisRelef.forEach(b=>{ t+=`⏰ Waktu ${b.waktu} | ${b.kelas} | ${b.subjek}\n   Ganti: *${b.pengganti?nama(b.pengganti):'BELUM ADA'}* (guru asal: ${nama(b.guruAsal)})\n`; });
+  t+='\nTerima kasih atas kerjasama cikgu. 🙏';
+  navigator.clipboard.writeText(t).then(()=>toast('📋 Disalin! Tampal dalam WhatsApp')).catch(()=>prompt('Salin teks ini:',t));
+};
+function bacaRekod(){ try{return JSON.parse(localStorage.getItem(KUNCI_REKOD))||[];}catch{return [];} }
+$('btnSimpan').onclick=()=>{
+  const tarikh=$('tarikh').value;
+  const baru = barisRelef.map(b=>({tarikh,hari:b.hari,waktu:b.waktu,kelas:b.kelas,subjek:b.subjek,guruAsal:nama(b.guruAsal),pengganti:b.pengganti,namaPengganti:b.pengganti?nama(b.pengganti):''}));
+  const rekod = bacaRekod().filter(r=>r.tarikh!==tarikh).concat(baru);
+  localStorage.setItem(KUNCI_REKOD,JSON.stringify(rekod));
+  if(DALAM_GAS){ google.script.run.withSuccessHandler(()=>toast('💾 Disimpan ke Google Sheet')).withFailureHandler(e=>toast('Gagal simpan: '+e.message)).simpanRelef(tarikh,baru); }
+  else toast('💾 Rekod disimpan dalam peranti ini');
+  lukisStat();
+};
+function lukisStat(){
+  if(!DATA) return; const c=jumlahRelefBulan(); const e=Object.entries(c).sort((a,b)=>b[1]-a[1]);
+  $('statRelef').innerHTML = e.length ? '<table><tr><th>Guru</th><th>Jumlah relef</th></tr>'+e.map(([g,n])=>`<tr><td>${nama(g)}</td><td><b>${n}</b></td></tr>`).join('')+'</table>' : 'Belum ada rekod bulan ini.';
+}
+
+/* ================== MULA ================== */
+(function mula(){
+  const d=new Date(); $('tarikh').value = d.toISOString().slice(0,10);
+  $('namaHari').textContent = hariDipilih();
+  const s=localStorage.getItem(KUNCI_DATA);
+  if(s){ DATA=JSON.parse(s); paparData(); lukisStat(); }
+  else if(DALAM_GAS){
+    google.script.run.withSuccessHandler(j=>{ if(j){ DATA=JSON.parse(j); localStorage.setItem(KUNCI_DATA,j); paparData(); lukisStat(); } }).ambilDataAsc();
+  }
+  $('tarikh').addEventListener('change',lukisStat);
+  if('serviceWorker' in navigator && location.protocol==='https:' && !DALAM_GAS && !location.hostname.includes('googleusercontent')){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+})();
+</script>
+</body>
+</html>
