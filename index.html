@@ -469,7 +469,7 @@ function senaraiKelasUnik(){ const s=new Set(); (DATA?.kelas||[]).forEach(k=>Str
 function pilihKelasHtml(se,si){ const K=senaraiKelasUnik(); if(!K.length) return ''; const pil=awalan(se.kelas);
   return `<details style="margin-top:8px"><summary>🏫 Pilih kelas yang guna masa ini (${pil.length} dipilih)</summary><div class="baris" style="flex-wrap:wrap;gap:6px;margin-top:8px">${K.map(k=>`<label style="border:1px solid #cfd8d3;border-radius:8px;padding:4px 8px"><input type="checkbox" data-sesi="${si}" data-kls="${esc(k)}" ${pil.includes(k.toUpperCase())?'checked':''}> ${esc(k)}</label>`).join('')}</div></details>`; }
 function ubahMasa(t){ const se=senaraiSesi()[+t.dataset.sesi]; if(!se) return false;
-  if(t.dataset.kls){ const k=t.dataset.kls.toUpperCase(); let a=awalan(se.kelas).filter(x=>x!==k); if(t.checked) a.push(k); se.kelas=a.join(', '); simpanTetapan(); lukisMasa(); const d=$('senaraiMasa').querySelectorAll('.sesi-kad details')[+t.dataset.sesi]; if(d) d.open=true; if(DATA&&!$('hasil').classList.contains('tersembunyi')) lukisJadual(); return true; }
+  if(t.dataset.kls){ const k=t.dataset.kls.toUpperCase(); let a=awalan(se.kelas).filter(x=>x!==k); if(t.checked) a.push(k); se.kelas=a.join(', '); simpanTetapan(); lukisMasa(); const d=$('senaraiMasa').querySelectorAll('.sesi-kad details')[+t.dataset.sesi]; if(d) d.open=true; if($('dlgMasa').open) bukaMasa(dlgWaktu); if(DATA&&!$('hasil').classList.contains('tersembunyi')) lukisJadual(); return true; }
   if(t.dataset.f){ se[t.dataset.f]=t.value; }
   else if(t.dataset.masa){ const w=t.dataset.masa; se.masa||={}; se.masa[w]={...(masaSesi(se,w)||{}),...(se.masa[w]||{}),[t.dataset.k]:t.value}; }
   else return false;
@@ -477,10 +477,12 @@ function ubahMasa(t){ const se=senaraiSesi()[+t.dataset.sesi]; if(!se) return fa
 $('senaraiMasa').onchange=e=>ubahMasa(e.target);
 $('senaraiMasa').onclick=e=>{ const p=e.target.closest('[data-padam]'); if(!p) return; if(!confirm('Padam sesi ini?')) return; senaraiSesi().splice(+p.dataset.padam,1); simpanTetapan(); lukisMasa(); if(DATA&&!$('hasil').classList.contains('tersembunyi')) lukisJadual(); };
 $('btnTambahSesi').onclick=()=>{ const L=senaraiSesi(); L.push({id:'s'+Date.now(),nama:'Sesi '+(L.length+1),kelas:'',masa:JSON.parse(JSON.stringify(L[0].masa||{}))}); simpanTetapan(); lukisMasa(); toast('➕ Sesi ditambah. Isi kelas & masa.'); };
-function bukaMasa(w){ $('dlgW').textContent=w;
+let dlgWaktu=null;
+function bukaMasa(w){ dlgWaktu=w; $('dlgW').textContent=w;
   $('dlgIsi').innerHTML=senaraiSesi().map((se,si)=>{ const t=se.masa?.[w]||masaSesi(se,w)||{};
-    return `<fieldset class="masa-dialog-sesi"><legend>${esc(se.nama)}</legend><small>${esc(se.kelas||'Kelas lain-lain')}</small><div class="masa-dialog-baris"><label>Mula<input type="time" aria-label="Mula ${esc(se.nama)}" data-sesi="${si}" data-masa="${w}" data-k="mula" value="${t.mula||''}"></label><label>Tamat<input type="time" aria-label="Tamat ${esc(se.nama)}" data-sesi="${si}" data-masa="${w}" data-k="tamat" value="${t.tamat||''}"></label></div></fieldset>`;}).join('');
-  $('dlgMasa').showModal(); }
+    return `<fieldset class="masa-dialog-sesi"><legend>${esc(se.nama)}</legend><small>${esc(se.kelas||'Kelas lain-lain')}</small><div class="masa-dialog-baris"><label>Mula<input type="time" aria-label="Mula ${esc(se.nama)}" data-sesi="${si}" data-masa="${w}" data-k="mula" value="${t.mula||''}"></label><label>Tamat<input type="time" aria-label="Tamat ${esc(se.nama)}" data-sesi="${si}" data-masa="${w}" data-k="tamat" value="${t.tamat||''}"></label></div>${pilihKelasHtml(se,si).replace('<details','<details open')}</fieldset>`;}).join('')+`<button class="kedua" id="dlgTambahSesi" style="margin-top:4px">➕ Tambah sesi (kumpulan kelas lain)</button>`;
+  $('dlgMasa').open||$('dlgMasa').showModal(); }
+$('dlgIsi').addEventListener('click',e=>{ if(e.target.id!=='dlgTambahSesi') return; $('btnTambahSesi').click(); bukaMasa(dlgWaktu); });
 $('dlgIsi').oninput=e=>{ if(ubahMasa(e.target)) lukisMasa(); };
 $('dlgIsi').onchange=e=>{ if(ubahMasa(e.target)) lukisMasa(); };
 $('dlgTutup').onclick=()=>$('dlgMasa').close();
