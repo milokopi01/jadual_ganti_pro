@@ -25,7 +25,8 @@ header{background:var(--hijau);color:var(--putih);padding:18px 20px;display:flex
 header img{width:48px;height:48px;border-radius:10px}
 header h1{margin:0;font-size:24px}
 header small{display:block;opacity:.85;font-size:15px}
-main{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+main{max-width:1800px;margin:0 auto;padding:20px 24px 80px}
+@media(min-width:1100px){main{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;align-items:start}main>#langkah3,main>#hasil,main>#seksyenStat,main>#tetapanGuru{grid-column:1/-1}}
 .langkah{background:var(--putih);border-radius:18px;padding:22px;margin-bottom:20px;box-shadow:0 2px 0 #e6dfcc}
 .langkah h2{margin:0 0 6px;font-size:22px;display:flex;align-items:center;gap:12px}
 .no{background:var(--kuning);color:var(--teks);width:38px;height:38px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:none}
@@ -70,11 +71,11 @@ td select{width:100%;font-size:17px;padding:10px}
 .petunjuk{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;font-size:16px}
 .petunjuk span{display:inline-flex;align-items:center;gap:6px}
 .petunjuk i{width:22px;height:22px;border-radius:5px;display:inline-block;border:1px solid #ccc}
-.grid{border-collapse:separate;border-spacing:3px;font-size:14px;min-width:100%}
-.grid th{background:var(--hijau);color:#fff;padding:8px 4px;text-align:center;border-radius:6px;position:static}
+.grid{border-collapse:separate;border-spacing:4px;font-size:16px;min-width:100%}
+.grid th{background:var(--hijau);color:#fff;padding:12px 6px;font-size:18px;text-align:center;border-radius:6px;position:static}
 .grid th.perlu{background:var(--merah)}
-.grid td{padding:0;border:0;text-align:center;height:46px;min-width:64px;border-radius:6px;font-size:13px;line-height:1.2}
-.grid td.nama{position:sticky;left:0;z-index:1;text-align:left;padding:4px 10px;font-weight:600;background:#f1efe6;min-width:150px;white-space:nowrap}
+.grid td{padding:2px;border:0;text-align:center;height:64px;min-width:88px;border-radius:8px;font-size:15px;line-height:1.25;font-weight:600}
+.grid td.nama{position:sticky;left:0;z-index:1;text-align:left;padding:4px 10px;font-weight:600;background:#f1efe6;min-width:170px;white-space:nowrap;font-size:17px}
 .grid tr.absen td.nama{background:var(--merah);color:#fff}
 .c-ajar{background:#f4a9a3;color:#5a1610}
 .c-free{background:#ffe46b;cursor:pointer}
@@ -95,6 +96,16 @@ td select{width:100%;font-size:17px;padding:10px}
 .tiket .ttd{margin-top:14px;font-size:13px;color:var(--kelabu)}
 body.cetak-tiket #hasil>*:not(#seksyenTiket){display:none!important}
 body.cetak-laporan #seksyenTiket{display:none!important}
+@media(max-width:700px){
+ body{font-size:16px}header{padding:12px 14px}header h1{font-size:19px}header small{font-size:13px}
+ main{padding:12px 10px 70px}.langkah{padding:16px;border-radius:14px}.langkah h2{font-size:19px}
+ button,.btn{font-size:16px;padding:12px 16px}.baris>button,.baris>label{flex:1 1 100%}
+ input[type=date],select{font-size:16px;width:100%}.guru-grid{grid-template-columns:1fr}
+ .grid{border-spacing:2px}.grid td{height:54px;min-width:66px;font-size:13px}.grid th{font-size:15px;padding:8px 4px}
+ .grid td.nama{min-width:96px;font-size:14px;padding:4px 6px}.tiket-grid{grid-template-columns:1fr}
+ table{font-size:15px}th,td{padding:8px 6px}.upload{padding:18px}
+}
+.drive-baris{margin-top:12px}.drive-baris input{flex:1;min-width:220px;font:inherit;padding:12px 14px;border:2px solid #cfd8d3;border-radius:12px}
 @media print{
  header,.langkah:not(#hasil),.tiada-cetak,.toast{display:none!important}
  body{background:#fff;font-size:13px}.langkah{box-shadow:none;padding:0}
@@ -122,6 +133,11 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <div style="font-size:42px">📂</div>
   <div><b>Tekan di sini</b> untuk pilih fail DATA ASC (.xlsx)</div>
  </label>
+ <div class="baris drive-baris">
+  <input id="pautanDrive" placeholder="🔗 Atau tampal pautan fail Google Drive di sini" aria-label="Pautan Google Drive">
+  <button class="kedua" id="btnDrive">☁️ Ambil dari Google Drive</button>
+ </div>
+ <p class="bantu" style="margin-top:8px;font-size:15px">Di telefon, butang di atas juga boleh terus pilih fail dari aplikasi Google Drive. Pastikan fail Drive dikongsi “Sesiapa yang ada pautan”.</p>
  <div id="statusData" class="status tersembunyi"></div>
 </section>
 
@@ -185,6 +201,8 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  <div class="baris tiada-cetak" style="margin-top:16px">
   <button onclick="cetak('cetak-laporan')">🖨️ Cetak Laporan Penuh</button>
   <button onclick="cetak('cetak-tiket')">🎫 Cetak Tiket Guru</button>
+  <button id="btnKongsiGambar">📤 Kongsi Gambar Tiket</button>
+  <button class="kedua" id="btnMuatGambar">🖼️ Muat Turun Gambar</button>
   <button class="kedua" id="btnWA">📋 Salin untuk WhatsApp</button>
   <button class="kedua" id="btnSimpan">✔ Simpan Rekod</button>
   <button class="amaran" id="btnReset">↺ Mula Semula</button>
@@ -300,19 +318,34 @@ $('fail').addEventListener('change', e=>{
   const f=e.target.files[0]; if(!f) return;
   tunjukStatus('⏳ Sedang membaca fail... sila tunggu sebentar (fail besar mungkin ambil 10-30 saat).');
   const rd=new FileReader();
-  rd.onload = ev=>{
+  rd.onload = ev=>muatBuffer(ev.target.result);
+  rd.readAsArrayBuffer(f);
+});
+function muatBuffer(buf){
     setTimeout(()=>{
       try{
-        const wb = XLSX.read(new Uint8Array(ev.target.result),{type:'array',dense:true});
+        const wb = XLSX.read(new Uint8Array(buf),{type:'array',dense:true});
         DATA = hurai(wb);
         simpanData(DATA);
         if(DALAM_GAS) google.script.run.simpanDataAsc(JSON.stringify(DATA));
         paparData(); toast('✅ Jadual berjaya dimuatkan');
       }catch(err){ console.error(err); tunjukStatus('❌ Fail tidak dapat dibaca: '+err,true); }
     },50);
-  };
-  rd.readAsArrayBuffer(f);
-});
+}
+/* ---------- Google Drive ---------- */
+function idDrive(u){ u=norm(u); const m=u.match(/\/d\/([\w-]{20,})/)||u.match(/[?&]id=([\w-]{20,})/); return m?m[1]:(/^[\w-]{20,}$/.test(u)?u:null); }
+$('btnDrive').onclick=async()=>{
+  const id=idDrive($('pautanDrive').value); if(!id) return toast('Pautan Google Drive tidak sah');
+  tunjukStatus('⏳ Sedang mengambil fail dari Google Drive...');
+  if(DALAM_GAS){
+    google.script.run.withSuccessHandler(b64=>{ const bin=atob(b64),u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i); muatBuffer(u.buffer); })
+      .withFailureHandler(e=>tunjukStatus('❌ Gagal ambil dari Drive: '+e.message,true)).ambilFailDrive(id);
+    return;
+  }
+  const urls=['https://drive.google.com/uc?export=download&id='+id,'https://docs.google.com/spreadsheets/d/'+id+'/export?format=xlsx'];
+  for(const u of urls){ try{ const r=await fetch(u); if(r.ok){ const b=await r.arrayBuffer(); if(b.byteLength>1000) return muatBuffer(b); } }catch{} }
+  tunjukStatus('❌ Google Drive tidak membenarkan fail diambil terus dari pelayar. Buka pautan, muat turun fail, kemudian tekan kotak di atas untuk pilih fail tersebut. (Jika app dijalankan melalui Google Apps Script, fungsi ini berfungsi terus.)',true);
+};
 function tunjukStatus(m,ralat){const s=$('statusData'); s.textContent=m; s.className='status'+(ralat?' ralat':'');}
 function paparData(){
   tunjukStatus(`✅ ${DATA.guru.length} guru, ${DATA.kelas.length} slot mengajar dimuatkan (${DATA.dimuat}). Tekan kotak di atas untuk tukar fail.`);
@@ -432,7 +465,7 @@ function lukisJadualLama(){
   $('ringkasan').innerHTML = `<div><b>${tak.length}</b>Guru tidak hadir</div><div><b>${barisRelef.length}</b>Waktu perlu relef</div><div><b>${diisi}</b>Sudah ada ganti</div><div><b>${barisRelef.length-diisi}</b>Belum ada ganti</div>`;
 }
 let slotAktif=null,jadualTarikh='';
-function lukisJadual(){ lukisJadualLama(); lukisGrid(); lukisTiket(); }
+function lukisJadual(){ lukisJadualLama(); lukisGrid(); lukisTiket(); janaGambar(); }
 function lukisGrid(){
   const h=hariDipilih(), tak=guruTakHadir(), W=DATA.waktu[h]||[];
   const perluW=new Set(barisRelef.map(b=>b.waktu));
@@ -475,7 +508,7 @@ $('grid').addEventListener('click',e=>{
 });
 function lukisTiket(){
   const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
-  const tarikh=new Date($('tarikh').value).toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const tarikh=labelTarikh().penuh;
   const e=Object.entries(kumpul);
   $('tiket').innerHTML = e.length ? e.map(([g,l])=>`<div class="tiket"><div class="kepala">Tiket Relef · ${tarikh}</div>
     <h3>${nama(g)}</h3><div class="bantu" style="margin:0;font-size:14px">Cikgu diminta masuk kelas berikut:</div>
@@ -483,6 +516,47 @@ function lukisTiket(){
     <div class="ttd">Jumlah: <b>${l.length}</b> waktu &nbsp;·&nbsp; Tandatangan guru: ____________________</div></div>`).join('')
     : '<p class="bantu">Belum ada guru ganti dipilih.</p>';
 }
+/* ---------- GAMBAR TIKET (kongsi media sosial) ---------- */
+let gambarBlob=null, gambarNama='';
+function labelTarikh(){ const d=new Date($('tarikh').value+'T00:00:00');
+  return {hari:d.toLocaleDateString('ms-MY',{weekday:'long'}), penuh:d.toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'}),
+    fail:'Relef_'+d.toLocaleDateString('ms-MY',{weekday:'long'}).replace(/\s+/g,'')+'_'+[String(d.getDate()).padStart(2,'0'),String(d.getMonth()+1).padStart(2,'0'),d.getFullYear()].join('-')+'.png'}; }
+function janaGambar(){
+  gambarBlob=null; const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
+  const e=Object.entries(kumpul); if(!e.length) return;
+  const L=labelTarikh(); gambarNama=L.fail;
+  const W=1080,P=48,RH=50; let H=260; e.forEach(([,l])=>H+=150+l.length*RH); H+=90;
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  const F=(w,s)=>`${w} ${s}px Lexend, system-ui, sans-serif`;
+  x.fillStyle='#faf6ec'; x.fillRect(0,0,W,H);
+  x.fillStyle='#0f5c4a'; x.fillRect(0,0,W,200);
+  x.fillStyle='#fff'; x.font=F(600,30); x.fillText('JADUAL RELEF GURU',P,70);
+  x.font=F(700,56); x.fillText(L.penuh.toUpperCase(),P,145);
+  x.fillStyle='#e8a33d'; x.fillRect(P,172,140,8);
+  let y=250;
+  e.forEach(([g,l])=>{
+    l.sort((a,b)=>a.waktu-b.waktu); const h=110+l.length*RH;
+    x.fillStyle='#fff'; x.strokeStyle='#0f5c4a'; x.lineWidth=3; x.setLineDash([12,8]);
+    x.beginPath(); x.roundRect(P,y,W-2*P,h,20); x.fill(); x.stroke(); x.setLineDash([]);
+    x.fillStyle='#0f5c4a'; x.font=F(700,34); x.fillText(nama(g),P+28,y+50);
+    x.fillStyle='#5f6f68'; x.font=F(600,22); x.fillText('WAKTU',P+28,y+92); x.fillText('KELAS',P+170,y+92); x.fillText('SUBJEK',P+430,y+92); x.fillText('GANTI',P+640,y+92);
+    l.forEach((b,i)=>{ const yy=y+92+(i+1)*RH; x.fillStyle='#1d2b26'; x.font=F(700,28); x.fillText(String(b.waktu),P+28,yy);
+      x.font=F(500,26); const fit=(t,m)=>{t=String(t);while(x.measureText(t).width>m&&t.length>2)t=t.slice(0,-2)+'…';return t;};
+      x.fillText(fit(b.kelas,240),P+170,yy); x.fillText(fit(b.subjek,190),P+430,yy); x.fillText(fit(nama(b.guruAsal),300),P+640,yy); });
+    y+=h+40;
+  });
+  x.fillStyle='#5f6f68'; x.font=F(500,22); x.fillText('Sistem Relef Guru · '+L.penuh,P,H-40);
+  c.toBlob(b=>{gambarBlob=b;},'image/png');
+}
+$('btnKongsiGambar').onclick=async()=>{
+  if(!gambarBlob) return toast('Tiada tiket relef untuk dijadikan gambar');
+  const f=new File([gambarBlob],gambarNama,{type:'image/png'});
+  if(navigator.canShare?.({files:[f]})){ try{ await navigator.share({files:[f],title:gambarNama.replace('.png',''),text:'Jadual Relef '+labelTarikh().penuh}); return; }catch(err){ if(err.name==='AbortError') return; } }
+  muatTurunGambar(); toast('Peranti ini tidak menyokong kongsi terus — gambar dimuat turun');
+};
+function muatTurunGambar(){ if(!gambarBlob) return toast('Tiada tiket relef untuk dijadikan gambar');
+  const u=URL.createObjectURL(gambarBlob),a=document.createElement('a'); a.href=u; a.download=gambarNama; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),30000); }
+$('btnMuatGambar').onclick=muatTurunGambar;
 function cetak(mod){ document.body.classList.add(mod); setTimeout(()=>{ window.print(); document.body.classList.remove(mod); },50); }
 $('jadual').addEventListener('change',e=>{ if(e.target.dataset.i!==undefined){ const i=+e.target.dataset.i,g=e.target.value;if(g&&!calonSlot(barisRelef[i],i).includes(g)){toast('Guru tidak tersedia pada waktu ini');return lukisJadual();}barisRelef[i].pengganti=g;lukisJadual(); }});
 function binaSelamat(auto){
