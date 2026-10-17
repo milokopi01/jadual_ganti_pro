@@ -41,7 +41,7 @@ function candidates(ctx,row,rows,ignore=-1){
   !(status[g]?.blocked||[]).includes(w)&&!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&
   !assigned.some(r=>r.waktu===w&&r.pengganti===g);
  const base=data.guru.map(g=>g.singkat).filter(g=>!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&loads[g]<max);
- const qualified=base.filter(g=>available(g,row.waktu)&&(available(g,row.waktu-1)||available(g,row.waktu+1)));
+ const qualified=base.filter(g=>available(g,row.waktu)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(available(g,row.waktu-1)||available(g,row.waktu+1)));
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
  const sort=list=>list.sort((a,b)=>rank(a)-rank(b)||(weekly[a]||0)+(counts[a]||0)-(weekly[b]||0)-(counts[b]||0)||loads[a]-loads[b]||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
@@ -64,8 +64,12 @@ function manualCandidates(ctx,row,rows,ignore=-1){
   !data.kelas.some(k=>k.hari===day&&k.waktu===row.waktu&&k.guru===g)&&
   !absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&
   !(status[g]?.blocked||[]).includes(row.waktu)&&
-  !rows.some((r,i)=>i!==ignore&&r.waktu===row.waktu&&r.pengganti===g)
+  !rows.some((r,i)=>i!==ignore&&r.waktu===row.waktu&&r.pengganti===g)&&
+  !(ctx.clash&&ctx.clash(g,row,rows,ignore))
  ).sort((a,b)=>a.localeCompare(b));
+}
+function needsRelief(lesson,day,absent,status={}){
+ return lesson.hari===day&&absent.includes(lesson.guru)&&!(status[lesson.guru]?.ajarSendiri||[]).includes(lesson.waktu);
 }
 function assign(ctx,rows){
  ctx={...ctx};
@@ -80,7 +84,7 @@ function assign(ctx,rows){
  }
  return result;
 }
-const api={schoolWeek,weekStart,weeklyCounts,candidates,manualCandidates,assign};
+const api={schoolWeek,weekStart,weeklyCounts,candidates,manualCandidates,needsRelief,assign};
 if(typeof module!=='undefined'&&module.exports) module.exports=api;
 else root.ReliefEngine=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
