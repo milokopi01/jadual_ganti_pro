@@ -118,7 +118,9 @@ td select{width:100%;font-size:17px;padding:10px}
 
 <section class="langkah tiada-cetak" id="seksyenStat">
  <h2>📊 Jumlah relef guru (bulan ini)</h2>
- <p class="bantu">Dikira daripada rekod yang disimpan dalam peranti / Google Sheet ini.</p>
+ <p class="bantu">Dikira daripada rekod yang disimpan dalam komputer / peranti ini sahaja.</p>
+ <div class="baris" style="margin-bottom:12px"><button class="kedua" id="btnBackup">⬇ Simpan Salinan (Backup)</button><button class="kedua" id="btnPulih">⬆ Pulihkan Backup</button><input type="file" id="failPulih" accept=".json" hidden></div>
+ <p class="bantu" style="display:none"></p>
  <div id="statRelef" class="bantu">Belum ada rekod.</div>
 </section>
 </main>
@@ -312,13 +314,24 @@ $('btnSimpan').onclick=()=>{
   const rekod = bacaRekod().filter(r=>r.tarikh!==tarikh).concat(baru);
   localStorage.setItem(KUNCI_REKOD,JSON.stringify(rekod));
   if(DALAM_GAS){ google.script.run.withSuccessHandler(()=>toast('💾 Disimpan ke Google Sheet')).withFailureHandler(e=>toast('Gagal simpan: '+e.message)).simpanRelef(tarikh,baru); }
-  else toast('💾 Rekod disimpan dalam peranti ini');
+  else toast('✔ Rekod disimpan dalam komputer ini');
   lukisStat();
 };
 function lukisStat(){
   if(!DATA) return; const c=jumlahRelefBulan(); const e=Object.entries(c).sort((a,b)=>b[1]-a[1]);
   $('statRelef').innerHTML = e.length ? '<table><tr><th>Guru</th><th>Jumlah relef</th></tr>'+e.map(([g,n])=>`<tr><td>${nama(g)}</td><td><b>${n}</b></td></tr>`).join('')+'</table>' : 'Belum ada rekod bulan ini.';
 }
+
+$('btnBackup').onclick=()=>{
+  const blob=new Blob([JSON.stringify({data:DATA,rekod:bacaRekod()})],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='backup-relef-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+  toast('⬇ Fail backup dimuat turun');
+};
+$('btnPulih').onclick=()=>$('failPulih').click();
+$('failPulih').onchange=e=>{ const f=e.target.files[0]; if(!f) return; f.text().then(t=>{ try{ const j=JSON.parse(t);
+  if(j.data){DATA=j.data; localStorage.setItem(KUNCI_DATA,JSON.stringify(DATA)); paparData();}
+  if(j.rekod) localStorage.setItem(KUNCI_REKOD,JSON.stringify(j.rekod)); lukisStat(); toast('✅ Backup dipulihkan');
+ }catch{ toast('❌ Fail backup tidak sah'); } }); };
 
 /* ================== MULA ================== */
 (function mula(){
