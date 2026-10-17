@@ -68,6 +68,16 @@ function manualCandidates(ctx,row,rows,ignore=-1){
   !(ctx.clash&&ctx.clash(g,row,rows,ignore))
  ).sort((a,b)=>a.localeCompare(b));
 }
+function sessionForClass(sessions,kelas){
+ const k=String(kelas||'').split(',')[0].trim().toUpperCase();
+ let best, length=0;
+ for(const session of sessions){
+  for(const prefix of String(session.kelas||'').split(',').map(s=>s.trim().toUpperCase()).filter(Boolean)){
+   if(k.startsWith(prefix)&&prefix.length>length){best=session;length=prefix.length;}
+  }
+ }
+ return best||sessions.find(s=>!String(s.kelas||'').trim())||sessions[0];
+}
 function needsRelief(lesson,day,absent,status={}){
  return lesson.hari===day&&absent.includes(lesson.guru)&&!(status[lesson.guru]?.ajarSendiri||[]).includes(lesson.waktu);
 }
@@ -84,7 +94,7 @@ function assign(ctx,rows){
  }
  return result;
 }
-const api={schoolWeek,weekStart,weeklyCounts,candidates,manualCandidates,needsRelief,assign};
+const api={schoolWeek,weekStart,weeklyCounts,candidates,manualCandidates,sessionForClass,needsRelief,assign};
 if(typeof module!=='undefined'&&module.exports) module.exports=api;
 else root.ReliefEngine=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

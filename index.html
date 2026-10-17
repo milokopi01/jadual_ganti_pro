@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="xlsx.full.min.js"></script>
-<script src="relief-engine.js"></script>
+<script src="relief-engine.js?v=2.10.0"></script>
 <style>
 :root{--hijau:#0f5c4a;--hijau2:#e3efe9;--kuning:#e8a33d;--krim:#faf6ec;--teks:#1d2b26;--kelabu:#5f6f68;--merah:#b3392f;--merah2:#fbe7e4;--putih:#fff}
 *{box-sizing:border-box}
@@ -110,6 +110,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  .grid td.nama{min-width:96px;font-size:14px;padding:4px 6px}.tiket-grid{grid-template-columns:1fr}
  table{font-size:15px}th,td{padding:8px 6px}.upload{padding:18px}
 }
+#dlgMasa{max-height:85dvh;overflow-y:auto;background:var(--putih);color:var(--teks)}#dlgMasa::backdrop{background:var(--teks);opacity:.45}.masa-dialog-sesi{border:1px solid var(--hijau2);border-radius:8px;margin:0 0 12px;min-width:0;padding:10px}.masa-dialog-sesi legend{font-weight:600;overflow-wrap:anywhere}.masa-dialog-sesi small{color:var(--kelabu)}.masa-dialog-baris{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}.masa-dialog-baris label{font-size:15px;min-width:0}.masa-dialog-baris input{display:block;width:100%;min-width:0;font:inherit;padding:8px;border:1px solid var(--kelabu);border-radius:6px;background:var(--putih);color:var(--teks)}
 .masa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}.masa-item{display:flex;align-items:center;gap:8px}.masa-item b{width:70px}.masa-item input{font:inherit;font-size:16px;padding:8px;border:2px solid #cfd8d3;border-radius:10px;width:100%}.masa{display:block;font-size:.78em;font-weight:500;color:var(--kelabu);white-space:nowrap}.grid th .masa{color:#fff;opacity:.9}
 @media print{
  header,.langkah:not(#hasil),.tiada-cetak,.toast{display:none!important}
@@ -156,11 +157,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <summary>⏰ Sesi operasi &amp; masa setiap waktu</summary>
   <p class="bantu" style="margin-top:10px;font-size:15px">Sekolah boleh ada beberapa sesi (cth. Tahap 1 &amp; Tahap 2) dengan masa rehat berbeza. Tetapkan kelas bagi setiap sesi (awalan nama kelas, cth. <b>1,2,3</b>). Anda juga boleh tekan nombor waktu pada grid untuk isi masa terus. Guru yang sama dikongsi — sistem tidak akan beri relef jika masa bertindih dengan kelas guru itu dalam sesi lain.</p>
   <div id="senaraiMasa"></div>
-<dialog id="dlgMasa" style="border:0;border-radius:16px;padding:20px;max-width:440px;width:92%">
- <h3 style="margin:0 0 6px">⏰ Masa Waktu <span id="dlgW"></span></h3><p class="bantu" style="font-size:14px;margin:0 0 12px">Isi masa mula &amp; tamat bagi setiap sesi.</p>
- <div id="dlgIsi"></div>
- <div class="baris" style="margin-top:14px;justify-content:flex-end"><button class="kedua" id="dlgTutup">Tutup</button></div>
-</dialog>
+
   <button class="kedua" id="btnTambahSesi" style="margin-top:10px">➕ Tambah sesi</button>
  </details>
 </section>
@@ -234,6 +231,11 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  <div id="statRelef" class="bantu">Belum ada rekod.</div>
 </section>
 </main>
+<dialog id="dlgMasa" style="border:0;border-radius:16px;padding:20px;max-width:440px;width:92%">
+ <h3 style="margin:0 0 6px">⏰ Masa Waktu <span id="dlgW"></span></h3><p class="bantu" style="font-size:14px;margin:0 0 12px">Isi masa mula &amp; tamat bagi setiap sesi.</p>
+ <div id="dlgIsi"></div>
+ <div class="baris" style="margin-top:14px;justify-content:flex-end"><button class="kedua" id="dlgTutup">Tutup</button></div>
+</dialog>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -421,7 +423,7 @@ function lukisTetapan(){
 $('cariTetapan').oninput=lukisTetapan;
 $('senaraiTetapan').onchange=e=>{
  const t=e.target;
- if(t.dataset.status){const g=t.dataset.status;hariStatus()[g]={...(hariStatus()[g]||{}),reason:t.value,ajarSendiri:[]};if(t.value==='Hadir')tidakHadir.delete(g);else tidakHadir.add(g);}
+ if(t.dataset.status){const g=t.dataset.status;hariStatus()[g]={...(hariStatus()[g]||{}),reason:t.value,ajarSendiri:t.value==='Hadir'?[]:(hariStatus()[g]?.ajarSendiri||[])};if(t.value==='Hadir')tidakHadir.delete(g);else tidakHadir.add(g);}
  if(t.dataset.block){const g=t.dataset.block,w=+t.dataset.period;const st=hariStatus();st[g] ||= {reason:'Hadir'};st[g].blocked=(st[g].blocked||[]).filter(x=>x!==w);if(t.checked)st[g].blocked.push(w);}
  simpanTetapan();lukisGuru();sembunyiHasil();
 };
@@ -436,8 +438,7 @@ function senaraiSesi(){
   if(!Array.isArray(tetapan.sesi)||!tetapan.sesi.length){ tetapan.sesi=[{id:'s1',nama:'Semua kelas',kelas:'',masa:{...(DATA?.masa||{}),...(tetapan.masa||{})}}]; }
   return tetapan.sesi; }
 function awalan(x){ return String(x||'').split(',').map(t=>t.trim().toUpperCase()).filter(Boolean); }
-function sesiKelas(kelas){ const L=senaraiSesi(), k=String(kelas||'').split(',')[0].trim().toUpperCase();
-  return (k&&L.find(x=>awalan(x.kelas).some(p=>k.startsWith(p))))||L.find(x=>!awalan(x.kelas).length)||L[0]; }
+function sesiKelas(kelas){ return ReliefEngine.sessionForClass(senaraiSesi(),kelas); }
 function masaSesi(se,w){ const t=se?.masa?.[w]||(senaraiSesi()[0]===se?DATA?.masa?.[w]:null); return t&&t.mula&&t.tamat?t:null; }
 function masaWaktu(w,kelas){ const t=masaSesi(sesiKelas(kelas),w); return t?jam12(t.mula)+' – '+jam12(t.tamat):''; }
 function minit(v){ const m=/^(\d{1,2}):(\d{2})$/.exec(v||''); return m?+m[1]*60+ +m[2]:null; }
@@ -466,9 +467,10 @@ $('senaraiMasa').onchange=e=>ubahMasa(e.target);
 $('senaraiMasa').onclick=e=>{ const p=e.target.closest('[data-padam]'); if(!p) return; if(!confirm('Padam sesi ini?')) return; senaraiSesi().splice(+p.dataset.padam,1); simpanTetapan(); lukisMasa(); if(DATA&&!$('hasil').classList.contains('tersembunyi')) lukisJadual(); };
 $('btnTambahSesi').onclick=()=>{ const L=senaraiSesi(); L.push({id:'s'+Date.now(),nama:'Sesi '+(L.length+1),kelas:'',masa:JSON.parse(JSON.stringify(L[0].masa||{}))}); simpanTetapan(); lukisMasa(); toast('➕ Sesi ditambah. Isi kelas & masa.'); };
 function bukaMasa(w){ $('dlgW').textContent=w;
-  $('dlgIsi').innerHTML=senaraiSesi().map((se,si)=>{ const t=masaSesi(se,w)||{};
-    return `<label class="masa-item" style="margin-bottom:8px"><b style="width:110px">${esc(se.nama)}</b><input type="time" data-sesi="${si}" data-masa="${w}" data-k="mula" value="${t.mula||''}">–<input type="time" data-sesi="${si}" data-masa="${w}" data-k="tamat" value="${t.tamat||''}"></label>`;}).join('');
+  $('dlgIsi').innerHTML=senaraiSesi().map((se,si)=>{ const t=se.masa?.[w]||masaSesi(se,w)||{};
+    return `<fieldset class="masa-dialog-sesi"><legend>${esc(se.nama)}</legend><small>${esc(se.kelas||'Kelas lain-lain')}</small><div class="masa-dialog-baris"><label>Mula<input type="time" aria-label="Mula ${esc(se.nama)}" data-sesi="${si}" data-masa="${w}" data-k="mula" value="${t.mula||''}"></label><label>Tamat<input type="time" aria-label="Tamat ${esc(se.nama)}" data-sesi="${si}" data-masa="${w}" data-k="tamat" value="${t.tamat||''}"></label></div></fieldset>`;}).join('');
   $('dlgMasa').showModal(); }
+$('dlgIsi').oninput=e=>{ if(ubahMasa(e.target)) lukisMasa(); };
 $('dlgIsi').onchange=e=>{ if(ubahMasa(e.target)) lukisMasa(); };
 $('dlgTutup').onclick=()=>$('dlgMasa').close();
 function labelHeader(w){ const L=senaraiSesi();
@@ -530,8 +532,8 @@ function lukisGrid(){
       if(!pelajaran.length) return '<td class="c-kosong"></td>';
       const sendiri=(hariStatus()[g]?.ajarSendiri||[]).includes(w);
       if(sendiri) return `<td class="c-sendiri" role="button" tabindex="0" data-keperluan="${esc(g)}" data-w="${w}" aria-label="Perlu relef ${esc(g)} waktu ${w}" title="Tekan untuk perlukan relef semula">${pelajaran.map(k=>esc(k.kelas)).join('<br>')}<br><small>AJAR SENDIRI</small></td>`;
-      return '<td style="padding:0">'+idx.map(i=>{const b=barisRelef[i];
-        return `<div role="button" tabindex="0" aria-label="Batalkan relef ${esc(g)} waktu ${w}" class="kotak-relef c-perlu ${b.pengganti?'ok':''} ${slotAktif===i?'aktif':''}" data-keperluan="${esc(g)}" data-w="${w}" title="Tekan untuk batalkan keperluan relef; guru asal mengajar">${esc(b.kelas)}<br><small>${esc(b.pengganti||'?')}</small><button class="pilih-slot" data-slot="${i}" aria-label="Pilih guru ganti ${esc(g)} waktu ${w}" title="Pilih / tukar guru ganti">↗</button></div>`;}).join('')+'</td>';
+      return `<td class="c-perlu ${idx.length&&idx.every(i=>barisRelef[i].pengganti)?'ok':''}" role="button" tabindex="0" data-keperluan="${esc(g)}" data-w="${w}" aria-label="Batalkan relef ${esc(g)} waktu ${w}" title="Tekan untuk batalkan keperluan relef; guru asal mengajar">`+idx.map(i=>{const b=barisRelef[i];
+        return `<div class="kotak-relef c-perlu ${b.pengganti?'ok':''} ${slotAktif===i?'aktif':''}">${esc(b.kelas)}<br><small>${esc(b.pengganti||'?')}</small><button class="pilih-slot" data-slot="${i}" aria-label="Pilih guru ganti ${esc(g)} waktu ${w}" title="Pilih / tukar guru ganti">↗</button></div>`;}).join('')+'</td>';
     }).join('')+'</tr>';
   });
   const baki=DATA.guru.filter(g=>!tak.includes(g.singkat));
@@ -550,7 +552,7 @@ function lukisGrid(){
   $('grid').innerHTML=html;
   $('arahanGrid').innerHTML = slotAktif!==null
     ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b>kuning atau kelabu berjalur</b> pada lajur yang sama.`
-    : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan petak merah tua (kelas perlu relef), kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal.';
+    : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relef, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal.';
 }
 function tukarKeperluan(g,w){
   const st=hariStatus();st[g] ||= {reason:'Tidak hadir'};
