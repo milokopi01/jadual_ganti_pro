@@ -46,6 +46,17 @@ function candidates(ctx,row,rows,ignore=-1){
  if(normal.length) return sort(normal);
  return emergency?sort(qualified.filter(g=>frozen.includes(g))):[];
 }
+function manualCandidates(ctx,row,rows,ignore=-1){
+ const {data,day,absent=[],status={}}=ctx;
+ return data.guru.map(g=>g.singkat).filter(g=>
+  (data.waktu[day]||[]).includes(row.waktu)&&
+  (data.free[day+'|'+row.waktu]||[]).includes(g)&&
+  !data.kelas.some(k=>k.hari===day&&k.waktu===row.waktu&&k.guru===g)&&
+  !absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&
+  !(status[g]?.blocked||[]).includes(row.waktu)&&
+  !rows.some((r,i)=>i!==ignore&&r.waktu===row.waktu&&r.pengganti===g)
+ ).sort((a,b)=>a.localeCompare(b));
+}
 function assign(ctx,rows){
  const result=rows.map(r=>({...r,pengganti:''}));
  // Repeat to reconsider an earlier unfilled slot after all teachers reach their first relief.
@@ -58,7 +69,7 @@ function assign(ctx,rows){
  }
  return result;
 }
-const api={schoolWeek,weekStart,weeklyCounts,candidates,assign};
+const api={schoolWeek,weekStart,weeklyCounts,candidates,manualCandidates,assign};
 if(typeof module!=='undefined'&&module.exports) module.exports=api;
 else root.ReliefEngine=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

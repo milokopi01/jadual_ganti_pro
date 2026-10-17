@@ -45,6 +45,15 @@ input[type=date],select{font:inherit;font-size:19px;padding:12px 14px;border:2px
 .guru input{width:26px;height:26px;accent-color:var(--merah)}
 .guru.pilih{border-color:var(--merah);background:var(--merah2)}
 .guru .kecil{font-size:14px;color:var(--kelabu)}
+.freeze-pilih{flex:1;min-width:0;width:100%;max-width:100%}
+.freeze-senarai{margin:14px 0 0;padding:0;list-style:none}
+.freeze-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #dde5e0}
+.freeze-item span{min-width:0;overflow-wrap:anywhere}
+.freeze-item button{flex:none;padding:10px 14px;font-size:16px}
+.status-harian{margin-top:20px;border-top:1px solid #dde5e0;padding-top:16px}
+.status-harian>summary{cursor:pointer;font-weight:600}
+.status-harian .cari{margin-top:14px}
+@media(max-width:600px){.freeze-pilih{flex-basis:100%}.freeze-item{align-items:flex-start}}
 .cari{width:100%;font:inherit;padding:12px 14px;border:2px solid #cfd8d3;border-radius:12px;margin-bottom:12px}
 table{width:100%;border-collapse:collapse;font-size:17px}
 th,td{padding:12px 10px;border-bottom:1px solid #e6e1d3;text-align:left;vertical-align:middle}
@@ -137,9 +146,17 @@ body.cetak-laporan #seksyenTiket{display:none!important}
 </section>
 
 <section class="langkah" id="tetapanGuru">
- <h2>❄️ Freeze &amp; status guru</h2>
- <input class="cari" id="cariTetapan" placeholder="Cari guru untuk freeze / status" aria-label="Cari tetapan guru">
- <div id="senaraiTetapan"></div>
+ <h2>❄️ Freeze guru <span id="jumlahFreeze" class="tag">0</span></h2>
+ <div class="baris">
+  <select id="pilihFreeze" class="freeze-pilih" aria-label="Pilih guru untuk freeze"><option value="">— Pilih guru untuk freeze —</option></select>
+  <button id="btnFreeze" disabled>❄️ Freeze</button>
+ </div>
+ <ul id="senaraiFreeze" class="freeze-senarai"></ul>
+ <details class="status-harian">
+  <summary>Status &amp; sekatan waktu harian</summary>
+  <input class="cari" id="cariTetapan" placeholder="Cari guru untuk status harian" aria-label="Cari tetapan guru">
+  <div id="senaraiTetapan"></div>
+ </details>
 </section>
 <section class="langkah" id="langkah4">
  <h2><span class="no">4</span> Susun jadual relef</h2>
@@ -333,14 +350,33 @@ function lukisMinggu(){
 }
 $('mingguSekolah').onchange=()=>{tetapan.mingguSekolah=$('mingguSekolah').value;simpanTetapan();lukisMinggu();sembunyiHasil();};
 function konteks(){return {data:DATA,day:hariDipilih(),absent:guruTakHadir(),frozen:tetapan.freeze,emergency:$('kecemasan').checked,status:hariStatus(),weekly:ReliefEngine.weeklyCounts(bacaRekod(),$('tarikh').value,mingguAktif()?.startDay??1)};}
-function calonSlot(b,i){return ReliefEngine.candidates(konteks(),b,barisRelef,i);}
+function calonSlot(b,i){return ReliefEngine.manualCandidates(konteks(),b,barisRelef,i);}
+function lukisFreeze(){
+ const tersedia=(DATA?.guru||[]).filter(g=>!tetapan.freeze.includes(g.singkat)).sort((a,b)=>a.nama.localeCompare(b.nama,'ms'));
+ $('pilihFreeze').innerHTML='<option value="">— Pilih guru untuk freeze —</option>'+tersedia.map(g=>`<option value="${esc(g.singkat)}">${esc(g.nama)}</option>`).join('');
+ $('pilihFreeze').disabled=!tersedia.length;
+ $('btnFreeze').disabled=true;
+ $('jumlahFreeze').textContent=tetapan.freeze.length;
+ $('senaraiFreeze').innerHTML=tetapan.freeze.map(g=>`<li class="freeze-item"><span>❄️ <b>${esc(DATA?.guru.find(x=>x.singkat===g)?.nama||g)}</b></span><button class="kedua" data-unfreeze="${esc(g)}" aria-label="Unfreeze ${esc(DATA?.guru.find(x=>x.singkat===g)?.nama||g)}">Unfreeze</button></li>`).join('');
+}
+$('pilihFreeze').onchange=()=>{$('btnFreeze').disabled=!$('pilihFreeze').value;};
+$('btnFreeze').onclick=()=>{
+ const g=$('pilihFreeze').value;
+ if(!g||!DATA?.guru.some(x=>x.singkat===g)||tetapan.freeze.includes(g)) return;
+ tetapan.freeze.push(g);simpanTetapan();lukisFreeze();sembunyiHasil();toast('❄️ '+nama(g)+' telah di-freeze');
+};
+$('senaraiFreeze').onclick=e=>{
+ const t=e.target.closest('[data-unfreeze]');if(!t) return;
+ const g=t.dataset.unfreeze;tetapan.freeze=tetapan.freeze.filter(x=>x!==g);
+ simpanTetapan();lukisFreeze();sembunyiHasil();toast('✓ '+(DATA?.guru.find(x=>x.singkat===g)?.nama||g)+' telah di-unfreeze');
+};
 function lukisTetapan(){
+ lukisFreeze();
  if(!DATA) return;
  const q=$('cariTetapan').value.toLowerCase(), st=hariStatus(), W=DATA.waktu[hariDipilih()]||[];
  $('senaraiTetapan').innerHTML=DATA.guru.filter(g=>(g.nama+g.singkat).toLowerCase().includes(q)).map(g=>{
   const state=st[g.singkat]||{};
   return `<div class="guru" style="cursor:default;flex-wrap:wrap;margin-bottom:10px"><b>${esc(g.nama)}</b>
-   <label><input type="checkbox" data-freeze="${esc(g.singkat)}" ${tetapan.freeze.includes(g.singkat)?'checked':''}> Freeze</label>
    <select aria-label="Status ${esc(g.nama)}" data-status="${esc(g.singkat)}">${['Hadir','Tidak hadir','MC','CRK','Cuti Bersalin','Kursus Luar'].map(x=>`<option ${x===(state.reason||'Hadir')?'selected':''}>${x}</option>`).join('')}</select>
    <details><summary>Sekatan waktu · ${(state.blocked||[]).length}</summary><div class="baris">${W.map(w=>`<label><input type="checkbox" data-block="${esc(g.singkat)}" data-period="${w}" ${(state.blocked||[]).includes(w)?'checked':''}> ${w}</label>`).join('')}</div><small>Tugas rasmi / mesyuarat / keluar / pulang awal</small></details></div>`;
  }).join('');
@@ -348,7 +384,6 @@ function lukisTetapan(){
 $('cariTetapan').oninput=lukisTetapan;
 $('senaraiTetapan').onchange=e=>{
  const t=e.target;
- if(t.dataset.freeze){const g=t.dataset.freeze;tetapan.freeze=tetapan.freeze.filter(x=>x!==g);if(t.checked)tetapan.freeze.push(g);}
  if(t.dataset.status){const g=t.dataset.status;hariStatus()[g]={...(hariStatus()[g]||{}),reason:t.value};if(t.value==='Hadir')tidakHadir.delete(g);else tidakHadir.add(g);}
  if(t.dataset.block){const g=t.dataset.block,w=+t.dataset.period;const st=hariStatus();st[g] ||= {reason:'Hadir'};st[g].blocked=(st[g].blocked||[]).filter(x=>x!==w);if(t.checked)st[g].blocked.push(w);}
  simpanTetapan();lukisGuru();sembunyiHasil();
@@ -364,12 +399,18 @@ function jumlahRelefBulan(){ const r=bacaRekod(), bln=($('tarikh').value||'').sl
 function bina(auto){
   if(!DATA) return toast('Sila masukkan fail jadual dahulu');
   const h=hariDipilih(); if(!h) return toast('Sila pilih tarikh dahulu');
-  if(!mingguAktif()) return toast('Sila pilih minggu sekolah dahulu untuk imbangan relief yang tepat.');
+  if(auto&&!mingguAktif()) return toast('Sila pilih minggu sekolah dahulu untuk imbangan relief yang tepat.');
   const tak=guruTakHadir(); if(!tak.length) return toast('Sila tanda guru yang tidak hadir');
+  const lama=jadualTarikh===$('tarikh').value?barisRelef:[];
   barisRelef = DATA.kelas.filter(k=>k.hari===h && tak.includes(k.guru))
     .sort((a,b)=>a.waktu-b.waktu||a.kelas.localeCompare(b.kelas))
     .map(k=>({...k,guruAsal:k.guru,pengganti:''}));
   if(auto) barisRelef=ReliefEngine.assign(konteks(),barisRelef);
+  else barisRelef.forEach((b,i)=>{
+   const old=lama.find(x=>x.hari===b.hari&&x.waktu===b.waktu&&x.kelas===b.kelas&&x.subjek===b.subjek&&x.guruAsal===b.guruAsal);
+   if(old?.pengganti&&calonSlot(b,i).includes(old.pengganti)) b.pengganti=old.pengganti;
+  });
+  jadualTarikh=$('tarikh').value;
   slotAktif=null;
   lukisJadual(); $('hasil').classList.remove('tersembunyi'); $('hasil').scrollIntoView({behavior:'smooth'});
 }
@@ -385,12 +426,12 @@ function lukisJadualLama(){
       if(b.pengganti&&!calon.includes(b.pengganti)) calon.unshift(b.pengganti);
       const opt = ['<option value="">— Pilih guru —</option>'].concat(calon.map(g=>`<option value="${g}" ${g===b.pengganti?'selected':''}>${nama(g)}</option>`));
       return `<tr class="${b.pengganti?'':'tiada'}"><td><b>${b.waktu}</b></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td>
-        <td><select data-i="${i}">${opt.join('')}</select>${calon.length?'':'<div class="kecil" style="color:var(--merah)">Tiada calon mematuhi filter</div>'}</td></tr>`;
+        <td><select data-i="${i}">${opt.join('')}</select>${calon.length?'':'<div class="kecil" style="color:var(--merah)">Tiada guru tersedia pada waktu ini</div>'}</td></tr>`;
     }).join('');
   const diisi=barisRelef.filter(b=>b.pengganti).length;
   $('ringkasan').innerHTML = `<div><b>${tak.length}</b>Guru tidak hadir</div><div><b>${barisRelef.length}</b>Waktu perlu relef</div><div><b>${diisi}</b>Sudah ada ganti</div><div><b>${barisRelef.length-diisi}</b>Belum ada ganti</div>`;
 }
-let slotAktif=null;
+let slotAktif=null,jadualTarikh='';
 function lukisJadual(){ lukisJadualLama(); lukisGrid(); lukisTiket(); }
 function lukisGrid(){
   const h=hariDipilih(), tak=guruTakHadir(), W=DATA.waktu[h]||[];
@@ -413,8 +454,7 @@ function lukisGrid(){
       const a=ajar(g.singkat,w);
       if(a.length) return `<td class="c-ajar">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;
       if((hariStatus()[g.singkat]?.blocked||[]).includes(w)) return '<td class="c-tiada" title="Sekatan waktu">SEKAT</td>';
-      if(tetapan.freeze.includes(g.singkat)&&!$('kecemasan').checked) return '<td class="c-tiada" title="Guru freeze">❄️</td>';
-      if((DATA.free[h+'|'+w]||[]).includes(g.singkat)) return `<td class="c-free" data-guru="${g.singkat}" data-w="${w}" title="Free"></td>`;
+      if((DATA.free[h+'|'+w]||[]).includes(g.singkat)) return `<td class="c-free" data-guru="${g.singkat}" data-w="${w}" title="${tetapan.freeze.includes(g.singkat)?'Guru freeze · pilih secara manual':'Free'}">${tetapan.freeze.includes(g.singkat)?'❄️':''}</td>`;
       return '<td class="c-tiada" title="Tidak bertugas"></td>';
     }).join('')+'</tr>';
   });
@@ -430,7 +470,7 @@ $('grid').addEventListener('click',e=>{
   const w=+t.dataset.w, g=t.dataset.guru;
   let i = (slotAktif!==null && barisRelef[slotAktif].waktu===w) ? slotAktif : barisRelef.findIndex(b=>b.waktu===w&&!b.pengganti);
   if(i<0){ const ada=barisRelef.findIndex(b=>b.waktu===w); if(ada<0) return toast('Tiada kelas perlu relef pada waktu '+w); i=ada; }
-  if(!calonSlot(barisRelef[i],i).includes(g)) return toast('Guru ini tidak layak: semak freeze, status, beban, kuota dan buffer.');
+  if(!calonSlot(barisRelef[i],i).includes(g)) return toast('Guru tidak tersedia: semak kehadiran, kelas, sekatan waktu atau relief pada waktu yang sama.');
   barisRelef[i].pengganti=g; slotAktif=null; lukisJadual(); toast('✅ '+nama(g)+' → '+barisRelef[i].kelas+' (waktu '+w+')');
 });
 function lukisTiket(){
@@ -444,7 +484,7 @@ function lukisTiket(){
     : '<p class="bantu">Belum ada guru ganti dipilih.</p>';
 }
 function cetak(mod){ document.body.classList.add(mod); setTimeout(()=>{ window.print(); document.body.classList.remove(mod); },50); }
-$('jadual').addEventListener('change',e=>{ if(e.target.dataset.i!==undefined){ const i=+e.target.dataset.i,g=e.target.value;if(g&&!calonSlot(barisRelef[i],i).includes(g)){toast('Guru tidak mematuhi filter');return lukisJadual();}barisRelef[i].pengganti=g;lukisJadual(); }});
+$('jadual').addEventListener('change',e=>{ if(e.target.dataset.i!==undefined){ const i=+e.target.dataset.i,g=e.target.value;if(g&&!calonSlot(barisRelef[i],i).includes(g)){toast('Guru tidak tersedia pada waktu ini');return lukisJadual();}barisRelef[i].pengganti=g;lukisJadual(); }});
 $('btnAuto').onclick=()=>bina(true);
 $('btnManual').onclick=()=>bina(false);
 function sembunyiHasil(){ $('hasil').classList.add('tersembunyi'); }
@@ -494,7 +534,7 @@ $('failPulih').onchange=e=>{ const f=e.target.files[0]; if(!f) return; f.text().
   else if(DALAM_GAS){
     google.script.run.withSuccessHandler(j=>{ if(j){ DATA=JSON.parse(j); localStorage.setItem(KUNCI_DATA,j); paparData(); lukisStat(); } }).ambilDataAsc();
   }
-  lukisMinggu();
+  lukisFreeze();lukisMinggu();
   $('tarikh').addEventListener('change',lukisStat);
   if('serviceWorker' in navigator && location.protocol==='https:' && !DALAM_GAS && !location.hostname.includes('googleusercontent')){
     navigator.serviceWorker.register('sw.js').catch(()=>{});
