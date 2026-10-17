@@ -66,7 +66,7 @@ td select{width:100%;font-size:17px;padding:10px}
 .ringkas div{background:var(--hijau2);border-radius:14px;padding:12px;text-align:center}
 .ringkas b{display:block;font-size:30px;color:var(--hijau)}
 .tersembunyi{display:none}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--teks);color:var(--putih);padding:14px 22px;border-radius:14px;font-weight:600;display:none;z-index:9}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--teks);color:var(--putih);padding:14px 22px;border-radius:14px;font-weight:600;display:none;z-index:9;pointer-events:none}
 .cetak-tajuk{display:none}
 .petunjuk{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;font-size:16px}
 .petunjuk span{display:inline-flex;align-items:center;gap:6px}
@@ -82,7 +82,9 @@ td select{width:100%;font-size:17px;padding:10px}
 .c-free:hover{outline:3px solid var(--hijau)}
 .c-klik{cursor:pointer}
 .c-klik:hover{outline:3px solid var(--hijau)}
-.c-relef{background:#5fd3e8;color:#073b45;font-weight:700;cursor:pointer}
+.c-relef{background:#5fd3e8;color:#073b45;font-weight:700;cursor:grab;touch-action:none;user-select:none}
+.c-relef.aktif{outline:4px solid var(--kuning)}
+.c-drop{outline:3px solid var(--hijau)}
 .c-perlu{background:#7a1f17;color:#fff;font-weight:700;cursor:pointer}
 .c-perlu.ok{background:#2c8a6e}
 .c-perlu.aktif{outline:4px solid var(--kuning)}
@@ -194,7 +196,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <span><i style="background:#7a1f17"></i>Kelas guru tidak hadir (perlu relef) — tekan untuk pilih</span>
   <span><i style="background:#f4a9a3"></i>Guru ada kelas</span>
   <span><i style="background:#ffe46b"></i>Guru free — tekan untuk beri relef</span>
-  <span><i style="background:#5fd3e8"></i>Relef diberi — tekan untuk batal</span>
+  <span><i style="background:#5fd3e8"></i>Relef diberi — seret atau tekan untuk pindah</span>
  </div>
  <p class="bantu tiada-cetak" id="arahanGrid"></p>
  <div style="overflow-x:auto"><table class="grid" id="grid"></table></div>
@@ -493,7 +495,7 @@ function lukisGrid(){
   [...sejuk,...baki.filter(g=>!tetapan.freeze.includes(g.singkat))].forEach(g=>{
     html+=`<tr><td class="nama" title="${esc(g.nama)}">${tetapan.freeze.includes(g.singkat)?'❄️ ':''}${esc(g.singkat)}</td>`+W.map(w=>{
       const rel=barisRelef.map((b,i)=>i).find(i=>barisRelef[i].waktu===w&&barisRelef[i].pengganti===g.singkat);
-      if(rel!==undefined) return `<td class="c-relef" data-batal="${rel}" title="Tekan untuk batal">RELEF<br>${barisRelef[rel].kelas}</td>`;
+      if(rel!==undefined) return `<td class="c-relef ${slotAktif===rel?'aktif':''}" data-batal="${rel}" title="Seret untuk pindah; tekan untuk pilih, tekan sekali lagi untuk batal">RELEF<br>${barisRelef[rel].kelas}</td>`;
       const a=ajar(g.singkat,w);
       if(a.length) return `<td class="c-ajar">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;
       if((hariStatus()[g.singkat]?.blocked||[]).includes(w)) return '<td class="c-tiada" title="Sekatan waktu">SEKAT</td>';
@@ -503,18 +505,60 @@ function lukisGrid(){
   });
   $('grid').innerHTML=html;
   $('arahanGrid').innerHTML = slotAktif!==null
-    ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b style="background:#ffe46b;padding:0 6px">kuning</b> pada lajur yang sama.`
-    : 'Tekan petak merah tua (kelas perlu relef), kemudian tekan petak kuning guru yang free. Petak kelabu berjalur juga boleh ditekan untuk letak relef secara manual. Atau terus tekan petak kuning pada lajur merah.';
+    ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b>kuning atau kelabu berjalur</b> pada lajur yang sama.`
+    : 'Tekan petak merah tua (kelas perlu relef), kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal.';
 }
+function letakManual(i,g,w){
+  const b=barisRelef[i];
+  if(!b) return false;
+  if(b.waktu!==w){toast('Pindahkan kad pada lajur waktu yang sama sahaja.');return false;}
+  if(!calonSlot(b,i).includes(g)){toast('Guru tidak tersedia: semak kehadiran, kelas, sekatan waktu atau relef pada waktu yang sama.');return false;}
+  b.pengganti=g; slotAktif=null; lukisJadual(); toast('✅ '+nama(g)+' → '+b.kelas+' (waktu '+w+')');
+  return true;
+}
+let seretan=null,abaikanKlik=false;
+$('grid').addEventListener('pointerdown',e=>{
+  const t=e.target.closest('[data-batal]');
+  if(!t || e.button!==0) return;
+  seretan={id:e.pointerId,i:+t.dataset.batal,x:e.clientX,y:e.clientY,bergerak:false};
+});
+$('grid').addEventListener('pointermove',e=>{
+  if(!seretan || seretan.id!==e.pointerId) return;
+  if(Math.hypot(e.clientX-seretan.x,e.clientY-seretan.y)>8) seretan.bergerak=true;
+  if(!seretan.bergerak) return;
+  if(!$('grid').hasPointerCapture(e.pointerId)) $('grid').setPointerCapture(e.pointerId);
+  e.preventDefault();
+  $('grid').querySelectorAll('.c-drop').forEach(t=>t.classList.remove('c-drop'));
+  const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-guru]');
+  if(t && +t.dataset.w===barisRelef[seretan.i]?.waktu) t.classList.add('c-drop');
+});
+function tamatSeret(e){
+  if(!seretan || seretan.id!==e.pointerId) return;
+  const d=seretan; seretan=null;
+  $('grid').querySelectorAll('.c-drop').forEach(t=>t.classList.remove('c-drop'));
+  if($('grid').hasPointerCapture(e.pointerId)) $('grid').releasePointerCapture(e.pointerId);
+  if(!d.bergerak || e.type==='pointercancel') return;
+  abaikanKlik=true; setTimeout(()=>{abaikanKlik=false;},400);
+  const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-guru]');
+  if(t) letakManual(d.i,t.dataset.guru,+t.dataset.w);
+  else toast('Petak ini tidak boleh menerima relef. Pilih petak kuning atau kelabu berjalur yang tidak disekat.');
+}
+$('grid').addEventListener('pointerup',tamatSeret);
+$('grid').addEventListener('pointercancel',tamatSeret);
 $('grid').addEventListener('click',e=>{
+  if(abaikanKlik) return;
   const t=e.target.closest('[data-slot],[data-guru],[data-batal]'); if(!t) return;
   if(t.dataset.slot!==undefined){ const i=+t.dataset.slot; slotAktif = slotAktif===i?null:i; return lukisGrid(); }
-  if(t.dataset.batal!==undefined){ barisRelef[+t.dataset.batal].pengganti=''; return lukisJadual(); }
+  if(t.dataset.batal!==undefined){
+    const i=+t.dataset.batal;
+    if(slotAktif===i){barisRelef[i].pengganti='';slotAktif=null;return lukisJadual();}
+    slotAktif=i;return lukisGrid();
+  }
   const w=+t.dataset.w, g=t.dataset.guru;
-  let i = (slotAktif!==null && barisRelef[slotAktif].waktu===w) ? slotAktif : barisRelef.findIndex(b=>b.waktu===w&&!b.pengganti);
+  if(slotAktif!==null && barisRelef[slotAktif]?.waktu!==w) return toast('Pindahkan kad pada lajur waktu yang sama sahaja.');
+  let i = slotAktif!==null ? slotAktif : barisRelef.findIndex(b=>b.waktu===w&&!b.pengganti);
   if(i<0){ const ada=barisRelef.findIndex(b=>b.waktu===w); if(ada<0) return toast('Tiada kelas perlu relef pada waktu '+w); i=ada; }
-  if(!calonSlot(barisRelef[i],i).includes(g)) return toast('Guru tidak tersedia: semak kehadiran, kelas, sekatan waktu atau relief pada waktu yang sama.');
-  barisRelef[i].pengganti=g; slotAktif=null; lukisJadual(); toast('✅ '+nama(g)+' → '+barisRelef[i].kelas+' (waktu '+w+')');
+  letakManual(i,g,w);
 });
 function lukisTiket(){
   const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
