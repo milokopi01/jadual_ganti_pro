@@ -9,7 +9,7 @@
 <meta property="og:description" content="Agihan relief berfilter dengan kawalan freeze dan sandaran kecemasan.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
-<meta name="theme-color" content="#0f5c4a">
+<meta name="theme-color" content="#eaf3ff">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -18,7 +18,7 @@
 <script src="xlsx.full.min.js"></script>
 <script src="relief-engine.js?v=2.12.0"></script>
 <style>
-:root{--hijau:#0f5c4a;--hijau2:#e3efe9;--kuning:#e8a33d;--krim:#faf6ec;--teks:#1d2b26;--kelabu:#5f6f68;--merah:#b3392f;--merah2:#fbe7e4;--putih:#fff}
+:root{--hijau:#1e6fd9;--hijau2:#e3f0ff;--kuning:#38bdf8;--krim:#eef5ff;--teks:#0f2747;--kelabu:#5b7290;--merah:#b3392f;--merah2:#fbe7e4;--putih:#fff}
 *{box-sizing:border-box}
 body{margin:0;font-family:Lexend,system-ui,sans-serif;background:var(--krim);color:var(--teks);font-size:19px;line-height:1.5}
 header{background:var(--hijau);color:var(--putih);padding:18px 20px;display:flex;align-items:center;gap:14px}
@@ -142,7 +142,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
 
 /* ===== LAPORAN FUTURISTIK ===== */
 :root{--neo:#0b1626;--neo2:#13263d;--siber:#22d3ee;--emas:#f5b942}
-.kepala-rasmi{position:relative;display:flex;align-items:center;gap:18px;padding:18px 22px;margin-bottom:16px;border:0;border-radius:16px;color:#fff;background:linear-gradient(120deg,var(--neo) 0%,var(--neo2) 60%,#0f5c4a 100%);overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.kepala-rasmi{position:relative;display:flex;align-items:center;gap:18px;padding:18px 22px;margin-bottom:16px;border:0;border-radius:16px;color:#fff;background:linear-gradient(120deg,var(--neo) 0%,var(--neo2) 60%,#1e6fd9 100%);overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .kepala-rasmi::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(34,211,238,.07) 0 1px,transparent 1px 22px);pointer-events:none}
 .kepala-rasmi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--siber),var(--emas),var(--siber))}
 .kepala-rasmi img{width:84px;height:84px;object-fit:contain;flex:none;background:#fff;border-radius:14px;padding:6px;box-shadow:0 0 0 2px var(--siber)}
@@ -157,7 +157,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
 .tiket .kepala-rasmi{border-radius:0;margin:0;padding:10px 14px;gap:10px}.tiket .kepala-rasmi img{width:40px;height:40px;padding:3px}
 .tiket .kepala-rasmi .kr-tajuk{font-size:9px}.tiket .kepala-rasmi .kr-sekolah{font-size:13px}.tiket .kepala-rasmi .kr-alamat,.tiket .kepala-rasmi .kr-info,.tiket .kr-cop{display:none}
 .tiket-badan{padding:12px 14px 14px}
-.tiket .kepala{font-size:11px;letter-spacing:.2em;color:#0f5c4a;font-weight:700}
+.tiket .kepala{font-size:11px;letter-spacing:.2em;color:#1e6fd9;font-weight:700}
 .tiket-nama{margin:6px 0 8px;padding:8px 12px;border-left:4px solid var(--siber);background:#eefbfd;border-radius:0 10px 10px 0;font-size:15px;font-weight:700;color:var(--neo);line-height:1.25;text-transform:uppercase;overflow-wrap:anywhere;hyphens:auto}
 .tiket table{font-size:13px;margin:6px 0;border-collapse:separate;border-spacing:0 3px}
 .tiket th{background:var(--neo);color:var(--siber);padding:5px 8px;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
@@ -174,28 +174,92 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  #jadual th{background:var(--neo)!important;color:var(--siber)!important}
  .tiket-grid{grid-template-columns:1fr 1fr 1fr;gap:10px}
 }
+
+/* ===== TEMA PUTIH & BIRU CAIR · 3D TIMBUL ===== */
+:root{--bg1:#f4f9ff;--bg2:#dcebff;--biru:#1e6fd9;--biru-cair:#7cc4ff;--biru-muda:#e3f0ff;--bayang:rgba(30,90,170,.18);--sinar:rgba(255,255,255,.95)}
+body{background:radial-gradient(1200px 600px at 10% -10%,#ffffff 0,transparent 60%),radial-gradient(900px 500px at 110% 10%,#d6ebff 0,transparent 60%),linear-gradient(180deg,var(--bg1),var(--bg2));background-attachment:fixed;min-height:100vh}
+header.atas{position:sticky;top:0;z-index:20;margin:14px auto 0;max-width:1800px;width:calc(100% - 28px);border-radius:24px;padding:14px 22px;background:linear-gradient(145deg,#ffffff,#eaf3ff);color:var(--teks);box-shadow:10px 10px 28px var(--bayang),-8px -8px 22px var(--sinar),inset 0 1px 0 #fff;display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+header.atas .logo{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:28px;background:linear-gradient(145deg,#5fb2ff,#1e6fd9);box-shadow:0 8px 18px rgba(30,111,217,.45),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 0 rgba(0,0,0,.12);flex:none}
+header.atas h1{margin:0;font-size:24px;letter-spacing:-.01em;background:linear-gradient(90deg,#0f2747,#1e6fd9);-webkit-background-clip:text;background-clip:text;color:transparent}
+header.atas small{color:var(--kelabu);opacity:1}
+header.atas .jenama{display:flex;align-items:center;gap:14px;flex:1;min-width:240px}
+.tab-bar{display:flex;gap:8px;padding:6px;border-radius:20px;background:#e6f0fd;box-shadow:inset 4px 4px 10px var(--bayang),inset -4px -4px 10px var(--sinar)}
+.tab-bar button{background:transparent;color:var(--kelabu);box-shadow:none;padding:12px 20px;border-radius:16px;font-size:17px;transition:all .25s}
+.tab-bar button.aktif{background:linear-gradient(145deg,#ffffff,#eef6ff);color:var(--biru);box-shadow:5px 5px 12px var(--bayang),-4px -4px 10px var(--sinar)}
+.tab-bar button:hover:not(.aktif){color:var(--biru);transform:none}
+main{display:block!important;padding-top:24px}
+.panel{display:none;animation:muncul .45s ease}
+.panel.aktif{display:grid;grid-template-columns:1fr;gap:0 24px;align-items:start}
+@media(min-width:1100px){.panel.aktif{grid-template-columns:1fr 1fr}.panel>.penuh{grid-column:1/-1}}
+@keyframes muncul{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.panel-tajuk{grid-column:1/-1;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 4px 18px}
+.panel-tajuk h2{margin:0;font-size:28px;color:var(--teks);letter-spacing:-.02em}
+.panel-tajuk p{margin:2px 0 0;color:var(--kelabu);font-size:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:linear-gradient(145deg,#fff,#e8f2ff);box-shadow:4px 4px 10px var(--bayang),-3px -3px 8px var(--sinar);font-size:14px;font-weight:600;color:var(--biru)}
+.langkah{background:linear-gradient(145deg,#ffffff,#f1f7ff);border-radius:26px;padding:26px;margin-bottom:24px;border:1px solid rgba(255,255,255,.9);box-shadow:14px 14px 34px var(--bayang),-10px -10px 26px var(--sinar),inset 0 1px 0 #fff;transition:transform .25s,box-shadow .25s}
+.langkah:hover{transform:translateY(-2px);box-shadow:18px 18px 40px rgba(30,90,170,.22),-10px -10px 26px var(--sinar),inset 0 1px 0 #fff}
+.langkah h2{font-size:21px;color:var(--teks)}
+.no{width:42px;height:42px;color:#fff;background:linear-gradient(145deg,#6cc0ff,#1e6fd9);box-shadow:0 6px 14px rgba(30,111,217,.4),inset 0 2px 0 rgba(255,255,255,.45),inset 0 -3px 0 rgba(0,0,0,.15)}
+button,.btn{background:linear-gradient(145deg,#4aa3ff,#1e6fd9);color:#fff;border-radius:16px;box-shadow:0 6px 0 #1553a8,0 12px 22px rgba(30,111,217,.35),inset 0 1px 0 rgba(255,255,255,.45);transition:transform .12s,box-shadow .12s;position:relative}
+button:hover:not(:disabled),.btn:hover{transform:translateY(-1px)}
+button:active:not(:disabled),.btn:active{transform:translateY(5px);box-shadow:0 1px 0 #1553a8,0 4px 8px rgba(30,111,217,.3),inset 0 1px 0 rgba(255,255,255,.3)}
+button.kedua{background:linear-gradient(145deg,#ffffff,#e4f0ff);color:var(--biru);box-shadow:0 5px 0 #bcd5f5,0 10px 18px var(--bayang),inset 0 1px 0 #fff}
+button.kedua:active:not(:disabled){box-shadow:0 1px 0 #bcd5f5,0 3px 6px var(--bayang)}
+button.amaran{background:linear-gradient(145deg,#fff5f4,#fde3e0);color:var(--merah);box-shadow:0 5px 0 #f2c0ba,0 10px 18px rgba(179,57,47,.15),inset 0 1px 0 #fff}
+input[type=date],select,.cari,.kepala-borang input,.masa-item input,.sesi-kad .baris input{border:0!important;background:#eef5ff!important;border-radius:14px!important;box-shadow:inset 4px 4px 9px var(--bayang),inset -4px -4px 9px var(--sinar);outline:none}
+input[type=date]:focus,select:focus,.cari:focus{box-shadow:inset 4px 4px 9px var(--bayang),inset -4px -4px 9px var(--sinar),0 0 0 3px rgba(124,196,255,.6)}
+.upload{border:2px dashed #9cc8f5;background:linear-gradient(145deg,#f7fbff,#e7f2ff);border-radius:22px;box-shadow:inset 6px 6px 14px var(--bayang),inset -6px -6px 14px var(--sinar);transition:all .25s}
+.upload:hover{border-color:var(--biru);transform:scale(1.01)}
+.status{border-radius:14px;box-shadow:inset 2px 2px 6px var(--bayang),inset -2px -2px 6px var(--sinar)}
+.guru{border:0;border-radius:18px;background:linear-gradient(145deg,#ffffff,#eef5ff);box-shadow:6px 6px 14px var(--bayang),-5px -5px 12px var(--sinar);transition:all .2s}
+.guru:hover{transform:translateY(-2px)}
+.guru.pilih{background:linear-gradient(145deg,#fff1ef,#fcdcd8);box-shadow:inset 4px 4px 10px rgba(179,57,47,.2),inset -4px -4px 10px #fff}
+.ringkas div{background:linear-gradient(145deg,#ffffff,#e6f1ff);border-radius:20px;padding:16px;box-shadow:8px 8px 18px var(--bayang),-6px -6px 14px var(--sinar)}
+.ringkas b{font-size:34px;background:linear-gradient(180deg,#4aa3ff,#1553a8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{background:linear-gradient(145deg,#fff,#dcecff);box-shadow:3px 3px 8px var(--bayang),-2px -2px 6px var(--sinar)}
+th{background:linear-gradient(180deg,#4aa3ff,#1e6fd9)}
+.grid th{background:linear-gradient(180deg,#5aaeff,#1e6fd9);box-shadow:0 3px 0 #1553a8;border-radius:10px}
+.grid td{border-radius:10px;box-shadow:0 2px 0 rgba(0,0,0,.06)}
+.grid td.nama{background:linear-gradient(145deg,#fff,#e8f2ff);box-shadow:3px 0 8px var(--bayang)}
+.c-relef{background:linear-gradient(145deg,#a8ddff,#5fb7f5);color:#05345e;box-shadow:0 3px 0 #3a8fd0}
+.c-kosong{background:#f2f6fb}
+.toast{background:linear-gradient(145deg,#1e6fd9,#1553a8);border-radius:18px;box-shadow:0 12px 30px rgba(21,83,168,.4)}
+details>summary{cursor:pointer}
+#dlgMasa{border-radius:24px!important;box-shadow:0 30px 60px rgba(15,39,71,.3)}
+.kaki{text-align:center;color:var(--kelabu);font-size:14px;padding:10px 0 30px}
+@media(max-width:700px){header.atas{margin:8px auto 0;width:calc(100% - 16px);padding:12px;border-radius:18px;position:static}.tab-bar{width:100%}.tab-bar button{flex:1;padding:10px 8px;font-size:15px}.panel-tajuk h2{font-size:22px}.langkah{border-radius:20px}}
+@media print{header.atas,.panel-tajuk,.kaki,#panelTetapan{display:none!important}.panel{display:block!important;animation:none}.langkah{box-shadow:none!important;background:#fff!important;transform:none!important}body{background:#fff!important}}
+
+button.wa{background:linear-gradient(145deg,#4ade80,#16a34a);box-shadow:0 6px 0 #15803d,0 12px 22px rgba(22,163,74,.35),inset 0 1px 0 rgba(255,255,255,.45)}
+button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
+.wp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.wp-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;background:linear-gradient(145deg,#fff,#eef5ff);box-shadow:5px 5px 12px var(--bayang),-4px -4px 10px var(--sinar)}
+.wp-item span{flex:1;min-width:0;font-size:15px;font-weight:600;overflow-wrap:anywhere}
+.wp-item input{width:150px;font:inherit;font-size:15px;padding:8px 10px;border:0;border-radius:12px;background:#eef5ff;box-shadow:inset 3px 3px 7px var(--bayang),inset -3px -3px 7px var(--sinar)}
+.wp-item input:disabled{color:var(--kelabu);background:#f3f7fc}
+.dlg-wa{border:0;border-radius:24px;padding:22px;max-width:520px;width:94%;max-height:88dvh;overflow:auto;background:linear-gradient(145deg,#fff,#f1f7ff);color:var(--teks);box-shadow:0 30px 60px rgba(15,39,71,.3)}
+.dlg-wa::backdrop{background:rgba(15,39,71,.45)}
+.wa-baris{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px;border-radius:14px;background:#fff;box-shadow:4px 4px 10px var(--bayang),-3px -3px 8px var(--sinar)}
+.wa-baris span{flex:1;min-width:0;font-size:15px}.wa-baris small{display:block;color:var(--kelabu)}
+.wa-baris button{padding:8px 12px;font-size:14px}
+.wa-st{font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--biru-muda);color:var(--biru)}
+.wa-st.ok{background:#dcfce7;color:#15803d}.wa-st.baru{background:#fef3c7;color:#92400e}.wa-st.x{background:var(--merah2);color:var(--merah)}
+.wa-pra{white-space:pre-wrap;font:14px/1.45 system-ui;background:#e7fbe9;border-radius:14px;padding:12px;margin-top:12px}
 </style>
 </head>
 <body>
-<header>
- <img src="icon-192.png" alt="" onerror="this.style.display='none'">
- <div><h1>Sistem Relef Guru</h1><small>Pilih tarikh, tanda guru tidak hadir, sistem susun guru ganti.</small></div>
+<header class="atas">
+ <div class="jenama"><div class="logo">🎓</div><div><h1>Sistem Relef Guru</h1><small>Agihan relief pintar · Freeze · Sandaran kecemasan</small></div></div>
+ <nav class="tab-bar" role="tablist">
+  <button type="button" role="tab" data-tab="panelHarian" class="aktif">⚡ Agihan Harian</button>
+  <button type="button" role="tab" data-tab="panelTetapan">⚙️ Data &amp; Tetapan</button>
+ </nav>
 </header>
 <main>
-
-<section class="langkah" id="langkah1">
- <h2><span class="no">1</span> Masukkan fail jadual aSc</h2>
- <p class="bantu">Buat sekali sahaja. Sistem akan ingat jadual ini. Tukar fail bila jadual baharu dikeluarkan.</p>
- <label class="upload" id="kotakUpload">
-  <input type="file" id="fail" accept=".xlsx,.xls" hidden>
-  <div style="font-size:42px">📂</div>
-  <div><b>Tekan di sini</b> untuk pilih fail DATA ASC (.xlsx)</div>
- </label>
- <div id="statusData" class="status tersembunyi"></div>
-</section>
-
-<section class="langkah" id="langkah2">
- <h2><span class="no">2</span> Pilih tarikh</h2>
+<div class="panel aktif" id="panelHarian" role="tabpanel">
+ <div class="panel-tajuk"><div><h2>Agihan Relef Harian</h2><p>Pilih tarikh, tanda guru tidak hadir, dan biar sistem susun guru ganti.</p></div><span class="chip">🗓️ Operasi harian</span></div>
+<section class="langkah penuh" id="langkah2">
+ <h2><span class="no">1</span> Pilih tarikh</h2>
  <div class="baris">
   <input type="date" id="tarikh">
   <span id="namaHari" class="tag" style="font-size:19px"></span>
@@ -216,46 +280,14 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  </details>
 </section>
 
-<section class="langkah" id="langkah3">
- <h2><span class="no">3</span> Tanda guru yang tidak hadir</h2>
+<section class="langkah penuh" id="langkah3">
+ <h2><span class="no">2</span> Tanda guru yang tidak hadir</h2>
  <p class="bantu">Tekan pada nama guru. Kotak bertukar merah bila dipilih.</p>
  <input class="cari" id="cari" placeholder="🔎 Cari nama guru...">
  <div class="guru-grid" id="senaraiGuru"><p class="bantu">Sila masukkan fail jadual dahulu.</p></div>
 </section>
-
-<section class="langkah" id="seksyenKepala">
- <details>
-  <summary><b>🏫 Kepala surat rasmi sekolah</b> <span class="bantu">(dipaparkan pada semua laporan, tiket dan gambar)</span></summary>
-  <div class="kepala-borang">
-   <label>Tajuk laporan<input id="kpTajuk"></label>
-   <label>Nama sekolah<input id="kpSekolah"></label>
-   <label>Alamat<input id="kpAlamat"></label>
-   <label>Kod sekolah<input id="kpKod"></label>
-   <label>No. telefon<input id="kpTel"></label>
-   <label>No. faks<input id="kpFaks"></label>
-   <label>Email rasmi<input id="kpEmail"></label>
-   <label>Logo sekolah<input type="file" id="kpLogo" accept="image/*"></label>
-  </div>
-  <div class="baris" style="margin-top:10px"><button id="kpSimpan">💾 Simpan kepala surat</button><button class="kedua" id="kpBuangLogo">🗑️ Buang logo</button></div>
-  <p class="bantu">Pratonton:</p>
-  <div id="kpPratonton"></div>
- </details>
-</section>
-<section class="langkah" id="tetapanGuru">
- <h2>❄️ Freeze guru <span id="jumlahFreeze" class="tag">0</span></h2>
- <div class="baris">
-  <select id="pilihFreeze" class="freeze-pilih" aria-label="Pilih guru untuk freeze"><option value="">— Pilih guru untuk freeze —</option></select>
-  <button id="btnFreeze" disabled>❄️ Freeze</button>
- </div>
- <ul id="senaraiFreeze" class="freeze-senarai"></ul>
- <details class="status-harian">
-  <summary>Status &amp; sekatan waktu harian</summary>
-  <input class="cari" id="cariTetapan" placeholder="Cari guru untuk status harian" aria-label="Cari tetapan guru">
-  <div id="senaraiTetapan"></div>
- </details>
-</section>
-<section class="langkah" id="langkah4">
- <h2><span class="no">4</span> Susun jadual relef</h2>
+<section class="langkah penuh" id="langkah4">
+ <h2><span class="no">3</span> Susun jadual relef</h2>
  <p class="bantu">Tekan <b>Susun Automatik</b> — sistem mematuhi filter beban, kuota, buffer, status dan imbangan mingguan. Anda masih boleh tukar guru ganti secara manual dalam jadual.</p>
  <div class="baris">
   <label><input type="checkbox" id="kecemasan"> Benarkan guru freeze sebagai sandaran kecemasan</label>
@@ -263,10 +295,9 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <button id="btnManual" class="kedua">✋ Pilih Sendiri (Manual)</button>
  </div>
 </section>
-
-<section class="langkah tersembunyi" id="hasil">
+<section class="langkah penuh tersembunyi" id="hasil">
  <div id="kepalaLaporan"></div><div class="cetak-tajuk"><h2>JADUAL RELEF GURU</h2></div>
- <h2 class="tiada-cetak"><span class="no">5</span> <span id="tajukHasil">Jadual Relef</span></h2>
+ <h2 class="tiada-cetak"><span class="no">4</span> <span id="tajukHasil">Jadual Relef</span></h2>
  <div class="ringkas tiada-cetak" id="ringkasan"></div>
  <div class="petunjuk tiada-cetak">
   <span><i style="background:#7a1f17"></i>Perlu relef</span>
@@ -286,7 +317,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <button onclick="cetak('cetak-tiket')">🎫 Cetak Tiket Guru</button>
   <button id="btnKongsiGambar">📤 Kongsi Gambar Tiket</button>
   <button class="kedua" id="btnMuatGambar">🖼️ Muat Turun Gambar</button>
-  <button class="kedua" id="btnWA">📋 Salin untuk WhatsApp</button>
+  <button class="wa" id="btnWA">💬 Hantar WhatsApp ke Semua Guru</button>
   <button class="kedua" id="btnSimpan">✔ Simpan Rekod</button>
   <button class="amaran" id="btnReset">↺ Mula Semula</button>
  </div>
@@ -296,19 +327,77 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <div class="tiket-grid" id="tiket"></div>
  </div>
 </section>
-
-<section class="langkah tiada-cetak" id="seksyenStat">
+</div>
+<div class="panel" id="panelTetapan" role="tabpanel">
+ <div class="panel-tajuk"><div><h2>Data &amp; Tetapan</h2><p>Jadual aSc, freeze guru, kepala surat dan statistik — tetapkan sekali, guna setiap hari.</p></div><span class="chip">🛠️ Pentadbiran</span></div>
+<section class="langkah" id="langkah1">
+ <h2><span class="no">⚙</span> Masukkan fail jadual aSc</h2>
+ <p class="bantu">Buat sekali sahaja. Sistem akan ingat jadual ini. Tukar fail bila jadual baharu dikeluarkan.</p>
+ <label class="upload" id="kotakUpload">
+  <input type="file" id="fail" accept=".xlsx,.xls" hidden>
+  <div style="font-size:42px">📂</div>
+  <div><b>Tekan di sini</b> untuk pilih fail DATA ASC (.xlsx)</div>
+ </label>
+ <div id="statusData" class="status tersembunyi"></div>
+</section>
+<section class="langkah" id="tetapanGuru">
+ <h2>❄️ Freeze guru <span id="jumlahFreeze" class="tag">0</span></h2>
+ <div class="baris">
+  <select id="pilihFreeze" class="freeze-pilih" aria-label="Pilih guru untuk freeze"><option value="">— Pilih guru untuk freeze —</option></select>
+  <button id="btnFreeze" disabled>❄️ Freeze</button>
+ </div>
+ <ul id="senaraiFreeze" class="freeze-senarai"></ul>
+ <details class="status-harian">
+  <summary>Status &amp; sekatan waktu harian</summary>
+  <input class="cari" id="cariTetapan" placeholder="Cari guru untuk status harian" aria-label="Cari tetapan guru">
+  <div id="senaraiTetapan"></div>
+ </details>
+</section>
+<section class="langkah penuh" id="seksyenTelefon">
+ <h2>📱 No. telefon WhatsApp guru <span id="wpLock" class="tag">🔓</span></h2>
+ <p class="bantu">Tetapkan nombor setiap guru sekali sahaja. Nombor disimpan dan <b>dikunci pada peranti ini</b> dengan PIN admin.</p>
+ <div class="baris" style="margin-bottom:12px"><button class="kedua" id="wpKunci">🔒 Kunci / Buka</button><button class="kedua" id="wpPin">🔑 Tukar PIN</button><input class="cari" id="wpCari" placeholder="🔎 Cari guru..." style="flex:1;margin:0;min-width:200px"></div>
+ <div id="wpSenarai" class="wp-grid"><p class="bantu">Sila masukkan fail jadual dahulu.</p></div>
+</section>
+<section class="langkah penuh" id="seksyenKepala">
+ <details>
+  <summary><b>🏫 Kepala surat rasmi sekolah</b> <span class="bantu">(dipaparkan pada semua laporan, tiket dan gambar)</span></summary>
+  <div class="kepala-borang">
+   <label>Tajuk laporan<input id="kpTajuk"></label>
+   <label>Nama sekolah<input id="kpSekolah"></label>
+   <label>Alamat<input id="kpAlamat"></label>
+   <label>Kod sekolah<input id="kpKod"></label>
+   <label>No. telefon<input id="kpTel"></label>
+   <label>No. faks<input id="kpFaks"></label>
+   <label>Email rasmi<input id="kpEmail"></label>
+   <label>Logo sekolah<input type="file" id="kpLogo" accept="image/*"></label>
+  </div>
+  <div class="baris" style="margin-top:10px"><button id="kpSimpan">💾 Simpan kepala surat</button><button class="kedua" id="kpBuangLogo">🗑️ Buang logo</button></div>
+  <p class="bantu">Pratonton:</p>
+  <div id="kpPratonton"></div>
+ </details>
+</section>
+<section class="langkah penuh tiada-cetak" id="seksyenStat">
  <h2>📊 Statistik jumlah relef guru (keseluruhan)</h2>
  <p class="bantu">Sejarah relef disimpan berasingan dan <b>tidak hilang</b> walaupun fail Excel baharu dimuat naik. Ia hanya dipadam jika anda tekan Reset Statistik.</p>
  <div class="baris" style="margin-bottom:12px"><button class="kedua" id="btnBackup">⬇ Simpan Salinan (Backup)</button><button class="kedua" id="btnPulih">⬆ Pulihkan Backup</button><button class="amaran" id="btnResetStat">🗑️ Reset Statistik</button><input type="file" id="failPulih" accept=".json" hidden></div>
  <p class="bantu" style="display:none"></p>
  <div id="statRelef" class="bantu">Belum ada rekod.</div>
 </section>
+</div>
+<div class="kaki">Sistem Relef Guru · Dibina untuk sekolah Malaysia</div>
 </main>
 <dialog id="dlgMasa" style="border:0;border-radius:16px;padding:20px;max-width:440px;width:92%">
  <h3 style="margin:0 0 6px">⏰ Masa Waktu <span id="dlgW"></span></h3><p class="bantu" style="font-size:14px;margin:0 0 12px">Isi masa mula &amp; tamat bagi setiap sesi.</p>
  <div id="dlgIsi"></div>
  <div class="baris" style="margin-top:14px;justify-content:flex-end"><button class="kedua" id="dlgTutup">Tutup</button></div>
+</dialog>
+<dialog id="dlgWA" class="dlg-wa">
+ <h3 style="margin:0 0 4px">💬 Hantar Kad Relef</h3><p class="bantu" id="waInfo" style="font-size:15px;margin:0 0 12px"></p>
+ <button class="wa" id="waMula" style="width:100%">🚀 Hantar Seterusnya</button>
+ <div id="waSenarai" style="margin-top:14px"></div>
+ <div class="baris" style="margin-top:14px;justify-content:space-between"><button class="kedua" id="waPrev">👁️ Pratonton</button><button class="kedua" id="waTutup">Tutup</button></div>
+ <pre id="waPra" class="wa-pra" hidden></pre>
 </dialog>
 <div class="toast" id="toast"></div>
 
@@ -917,5 +1006,75 @@ async function bacaData(){
 })();
 </script>
 
+<script>
+/* ================== WHATSAPP KAD RELEF ================== */
+(function(){
+const KT='relefTelefonGuru',KP='relefPinAdmin',KH='relefWAHantar';
+const baca=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const tulis=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let tel=baca(KT)||{}, kunci=!!localStorage.getItem(KP);
+const guru=()=>(typeof DATA!=='undefined'&&DATA&&DATA.guru)||[];
+function normal(n){n=String(n||'').replace(/\D/g,'');if(!n)return'';if(n.startsWith('0'))n='6'+n;else if(!n.startsWith('6'))n='60'+n;return n;}
+function lukisTel(){
+  const el=$('wpSenarai'); if(!el) return; $('wpLock').textContent=kunci?'🔒 Dikunci':'🔓 Boleh ubah';
+  const q=($('wpCari').value||'').toLowerCase(), G=guru();
+  if(!G.length){el.innerHTML='<p class="bantu">Sila masukkan fail jadual dahulu.</p>';return;}
+  el.innerHTML=G.filter(g=>(g.nama+g.singkat).toLowerCase().includes(q)).map(g=>`<label class="wp-item"><span>${esc(g.nama)}</span><input inputmode="tel" placeholder="012-3456789" data-tel="${esc(g.singkat)}" value="${esc(tel[g.singkat]||'')}" ${kunci?'disabled':''}></label>`).join('');
+}
+function semakPin(){const p=localStorage.getItem(KP);if(!p)return true;const x=prompt('Masukkan PIN admin:');if(x===null)return false;if(x===p)return true;toast('❌ PIN salah');return false;}
+document.addEventListener('input',e=>{const g=e.target.dataset&&e.target.dataset.tel;if(g===undefined||kunci)return;tel[g]=e.target.value.trim();tulis(KT,tel);});
+$('wpCari').addEventListener('input',lukisTel);
+$('wpKunci').onclick=()=>{ if(kunci){ if(!semakPin())return; kunci=false; toast('🔓 Nombor boleh diubah'); }
+  else{ if(!localStorage.getItem(KP)){const p=prompt('Cipta PIN admin (4–8 digit) untuk kunci nombor pada peranti ini:');if(!p||!/^\d{4,8}$/.test(p)){toast('PIN mesti 4–8 digit');return;}localStorage.setItem(KP,p);} kunci=true; toast('🔒 Nombor telefon dikunci pada peranti ini'); } lukisTel(); };
+$('wpPin').onclick=()=>{ if(!semakPin())return; const p=prompt('PIN baharu (4–8 digit):'); if(!p||!/^\d{4,8}$/.test(p)){toast('PIN mesti 4–8 digit');return;} localStorage.setItem(KP,p); kunci=true; lukisTel(); toast('🔑 PIN dikemas kini'); };
+new MutationObserver(lukisTel).observe($('senaraiGuru'),{childList:true}); lukisTel();
+
+function sapaan(){const h=new Date().getHours();return h<12?'Selamat pagi':h<15?'Selamat tengah hari':h<19?'Selamat petang':'Selamat malam';}
+function kad(g,l,jenis){
+  const K=kepala(), L=labelTarikh(), sek=(K.sekolah||'Sistem Relef Guru').toUpperCase();
+  let t=`🏫 *${sek}*\n`;
+  if(jenis==='batal') return t+`━━━━━━━━━━━━━━━━\n🔔 *MAKLUMAN PEMBATALAN RELEF*\n📅 ${L.penuh}\n━━━━━━━━━━━━━━━━\n\nAssalamualaikum dan ${sapaan().toLowerCase()} *${nama(g)}*,\n\nDengan hormatnya dimaklumkan bahawa tugasan relef cikgu pada hari ini *telah dibatalkan* susulan perubahan jadual. Cikgu tidak perlu lagi masuk ke kelas relef yang dimaklumkan sebelum ini.\n\nMohon maaf atas sebarang kesulitan. Terima kasih atas keprihatinan cikgu 🙏`;
+  t+=`━━━━━━━━━━━━━━━━\n${jenis==='baru'?'🔄 *KAD RELEF (DIKEMAS KINI)*':'🎫 *KAD RELEF GURU*'}\n📅 ${L.penuh}\n━━━━━━━━━━━━━━━━\n\nAssalamualaikum dan ${sapaan().toLowerCase()} *${nama(g)}*,\n\n`;
+  t+= jenis==='baru' ? `Mohon maaf, terdapat *perubahan* pada jadual relef hari ini. Berikut ialah kad relef terkini untuk rujukan cikgu (sila abaikan kad sebelum ini):\n\n` : `Dengan hormatnya, cikgu dijemput untuk melaksanakan tugasan relef seperti berikut:\n\n`;
+  l.slice().sort((a,b)=>a.waktu-b.waktu).forEach((b,i)=>{const m=masaWaktu(b.waktu,b.kelas);t+=`*${i+1}. Waktu ${b.waktu}*${m?'  ⏰ '+m:''}\n   🏷️ Kelas : *${b.kelas}*\n   📚 Subjek : ${b.subjek||'-'}\n   👤 Ganti : ${nama(b.guruAsal)}\n\n`;});
+  t+=`━━━━━━━━━━━━━━━━\n📌 Jumlah: *${l.length} waktu*\n\nJasa dan kerjasama cikgu amat dihargai. Terima kasih 🙏🌷`;
+  return t;
+}
+function cap(l){return l.map(b=>b.waktu+'|'+b.kelas+'|'+b.subjek).sort().join(';');}
+let antrian=[];
+function sediakan(){
+  const tarikh=$('tarikh').value, rek=baca(KH)||{}, lama=rek[tarikh]||{}, kumpul={};
+  barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
+  antrian=[];
+  Object.entries(kumpul).forEach(([g,l])=>{const c=cap(l),dulu=lama[g];
+    antrian.push({g,l,c,jenis:dulu?(dulu===c?'sama':'baru'):'asal'});});
+  Object.keys(lama).forEach(g=>{if(!kumpul[g]&&lama[g]!=='BATAL')antrian.push({g,l:[],c:'BATAL',jenis:'batal'});});
+  antrian.sort((a,b)=>(a.jenis==='sama')-(b.jenis==='sama'));
+}
+function rekod(x){const t=$('tarikh').value,r=baca(KH)||{};r[t]=r[t]||{};r[t][x.g]=x.c;Object.keys(r).sort().slice(0,-14).forEach(k=>delete r[k]);tulis(KH,r);x.jenis='sama';x.dihantar=true;}
+function lukisWA(){
+  const tak=antrian.filter(x=>!normal(tel[x.g])).length, baki=antrian.filter(x=>x.jenis!=='sama'&&normal(tel[x.g])).length;
+  $('waInfo').innerHTML=`${antrian.length} guru terlibat · <b>${baki}</b> perlu dihantar${tak?` · <span style="color:var(--merah)">${tak} tiada nombor</span>`:''}`;
+  $('waMula').disabled=!baki; $('waMula').textContent=baki?`🚀 Hantar Seterusnya (${baki} lagi)`:'✅ Semua kad telah dihantar';
+  const lbl={asal:['Belum hantar',''],baru:['Ada perubahan','baru'],batal:['Dibatalkan','x'],sama:['Dihantar','ok']};
+  $('waSenarai').innerHTML=antrian.map((x,i)=>{const n=normal(tel[x.g]),[t,k]=lbl[x.jenis];return `<div class="wa-baris"><span><b>${esc(nama(x.g))}</b><small>${n?'+'+n:'⚠️ Tiada nombor — tetapkan di Data & Tetapan'} · ${x.l.length} waktu</small></span><span class="wa-st ${n?k:'x'}" style="flex:none">${t}</span><button class="kedua" data-wa="${i}" ${n?'':'disabled'}>${x.jenis==='sama'?'↻':'➤'}</button></div>`;}).join('')||'<p class="bantu">Tiada relef untuk dihantar.</p>';
+}
+function hantar(i){const x=antrian[i],n=normal(tel[x.g]);if(!n)return;
+  const jenis=x.jenis==='sama'?(x.c==='BATAL'?'batal':'asal'):x.jenis;
+  window.open('https://wa.me/'+n+'?text='+encodeURIComponent(kad(x.g,x.l,jenis)),'_blank');rekod(x);lukisWA();}
+$('btnWA').onclick=()=>{ if(!barisRelef.length){toast('Tiada relef untuk dihantar');return;} sediakan(); $('waPra').hidden=true; lukisWA(); $('dlgWA').showModal(); };
+$('waMula').onclick=()=>{const i=antrian.findIndex(x=>x.jenis!=='sama'&&normal(tel[x.g]));if(i>=0)hantar(i);};
+$('waSenarai').addEventListener('click',e=>{const b=e.target.closest('[data-wa]');if(b)hantar(+b.dataset.wa);});
+$('waPrev').onclick=()=>{const x=antrian.find(x=>x.l.length)||antrian[0];if(!x)return;const p=$('waPra');p.hidden=!p.hidden;p.textContent=kad(x.g,x.l,x.jenis==='sama'?'asal':x.jenis);};
+$('waTutup').onclick=()=>$('dlgWA').close();
+})();
+</script>
+<script>
+(function(){var t=document.querySelectorAll('.tab-bar [data-tab]');function buka(id){t.forEach(function(b){b.classList.toggle('aktif',b.dataset.tab===id);b.setAttribute('aria-selected',b.dataset.tab===id)});document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('aktif',p.id===id)});try{localStorage.setItem('tabRelef',id)}catch(e){}window.scrollTo({top:0,behavior:'smooth'})}
+t.forEach(function(b){b.addEventListener('click',function(){buka(b.dataset.tab)})});
+var f=document.getElementById('fail');if(f)f.addEventListener('change',function(){setTimeout(function(){buka('panelHarian')},900)});
+var h=document.getElementById('hasil');if(h)new MutationObserver(function(){if(!h.classList.contains('tersembunyi'))buka('panelHarian')}).observe(h,{attributes:true,attributeFilter:['class']});
+var s=null;try{s=localStorage.getItem('tabRelef')}catch(e){}if(s&&document.getElementById(s))buka(s);})();
+</script>
 </body>
 </html>
