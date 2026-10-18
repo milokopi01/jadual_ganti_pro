@@ -1,5 +1,5 @@
-// Service worker Sistem Relef Guru — halaman: network-first, fail lain: cache-first
-const CACHE = 'relef-guru-v2c.25.0';
+// Service worker Sistem Relief Guru — halaman: network-first, fail lain: cache-first
+const CACHE = 'relief-guru-v2c.25.1';
 const ASET = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
   './xlsx.full.min.js', './relief-engine.js?v=2.12.0'];
 
@@ -8,7 +8,7 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(k => Promise.all(k.filter(n => n.startsWith('relef-guru-') && n !== CACHE).map(n => caches.delete(n))))
+  e.waitUntil(caches.keys().then(k => Promise.all(k.filter(n => (n.startsWith('relief-guru-')||n.startsWith('relef-guru-')) && n !== CACHE).map(n => caches.delete(n))))
     .then(() => self.clients.claim()));
 });
 

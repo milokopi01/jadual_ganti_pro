@@ -97,7 +97,7 @@ function candidates(ctx,row,rows,ignore=-1){
  const maxRun=ctx.maxConsecutive||3;
  const busy=(g,w)=>P.teach.has(g+'|'+w)||assigned.some(r=>r.waktu===w&&r.pengganti===g);
  const runOk=g=>{let n=1;for(let w=row.waktu-1;busy(g,w);w--)n++;for(let w=row.waktu+1;busy(g,w);w++)n++;return n<=maxRun;};
- const qualified=base.filter(g=>available(g,row.waktu)&&runOk(g)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(available(g,row.waktu-1)||available(g,row.waktu+1)));
+ const qualified=base.filter(g=>available(g,row.waktu)&&runOk(g)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(loads[g]===0||available(g,row.waktu-1)||available(g,row.waktu+1)));
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
  // Fair share by total burden today: own lessons + reliefs already given. A light-timetable
  // teacher may take several reliefs before a packed teacher takes even one.
@@ -105,7 +105,9 @@ function candidates(ctx,row,rows,ignore=-1){
  // plus half a point per own lesson today, so a teacher with no classes today takes
  // several reliefs before a busy teacher takes one, but nobody gets far ahead for the year.
  const burden=g=>(history[g]||0)+(counts[g]||0)+loads[g]/2;
- const sort=list=>list.sort((a,b)=>burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
+ // Guarantee: a teacher with no own class today who has no relief yet today goes first (at least 1 relief card).
+ const idle=g=>loads[g]===0&&!(counts[g]>0)?0:1;
+ const sort=list=>list.sort((a,b)=>idle(a)-idle(b)||burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
  const normal=qualified.filter(g=>!frozen.includes(g));
  if(normal.length) return sort(normal);

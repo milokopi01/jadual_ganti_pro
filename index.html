@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sistem Relef Guru — Freeze &amp; Agihan Berfilter</title>
+<title>Sistem Relief Guru — Freeze &amp; Agihan Berfilter</title>
 <meta name="description" content="Pengurusan relief guru dengan freeze, status kehadiran, sekatan waktu dan agihan automatik berfilter.">
-<meta property="og:title" content="Sistem Relef Guru">
+<meta property="og:title" content="Sistem Relief Guru">
 <meta property="og:description" content="Agihan relief berfilter dengan kawalan freeze dan sandaran kecemasan.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
@@ -105,16 +105,16 @@ td select{width:100%;font-size:17px;padding:10px}
 .c-free:hover{outline:3px solid var(--hijau)}
 .c-klik{cursor:pointer}
 .c-klik:hover{outline:3px solid var(--hijau)}
-.c-relef{background:#5fd3e8;color:#073b45;font-weight:700;cursor:grab;touch-action:none;user-select:none}
-.c-relef.aktif{outline:4px solid var(--kuning)}
-.c-relef.c-rakan{background:var(--rakan);color:var(--rakan2);box-shadow:0 3px 0 var(--rakan-bayang)}
+.c-relief{background:#5fd3e8;color:#073b45;font-weight:700;cursor:grab;touch-action:none;user-select:none}
+.c-relief.aktif{outline:4px solid var(--kuning)}
+.c-relief.c-rakan{background:var(--rakan);color:var(--rakan2);box-shadow:0 3px 0 var(--rakan-bayang)}
 .legenda-rakan{display:inline-block;background:var(--rakan);color:var(--rakan2);font-weight:700;padding:1px 6px;border-radius:4px}
 .c-drop{outline:3px solid var(--hijau)}
 .c-pulang{outline:2px dashed var(--rakan-bayang);outline-offset:-3px;cursor:pointer}
 .c-perlu{background:#7a1f17;color:#fff;font-weight:700;cursor:pointer}
 .c-perlu.ok{background:#2c8a6e}
 .c-perlu.aktif{outline:4px solid var(--kuning)}
-.kotak-relef{position:relative;padding:5px 28px 5px 4px;min-height:54px;display:flex;flex-direction:column;justify-content:center;border-radius:6px;cursor:pointer}.kotak-relef:focus-visible{outline:3px solid var(--kuning)}.pilih-slot{position:absolute;right:3px;top:3px;padding:3px 5px;font-size:15px;border-radius:4px;background:var(--hijau2);color:var(--hijau)}.c-sendiri{background:var(--hijau2);color:var(--hijau);cursor:pointer}.c-sendiri small{font-size:11px}
+.kotak-relief{position:relative;padding:5px 28px 5px 4px;min-height:54px;display:flex;flex-direction:column;justify-content:center;border-radius:6px;cursor:pointer}.kotak-relief:focus-visible{outline:3px solid var(--kuning)}.pilih-slot{position:absolute;right:3px;top:3px;padding:3px 5px;font-size:15px;border-radius:4px;background:var(--hijau2);color:var(--hijau)}.c-sendiri{background:var(--hijau2);color:var(--hijau);cursor:pointer}.c-sendiri small{font-size:11px}
 .c-kosong{background:#f3f3f3}
 .c-tiada{background:repeating-linear-gradient(45deg,#ddd,#ddd 4px,#eee 4px,#eee 8px)}
 .tiket-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
@@ -232,7 +232,7 @@ th{background:linear-gradient(180deg,#4aa3ff,#1e6fd9)}
 .grid th{background:linear-gradient(180deg,#5aaeff,#1e6fd9);box-shadow:0 3px 0 #1553a8;border-radius:10px}
 .grid td{border-radius:10px;box-shadow:0 2px 0 rgba(0,0,0,.06)}
 .grid td.nama{background:linear-gradient(145deg,#fff,#e8f2ff);box-shadow:3px 0 8px var(--bayang)}
-.c-relef{background:linear-gradient(145deg,#a8ddff,#5fb7f5);color:#05345e;box-shadow:0 3px 0 #3a8fd0}
+.c-relief{background:linear-gradient(145deg,#a8ddff,#5fb7f5);color:#05345e;box-shadow:0 3px 0 #3a8fd0}
 .c-kosong{background:#f2f6fb}
 .toast{background:linear-gradient(145deg,#1e6fd9,#1553a8);border-radius:18px;box-shadow:0 12px 30px rgba(21,83,168,.4)}
 details>summary{cursor:pointer}
@@ -268,7 +268,7 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
 </head>
 <body>
 <header class="atas">
- <div class="jenama"><div class="logo">🎓</div><div><h1>Sistem Relef Guru</h1><small>Agihan relief pintar · Freeze · Sandaran kecemasan</small></div></div>
+ <div class="jenama"><div class="logo">🎓</div><div><h1>Sistem Relief Guru</h1><small>Agihan relief pintar · Freeze · Sandaran kecemasan</small></div></div>
  <nav class="tab-bar" role="tablist">
   <button type="button" role="tab" data-tab="panelHarian" class="aktif">⚡ Agihan Harian</button>
   <button type="button" role="tab" data-tab="panelTetapan">⚙️ Data &amp; Tetapan</button>
@@ -276,7 +276,7 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
 </header>
 <main>
 <div class="panel aktif" id="panelHarian" role="tabpanel">
- <div class="panel-tajuk"><div><h2>Agihan Relef Harian</h2><p>Pilih tarikh, tanda guru tidak hadir, dan biar sistem susun guru ganti.</p></div><span class="chip">🗓️ Operasi harian</span></div>
+ <div class="panel-tajuk"><div><h2>Agihan Relief Harian</h2><p>Pilih tarikh, tanda guru tidak hadir, dan biar sistem susun guru ganti.</p></div><span class="chip">🗓️ Operasi harian</span></div>
 <section class="langkah penuh" id="langkah2">
  <h2><span class="no">1</span> Pilih tarikh</h2>
  <div class="baris">
@@ -290,7 +290,7 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
  <div id="statusMinggu" class="status" role="status"></div>
  <details class="status-harian" id="kotakMasa" hidden style="display:none">
   <summary>⏰ Sesi operasi &amp; masa setiap waktu</summary>
-  <p class="bantu" style="margin-top:10px;font-size:15px">Sekolah boleh ada beberapa sesi (cth. Tahap 1 &amp; Tahap 2) dengan masa rehat berbeza. Tetapkan kelas bagi setiap sesi (awalan nama kelas, cth. <b>1,2,3</b>). Anda juga boleh tekan nombor waktu pada grid untuk isi masa terus. Guru yang sama dikongsi — sistem tidak akan beri relef jika masa bertindih dengan kelas guru itu dalam sesi lain.</p>
+  <p class="bantu" style="margin-top:10px;font-size:15px">Sekolah boleh ada beberapa sesi (cth. Tahap 1 &amp; Tahap 2) dengan masa rehat berbeza. Tetapkan kelas bagi setiap sesi (awalan nama kelas, cth. <b>1,2,3</b>). Anda juga boleh tekan nombor waktu pada grid untuk isi masa terus. Guru yang sama dikongsi — sistem tidak akan beri relief jika masa bertindih dengan kelas guru itu dalam sesi lain.</p>
   <div id="senaraiMasa"></div>
 
   <button class="kedua" id="btnTambahSesi" style="margin-top:10px">➕ Tambah sesi</button>
@@ -312,7 +312,7 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
  <div class="dd-cip" id="ddCip"></div>
 </section>
 <section class="langkah penuh" id="langkah4">
- <h2><span class="no">3</span> Susun jadual relef</h2>
+ <h2><span class="no">3</span> Susun jadual relief</h2>
  <p class="bantu">Tekan <b>Susun Automatik</b> — sistem mematuhi filter beban, kuota, buffer, status dan imbangan mingguan. Anda masih boleh tukar guru ganti secara manual dalam jadual.</p>
  <div class="baris">
   <label><input type="checkbox" id="kecemasan"> Benarkan guru freeze sebagai sandaran kecemasan</label>
@@ -321,27 +321,27 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
  </div>
 </section>
 <section class="langkah penuh tersembunyi" id="hasil">
- <div id="kepalaLaporan"></div><div class="cetak-tajuk"><h2>JADUAL RELEF GURU</h2></div>
- <h2 class="tiada-cetak"><span class="no">4</span> <span id="tajukHasil">Jadual Relef</span></h2>
+ <div id="kepalaLaporan"></div><div class="cetak-tajuk"><h2>JADUAL RELIEF GURU</h2></div>
+ <h2 class="tiada-cetak"><span class="no">4</span> <span id="tajukHasil">Jadual Relief</span></h2>
  <div class="ringkas tiada-cetak" id="ringkasan"></div>
  <div class="petunjuk tiada-cetak">
-  <span><i style="background:#7a1f17"></i>Perlu relef</span>
+  <span><i style="background:#7a1f17"></i>Perlu relief</span>
   <span><i style="background:var(--hijau2)"></i>Ajar sendiri</span>
   <span><i style="background:#f4a9a3"></i>Guru ada kelas</span>
-  <span><i style="background:#ffe46b"></i>Guru free — tekan untuk beri relef</span>
-  <span><i style="background:#5fd3e8"></i>Relef diberi — seret atau tekan untuk pindah</span>
+  <span><i style="background:#ffe46b"></i>Guru free — tekan untuk beri relief</span>
+  <span><i style="background:#5fd3e8"></i>Relief diberi — seret atau tekan untuk pindah</span>
  </div>
  <p class="bantu tiada-cetak" id="arahanGrid"></p>
  <div class="tiada-cetak zoom-alat" id="zoomAlat"><button class="kedua" data-zoom="-">－</button><button class="kedua" data-zoom="muat">Muat skrin</button><button class="kedua" data-zoom="+">＋</button><small>Telefon: cubit dengan dua jari untuk zoom</small></div><div style="overflow:auto" class="tiada-cetak grid-wrap" id="gridWrap"><table class="grid" id="grid"></table></div>
  <div class="baris tiada-cetak" style="margin-top:22px">
-  <button class="kedua" id="btnTogolStat" onclick="togolStat()">📊 Statistik jumlah relef setiap guru ▸</button>
+  <button class="kedua" id="btnTogolStat" onclick="togolStat()">📊 Statistik jumlah relief setiap guru ▸</button>
  </div>
  <div id="statBlok" hidden>
-  <h3 class="tiada-cetak" style="margin-top:12px">📊 Statistik jumlah relef setiap guru</h3>
-  <p class="bantu tiada-cetak">Sejarah kekal sehingga anda tekan Reset Statistik. Susun Automatik akan beri relef kepada guru yang paling kurang dahulu.</p>
+  <h3 class="tiada-cetak" style="margin-top:12px">📊 Statistik jumlah relief setiap guru</h3>
+  <p class="bantu tiada-cetak">Sejarah kekal sehingga anda tekan Reset Statistik. Susun Automatik akan beri relief kepada guru yang paling kurang dahulu.</p>
   <div style="overflow-x:auto" class="tiada-cetak" id="statHasil"></div>
  </div>
- <div class="hanya-cetak"><h3 style="margin-top:22px">Senarai relef</h3><div style="overflow-x:auto"><table id="jadual"></table></div></div>
+ <div class="hanya-cetak"><h3 style="margin-top:22px">Senarai relief</h3><div style="overflow-x:auto"><table id="jadual"></table></div></div>
  <div class="baris tiada-cetak" style="margin-top:16px">
   <button onclick="cetak('cetak-laporan')">🖨️ Cetak Laporan Penuh</button>
   <button onclick="cetak('cetak-tiket')">🎫 Cetak Tiket Guru</button>
@@ -352,7 +352,7 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
   <button class="amaran" id="btnReset">↺ Mula Semula</button>
  </div>
  <div id="seksyenTiket" style="margin-top:26px">
-  <h2 class="tiada-cetak">🎫 Tiket relef untuk guru</h2>
+  <h2 class="tiada-cetak">🎫 Tiket relief untuk guru</h2>
   <p class="bantu tiada-cetak">Satu tiket untuk setiap guru ganti. Cetak, gunting di garis putus-putus dan beri kepada guru.</p>
   <div class="tiket-grid" id="tiket"></div>
  </div>
@@ -408,14 +408,14 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
  </details>
 </section>
 <section class="langkah penuh tiada-cetak" id="seksyenStat">
- <h2>📊 Statistik jumlah relef guru (keseluruhan)</h2>
- <p class="bantu">Sejarah relef disimpan berasingan dan <b>tidak hilang</b> walaupun fail Excel baharu dimuat naik. Ia hanya dipadam jika anda tekan Reset Statistik.</p>
+ <h2>📊 Statistik jumlah relief guru (keseluruhan)</h2>
+ <p class="bantu">Sejarah relief disimpan berasingan dan <b>tidak hilang</b> walaupun fail Excel baharu dimuat naik. Ia hanya dipadam jika anda tekan Reset Statistik.</p>
  <div class="baris" style="margin-bottom:12px"><button class="kedua" id="btnBackup">⬇ Simpan Salinan (Backup)</button><button class="kedua" id="btnPulih">⬆ Pulihkan Backup</button><button class="amaran" id="btnResetStat">🗑️ Reset Statistik</button><input type="file" id="failPulih" accept=".json" hidden></div>
  <p class="bantu" style="display:none"></p>
- <div id="statRelef" class="bantu">Belum ada rekod.</div>
+ <div id="statRelief" class="bantu">Belum ada rekod.</div>
 </section>
 </div>
-<div class="kaki">Sistem Relef Guru · Dibina untuk sekolah Malaysia</div>
+<div class="kaki">Sistem Relief Guru · Dibina untuk sekolah Malaysia</div>
 </main>
 <dialog id="dlgMasa" style="border:0;border-radius:16px;padding:20px;max-width:440px;width:92%">
  <h3 style="margin:0 0 6px">⏰ Masa Waktu <span id="dlgW"></span></h3><p class="bantu" style="font-size:14px;margin:0 0 12px">Isi masa mula &amp; tamat bagi setiap sesi.</p>
@@ -423,7 +423,7 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
  <div class="baris" style="margin-top:14px;justify-content:flex-end"><button class="kedua" id="dlgTutup">Tutup</button></div>
 </dialog>
 <dialog id="dlgWA" class="dlg-wa">
- <h3 style="margin:0 0 4px">💬 Hantar Kad Relef</h3><p class="bantu" id="waInfo" style="font-size:15px;margin:0 0 12px"></p>
+ <h3 style="margin:0 0 4px">💬 Hantar Kad Relief</h3><p class="bantu" id="waInfo" style="font-size:15px;margin:0 0 12px"></p>
  <button class="wa" id="waMula" style="width:100%">🚀 Hantar Seterusnya</button>
  <div id="waSenarai" style="margin-top:14px"></div>
  <div class="baris" style="margin-top:14px;justify-content:space-between"><button class="kedua" id="waPrev">👁️ Pratonton</button><button class="kedua" id="waTutup">Tutup</button></div>
@@ -434,11 +434,12 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
 <script>
 /* ================== TETAPAN ================== */
 const HARI_JS = {0:'AHAD',1:'ISNIN',2:'SELASA',3:'RABU',4:'KHAMIS',5:'JUMAAT',6:'SABTU'};
-const KUNCI_DATA = 'relef_data_asc_v1', KUNCI_REKOD = 'relef_rekod_v1';
-const KUNCI_TETAPAN='relef_tetapan_v2';
+try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(/relef/i.test(k)){const n=k.replace(/relef/g,'relief').replace(/Relef/g,'Relief');if(localStorage.getItem(n)===null)localStorage.setItem(n,localStorage.getItem(k));}}}catch(e){}
+const KUNCI_DATA = 'relief_data_asc_v1', KUNCI_REKOD = 'relief_rekod_v1';
+const KUNCI_TETAPAN='relief_tetapan_v2';
 let tetapan; try{tetapan=JSON.parse(localStorage.getItem(KUNCI_TETAPAN))||{freeze:[],harian:{}};}catch{tetapan={freeze:[],harian:{}};}
 tetapan.freeze ||= []; tetapan.harian ||= {};
-const KUNCI_MASA='relef_masa_kekal_v1';
+const KUNCI_MASA='relief_masa_kekal_v1';
 // Saved session times win over anything from a new ASC file or app backup.
 try{ const m=JSON.parse(localStorage.getItem(KUNCI_MASA)); if(Array.isArray(m)&&m.length) tetapan.sesi=m; }catch{}
 try{ navigator.storage?.persist?.(); }catch{}
@@ -447,7 +448,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const DALAM_GAS = typeof google !== 'undefined' && google.script && google.script.run;
 
 let DATA = null;          // {guru:[{nama,singkat}], hari:[], waktu:{}, free:{hari|waktu:[singkat]}, kelas:[{hari,waktu,kelas,subjek,guru}]}
-let barisRelef = [];      // [{hari,waktu,kelas,subjek,guruAsal,pengganti}]
+let barisRelief = [];      // [{hari,waktu,kelas,subjek,guruAsal,pengganti}]
 const $ = id => document.getElementById(id);
 const norm = s => String(s ?? '').replace(/\s+/g,' ').trim();
 const toast = m => { const t=$('toast'); t.textContent=m; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',2600); };
@@ -599,13 +600,13 @@ $('ddGuru').addEventListener('toggle',()=>{ if($('ddGuru').open && matchMedia('(
 $('ddCip').addEventListener('click',e=>{ const b=e.target.closest('[data-buang]'); if(!b) return; const cb=[...$('senaraiGuru').querySelectorAll('input[type=checkbox]')].find(c=>c.value===b.dataset.buang); if(cb) cb.click(); });
 const guruTakHadir = ()=>[...tidakHadir];
 function hariStatus(){const date=$('tarikh').value; return tetapan.harian[date] ||= {};}
-const KP_ASAL={tajuk:'JADUAL RELEF GURU',sekolah:'',alamat:'',kod:'',tel:'',faks:'',email:'',logo:''};
+const KP_ASAL={tajuk:'JADUAL RELIEF GURU',sekolah:'',alamat:'',kod:'',tel:'',faks:'',email:'',logo:''};
 const KP_MEDAN={tajuk:'kpTajuk',sekolah:'kpSekolah',alamat:'kpAlamat',kod:'kpKod',tel:'kpTel',faks:'kpFaks',email:'kpEmail'};
 function kepala(){ return {...KP_ASAL,...(tetapan.kepala||{})}; }
 function infoKepala(k){ return [k.kod&&'KOD SEK : '+k.kod,k.tel&&'TEL : '+k.tel,k.faks&&'FAX : '+k.faks].filter(Boolean).join('     '); }
-function htmlKepala(){ const k={...kepala()}; if(!k.sekolah) k.sekolah='Sistem Relef Guru';
+function htmlKepala(){ const k={...kepala()}; if(!k.sekolah) k.sekolah='Sistem Relief Guru';
   const tr=$('tarikh')&&$('tarikh').value?labelTarikh():null;
-  const cop=tr?`<div class="kr-cop">LAPORAN RELEF<b>${esc(tr.pendek)}</b></div>`:'';
+  const cop=tr?`<div class="kr-cop">LAPORAN RELIEF<b>${esc(tr.pendek)}</b></div>`:'';
   return `<div class="kepala-rasmi">${k.logo?`<img src="${k.logo}" alt="Logo sekolah">`:''}<div class="kr-teks">${k.tajuk?`<div class="kr-tajuk">${esc(k.tajuk)}</div>`:''}${k.sekolah?`<div class="kr-sekolah">${esc(k.sekolah.toUpperCase())}</div>`:''}${k.alamat?`<div class="kr-alamat">${esc(k.alamat.toUpperCase())}</div>`:''}${infoKepala(k)?`<div class="kr-info">${esc(infoKepala(k)).replace(/ {2,}/g,m=>'&nbsp;'.repeat(m.length))}</div>`:''}${k.email?`<div class="kr-info">EMAIL : ${esc(k.email)}</div>`:''}</div>${cop}</div>`; }
 function lukisKepala(){ const h=htmlKepala(); $('kpPratonton').innerHTML=h||'<p class="bantu">Isi nama sekolah untuk lihat pratonton.</p>'; $('kepalaLaporan').innerHTML=h; }
 function isiBorangKepala(){ const k=kepala(); Object.entries(KP_MEDAN).forEach(([f,id])=>$(id).value=k[f]||''); lukisKepala(); }
@@ -620,7 +621,7 @@ function lukisMinggu(){
 }
 $('mingguSekolah').onchange=()=>{tetapan.mingguSekolah=$('mingguSekolah').value;simpanTetapan();lukisMinggu();sembunyiHasil();};
 function konteks(){return {clash:bentrok,data:DATA,day:hariDipilih(),absent:guruTakHadir(),frozen:tetapan.freeze,emergency:$('kecemasan').checked,status:hariStatus(),weekly:ReliefEngine.weeklyCounts(bacaRekod(),$('tarikh').value,mingguAktif()?.startDay??1),history:ReliefEngine.historyCounts(bacaRekod(),$('tarikh').value)};}
-function calonSlot(b,i){return ReliefEngine.manualCandidates(konteks(),b,barisRelef,i);}
+function calonSlot(b,i){return ReliefEngine.manualCandidates(konteks(),b,barisRelief,i);}
 function lukisFreeze(){
  const tersedia=(DATA?.guru||[]).filter(g=>!tetapan.freeze.includes(g.singkat)).sort((a,b)=>a.nama.localeCompare(b.nama,'ms'));
  $('pilihFreeze').innerHTML='<option value="">— Pilih guru untuk freeze —</option>'+tersedia.map(g=>`<option value="${esc(g.singkat)}">${esc(g.nama)}</option>`).join('');
@@ -711,7 +712,7 @@ $('dlgIsi').addEventListener('click',e=>{ if(e.target.id!=='dlgTambahSesi') retu
 $('dlgIsi').oninput=e=>{ if(ubahMasa(e.target)) lukisMasa(); };
 $('dlgIsi').onchange=e=>{ if(ubahMasa(e.target)) lukisMasa(); };
 $('dlgTutup').onclick=()=>$('dlgMasa').close();
-function backupMasa(){ const b=new Blob([JSON.stringify({jenis:'relef-masa',versi:1,tarikh:new Date().toISOString(),sesi:senaraiSesi()},null,2)],{type:'application/json'});
+function backupMasa(){ const b=new Blob([JSON.stringify({jenis:'relief-masa',versi:1,tarikh:new Date().toISOString(),sesi:senaraiSesi()},null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='backup-masa-waktu-'+new Date().toISOString().slice(0,10)+'.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),30000); toast('💾 Backup masa dimuat turun'); }
 function restoreMasa(){ const i=document.createElement('input'); i.type='file'; i.accept='.json,application/json';
   i.onchange=async()=>{ try{ const j=JSON.parse(await i.files[0].text()); const L=Array.isArray(j)?j:j.sesi; if(!Array.isArray(L)||!L.length) throw 0;
@@ -722,22 +723,22 @@ function labelHeader(w){ const L=senaraiSesi();
   if(L.length<2) return `<span class="masa">${masaWaktu(w)||'＋ masa'}</span>`;
   return L.map(se=>{ const t=masaSesi(se,w); return `<span class="masa">${esc(se.nama.slice(0,6))}: ${t?jam12(t.mula).replace(/ P[GT]/,'')+'–'+jam12(t.tamat):'—'}</span>`; }).join(''); }
 
-/* ================== SUSUN RELEF ================== */
+/* ================== SUSUN RELIEF ================== */
 function freeWaktu(h,w,tak){ return (DATA.free[h+'|'+w]||[]).filter(g=>!tak.includes(g)); }
 function nama(s){ return (DATA.guru.find(g=>g.singkat===s)||{}).nama||s; }
-function jumlahRelefBulan(){ const r=bacaRekod(), bln=($('tarikh').value||'').slice(0,7), c={}; r.filter(x=>x.tarikh.slice(0,7)===bln).forEach(x=>{ if(x.pengganti) c[x.pengganti]=(c[x.pengganti]||0)+1; }); return c; }
+function jumlahReliefBulan(){ const r=bacaRekod(), bln=($('tarikh').value||'').slice(0,7), c={}; r.filter(x=>x.tarikh.slice(0,7)===bln).forEach(x=>{ if(x.pengganti) c[x.pengganti]=(c[x.pengganti]||0)+1; }); return c; }
 
 function bina(auto){
   if(!DATA) return toast('Sila masukkan fail jadual dahulu');
   const h=hariDipilih(); if(!h) return toast('Sila pilih tarikh dahulu');
   if(auto&&!mingguAktif()) return toast('Sila pilih minggu sekolah dahulu untuk imbangan relief yang tepat.');
   const tak=guruTakHadir(); if(!tak.length) return toast('Sila tanda guru yang tidak hadir');
-  const lama=jadualTarikh===$('tarikh').value?barisRelef:[];
-  barisRelef = DATA.kelas.filter(k=>ReliefEngine.needsRelief(k,h,tak,hariStatus()))
+  const lama=jadualTarikh===$('tarikh').value?barisRelief:[];
+  barisRelief = DATA.kelas.filter(k=>ReliefEngine.needsRelief(k,h,tak,hariStatus()))
     .sort((a,b)=>a.waktu-b.waktu||a.kelas.localeCompare(b.kelas))
     .map(k=>({...k,guruAsal:k.guru,pengganti:''}));
-  if(auto) barisRelef=ReliefEngine.assign(konteks(),barisRelef);
-  else barisRelef.forEach((b,i)=>{
+  if(auto) barisRelief=ReliefEngine.assign(konteks(),barisRelief);
+  else barisRelief.forEach((b,i)=>{
    const old=lama.find(x=>x.hari===b.hari&&x.waktu===b.waktu&&x.kelas===b.kelas&&x.subjek===b.subjek&&x.guruAsal===b.guruAsal);
    if(old?.pengganti&&calonSlot(b,i).includes(old.pengganti)) b.pengganti=old.pengganti;
   });
@@ -747,12 +748,12 @@ function bina(auto){
 }
 function lukisJadualLama(){
   const h=hariDipilih(), tak=guruTakHadir();
-  $('tajukHasil').textContent = `Jadual Relef — ${h}, ${new Date($('tarikh').value).toLocaleDateString('ms-MY',{day:'numeric',month:'long',year:'numeric'})}`;
-  document.querySelector('.cetak-tajuk h2').textContent = 'JADUAL RELEF GURU — '+$('tajukHasil').textContent.replace('Jadual Relef — ','');
-  if(!barisRelef.length){ $('jadual').innerHTML='<tr><td>Tiada waktu memerlukan relef pada hari ini.</td></tr>'; $('ringkasan').innerHTML=''; return; }
+  $('tajukHasil').textContent = `Jadual Relief — ${h}, ${new Date($('tarikh').value).toLocaleDateString('ms-MY',{day:'numeric',month:'long',year:'numeric'})}`;
+  document.querySelector('.cetak-tajuk h2').textContent = 'JADUAL RELIEF GURU — '+$('tajukHasil').textContent.replace('Jadual Relief — ','');
+  if(!barisRelief.length){ $('jadual').innerHTML='<tr><td>Tiada waktu memerlukan relief pada hari ini.</td></tr>'; $('ringkasan').innerHTML=''; return; }
   $('jadual').innerHTML = `<tr><th>Waktu</th><th>Kelas</th><th>Subjek</th><th>Guru Tidak Hadir</th><th>Guru Ganti</th></tr>` +
-    barisRelef.map((b,i)=>{
-      const dipakai = barisRelef.filter((x,j)=>j!==i&&x.waktu===b.waktu&&x.pengganti).map(x=>x.pengganti);
+    barisRelief.map((b,i)=>{
+      const dipakai = barisRelief.filter((x,j)=>j!==i&&x.waktu===b.waktu&&x.pengganti).map(x=>x.pengganti);
       const calon = calonSlot(b,i);
       if(b.pengganti&&!calon.includes(b.pengganti)) calon.unshift(b.pengganti);
       const rakan = ReliefEngine.coTeachers(konteks(),b);
@@ -760,8 +761,8 @@ function lukisJadualLama(){
       return `<tr class="${b.pengganti?'':'tiada'}"><td><b>${b.waktu}</b><span class="masa">${masaWaktu(b.waktu,b.kelas)}</span></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td>
         <td><select data-i="${i}">${opt.join('')}</select>${calon.length?'':'<div class="kecil" style="color:var(--merah)">Tiada guru tersedia pada waktu ini</div>'}</td></tr>`;
     }).join('');
-  const diisi=barisRelef.filter(b=>b.pengganti).length;
-  $('ringkasan').innerHTML = `<div><b>${tak.length}</b>Guru tidak hadir</div><div><b>${barisRelef.length}</b>Waktu perlu relef</div><div><b>${diisi}</b>Sudah ada ganti</div><div><b>${barisRelef.length-diisi}</b>Belum ada ganti</div>`;
+  const diisi=barisRelief.filter(b=>b.pengganti).length;
+  $('ringkasan').innerHTML = `<div><b>${tak.length}</b>Guru tidak hadir</div><div><b>${barisRelief.length}</b>Waktu perlu relief</div><div><b>${diisi}</b>Sudah ada ganti</div><div><b>${barisRelief.length-diisi}</b>Belum ada ganti</div>`;
 }
 let slotAktif=null,jadualTarikh='';
 function lukisJadual(){ lukisJadualLama(); lukisGrid(); lukisTiket(); janaGambar(); simpanRekodSenyap(); lukisStat(); }
@@ -803,44 +804,44 @@ if(window.ResizeObserver) new ResizeObserver(()=>{if(zoomGrid===null) aturZoomGr
 })();
 function lukisGrid(){
   const h=hariDipilih(), tak=guruTakHadir(), W=DATA.waktu[h]||[];
-  const perluW=new Set(barisRelef.map(b=>b.waktu));
+  const perluW=new Set(barisRelief.map(b=>b.waktu));
   const ajar=(g,w)=>DATA.kelas.filter(k=>k.hari===h&&k.waktu===w&&k.guru===g);
-  if(slotAktif!==null && !barisRelef[slotAktif]) slotAktif=null;
+  if(slotAktif!==null && !barisRelief[slotAktif]) slotAktif=null;
   let html='<tr><th>Guru</th>'+W.map(w=>`<th data-thw="${w}" title="Tekan untuk isi masa" class="${perluW.has(w)?'perlu':''}">${w}${labelHeader(w)}</th>`).join('')+'<th class="th-backup"><button class="kedua" data-bmasa="backup" title="Backup semua masa waktu">💾 Backup</button><button class="kedua" data-bmasa="restore" title="Restore masa dari fail backup" style="margin-top:4px">📂 Restore</button></th></tr>';
   tak.forEach(g=>{
     html+=`<tr class="absen"><td class="nama">✖ ${g}</td>`+W.map(w=>{
-      const idx=barisRelef.map((b,i)=>i).filter(i=>barisRelef[i].waktu===w&&barisRelef[i].guruAsal===g);
+      const idx=barisRelief.map((b,i)=>i).filter(i=>barisRelief[i].waktu===w&&barisRelief[i].guruAsal===g);
       const pelajaran=ajar(g,w);
       if(!pelajaran.length) return '<td class="c-kosong"></td>';
       const sendiri=(hariStatus()[g]?.ajarSendiri||[]).includes(w);
-      if(sendiri) return `<td class="c-sendiri" role="button" tabindex="0" data-keperluan="${esc(g)}" data-w="${w}" aria-label="Perlu relef ${esc(g)} waktu ${w}" title="Tekan untuk perlukan relef semula">${pelajaran.map(k=>esc(k.kelas)).join('<br>')}<br><small>AJAR SENDIRI</small></td>`;
-      return `<td class="c-perlu ${idx.length&&idx.every(i=>barisRelef[i].pengganti)?'ok':''}" role="button" tabindex="0" data-keperluan="${esc(g)}" data-w="${w}" aria-label="Batalkan relef ${esc(g)} waktu ${w}" title="Tekan untuk batalkan keperluan relef; guru asal mengajar">`+idx.map(i=>{const b=barisRelef[i];
-        return `<div class="kotak-relef c-perlu ${b.pengganti?'ok':''} ${slotAktif===i?'aktif':''}">${esc(b.kelas)}<br><small>${esc(b.pengganti||'?')}</small><button class="pilih-slot" data-slot="${i}" aria-label="Pilih guru ganti ${esc(g)} waktu ${w}" title="Pilih / tukar guru ganti">↗</button></div>`;}).join('')+'</td>';
+      if(sendiri) return `<td class="c-sendiri" role="button" tabindex="0" data-keperluan="${esc(g)}" data-w="${w}" aria-label="Perlu relief ${esc(g)} waktu ${w}" title="Tekan untuk perlukan relief semula">${pelajaran.map(k=>esc(k.kelas)).join('<br>')}<br><small>AJAR SENDIRI</small></td>`;
+      return `<td class="c-perlu ${idx.length&&idx.every(i=>barisRelief[i].pengganti)?'ok':''}" role="button" tabindex="0" data-keperluan="${esc(g)}" data-w="${w}" aria-label="Batalkan relief ${esc(g)} waktu ${w}" title="Tekan untuk batalkan keperluan relief; guru asal mengajar">`+idx.map(i=>{const b=barisRelief[i];
+        return `<div class="kotak-relief c-perlu ${b.pengganti?'ok':''} ${slotAktif===i?'aktif':''}">${esc(b.kelas)}<br><small>${esc(b.pengganti||'?')}</small><button class="pilih-slot" data-slot="${i}" aria-label="Pilih guru ganti ${esc(g)} waktu ${w}" title="Pilih / tukar guru ganti">↗</button></div>`;}).join('')+'</td>';
     }).join('')+'</tr>';
   });
   const baki=DATA.guru.filter(g=>!tak.includes(g.singkat));
   const sejuk=baki.filter(g=>tetapan.freeze.includes(g.singkat));
   [...sejuk,...baki.filter(g=>!tetapan.freeze.includes(g.singkat))].forEach(g=>{
     html+=`<tr><td class="nama" title="${esc(g.nama)}">${tetapan.freeze.includes(g.singkat)?'❄️ ':''}${esc(g.singkat)}</td>`+W.map(w=>{
-      const rel=barisRelef.map((b,i)=>i).find(i=>barisRelef[i].waktu===w&&barisRelef[i].pengganti===g.singkat);
-      if(rel!==undefined) {const rk=ReliefEngine.coTeachers(konteks(),barisRelef[rel]).includes(g.singkat);
-      return `<td class="c-relef ${rk?'c-rakan':''} ${slotAktif===rel?'aktif':''}" data-batal="${rel}" title="${rk?'Rakan sekelas guru tidak hadir · ':''}Seret untuk pindah; tekan untuk pilih, tekan sekali lagi untuk batal">RELEF${rk?' 🤝':''}<br>${barisRelef[rel].kelas}</td>`;}
+      const rel=barisRelief.map((b,i)=>i).find(i=>barisRelief[i].waktu===w&&barisRelief[i].pengganti===g.singkat);
+      if(rel!==undefined) {const rk=ReliefEngine.coTeachers(konteks(),barisRelief[rel]).includes(g.singkat);
+      return `<td class="c-relief ${rk?'c-rakan':''} ${slotAktif===rel?'aktif':''}" data-batal="${rel}" title="${rk?'Rakan sekelas guru tidak hadir · ':''}Seret untuk pindah; tekan untuk pilih, tekan sekali lagi untuk batal">RELIEF${rk?' 🤝':''}<br>${barisRelief[rel].kelas}</td>`;}
       const a=ajar(g.singkat,w);
-      if(a.length){const pulang=barisRelef.some(b=>b.waktu===w&&a.some(x=>x.kelas===b.kelas)&&ReliefEngine.coTeachers(konteks(),b).includes(g.singkat));
-      if(pulang) return `<td class="c-ajar c-pulang" data-guru="${g.singkat}" data-w="${w}" title="Rakan sekelas · boleh terima semula kad relef kelas ini">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;}
+      if(a.length){const pulang=barisRelief.some(b=>b.waktu===w&&a.some(x=>x.kelas===b.kelas)&&ReliefEngine.coTeachers(konteks(),b).includes(g.singkat));
+      if(pulang) return `<td class="c-ajar c-pulang" data-guru="${g.singkat}" data-w="${w}" title="Rakan sekelas · boleh terima semula kad relief kelas ini">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;}
       if(a.length) return `<td class="c-ajar">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;
       if((hariStatus()[g.singkat]?.blocked||[]).includes(w)) return '<td class="c-tiada" title="Sekatan waktu">SEKAT</td>';
       if((DATA.free[h+'|'+w]||[]).includes(g.singkat)) return `<td class="c-free" data-guru="${g.singkat}" data-w="${w}" title="${tetapan.freeze.includes(g.singkat)?'Guru freeze · pilih secara manual':'Free'}">${tetapan.freeze.includes(g.singkat)?'❄️':''}</td>`;
-      return `<td class="c-tiada c-klik" data-guru="${g.singkat}" data-w="${w}" title="Tidak bertugas · tekan untuk letak relef secara manual"></td>`;
+      return `<td class="c-tiada c-klik" data-guru="${g.singkat}" data-w="${w}" title="Tidak bertugas · tekan untuk letak relief secara manual"></td>`;
     }).join('')+'</tr>';
   });
   $('grid').innerHTML=html;
-  const belumW=new Set(barisRelef.filter(b=>!b.pengganti).map(b=>b.waktu));
+  const belumW=new Set(barisRelief.filter(b=>!b.pengganti).map(b=>b.waktu));
   $('grid').querySelectorAll('tr').forEach(tr=>{[...tr.children].forEach((c,ci)=>{const w=W[ci-1];if(ci>0&&belumW.has(w))c.classList.add('lajur-belum');});});
   zoomGrid=null; muatAuto();
   $('arahanGrid').innerHTML = slotAktif!==null
-    ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b>kuning atau kelabu berjalur</b> pada lajur yang sama.`
-    : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relef, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal. Kad <span class="legenda-rakan">hijau 🤝</span> = relef diberi kepada rakan sekelas guru tidak hadir.';
+    ? `👉 Dipilih: <b>Waktu ${barisRelief[slotAktif].waktu} · ${barisRelief[slotAktif].kelas}</b>. Sekarang tekan petak <b>kuning atau kelabu berjalur</b> pada lajur yang sama.`
+    : 'Tekan kotak jadual guru tidak hadir untuk batalkan relief waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relief. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relief, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal. Kad <span class="legenda-rakan">hijau 🤝</span> = relief diberi kepada rakan sekelas guru tidak hadir.';
 }
 function tukarKeperluan(g,w){
   const st=hariStatus();st[g] ||= {reason:'Tidak hadir'};
@@ -848,22 +849,22 @@ function tukarKeperluan(g,w){
   st[g].ajarSendiri=(st[g].ajarSendiri||[]).filter(x=>x!==w);
   if(!sendiri){
     st[g].ajarSendiri.push(w);
-    barisRelef=barisRelef.filter(b=>!(b.guruAsal===g&&b.waktu===w));
+    barisRelief=barisRelief.filter(b=>!(b.guruAsal===g&&b.waktu===w));
   }else{
-    DATA.kelas.filter(k=>k.hari===hariDipilih()&&k.guru===g&&k.waktu===w).forEach(k=>barisRelef.push({...k,guruAsal:g,pengganti:''}));
-    barisRelef.sort((a,b)=>a.waktu-b.waktu||a.kelas.localeCompare(b.kelas));
+    DATA.kelas.filter(k=>k.hari===hariDipilih()&&k.guru===g&&k.waktu===w).forEach(k=>barisRelief.push({...k,guruAsal:g,pengganti:''}));
+    barisRelief.sort((a,b)=>a.waktu-b.waktu||a.kelas.localeCompare(b.kelas));
   }
   slotAktif=null;simpanTetapan();lukisJadual();
-  toast(sendiri?'Waktu '+w+' perlu relef semula':'Waktu '+w+' dibatalkan — '+nama(g)+' mengajar sendiri');
+  toast(sendiri?'Waktu '+w+' perlu relief semula':'Waktu '+w+' dibatalkan — '+nama(g)+' mengajar sendiri');
 }
 $('grid').addEventListener('keydown',e=>{
   if(e.target.matches('[data-keperluan]')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.target.click();}
 });
 function letakManual(i,g,w){
-  const b=barisRelef[i];
+  const b=barisRelief[i];
   if(!b) return false;
   if(b.waktu!==w){toast('Pindahkan kad pada lajur waktu yang sama sahaja.');return false;}
-  if(!calonSlot(b,i).includes(g)){toast('Guru tidak tersedia: semak kehadiran, kelas, sekatan waktu atau relef pada waktu yang sama.');return false;}
+  if(!calonSlot(b,i).includes(g)){toast('Guru tidak tersedia: semak kehadiran, kelas, sekatan waktu atau relief pada waktu yang sama.');return false;}
   b.pengganti=g; slotAktif=null; lukisJadual(); toast('✅ '+nama(g)+' → '+b.kelas+' (waktu '+w+')');
   return true;
 }
@@ -881,7 +882,7 @@ $('grid').addEventListener('pointermove',e=>{
   e.preventDefault();
   $('grid').querySelectorAll('.c-drop').forEach(t=>t.classList.remove('c-drop'));
   const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-guru]');
-  if(t && +t.dataset.w===barisRelef[seretan.i]?.waktu) t.classList.add('c-drop');
+  if(t && +t.dataset.w===barisRelief[seretan.i]?.waktu) t.classList.add('c-drop');
 });
 function tamatSeret(e){
   if(!seretan || seretan.id!==e.pointerId) return;
@@ -892,7 +893,7 @@ function tamatSeret(e){
   abaikanKlik=true; setTimeout(()=>{abaikanKlik=false;},400);
   const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-guru]');
   if(t) letakManual(d.i,t.dataset.guru,+t.dataset.w);
-  else toast('Petak ini tidak boleh menerima relef. Pilih petak kuning atau kelabu berjalur yang tidak disekat.');
+  else toast('Petak ini tidak boleh menerima relief. Pilih petak kuning atau kelabu berjalur yang tidak disekat.');
 }
 $('grid').addEventListener('pointerup',tamatSeret);
 $('grid').addEventListener('pointercancel',tamatSeret);
@@ -907,20 +908,20 @@ $('grid').addEventListener('click',e=>{
   if(t.dataset.slot!==undefined){ const i=+t.dataset.slot; slotAktif = slotAktif===i?null:i; return lukisGrid(); }
   if(t.dataset.batal!==undefined){
     const i=+t.dataset.batal;
-    if(slotAktif===i){barisRelef[i].pengganti='';slotAktif=null;return lukisJadual();}
+    if(slotAktif===i){barisRelief[i].pengganti='';slotAktif=null;return lukisJadual();}
     slotAktif=i;return lukisGrid();
   }
   const w=+t.dataset.w, g=t.dataset.guru;
-  if(slotAktif!==null && barisRelef[slotAktif]?.waktu!==w) return toast('Pindahkan kad pada lajur waktu yang sama sahaja.');
-  let i = slotAktif!==null ? slotAktif : barisRelef.findIndex(b=>b.waktu===w&&!b.pengganti);
-  if(i<0){ const ada=barisRelef.findIndex(b=>b.waktu===w); if(ada<0) return toast('Tiada kelas perlu relef pada waktu '+w); i=ada; }
+  if(slotAktif!==null && barisRelief[slotAktif]?.waktu!==w) return toast('Pindahkan kad pada lajur waktu yang sama sahaja.');
+  let i = slotAktif!==null ? slotAktif : barisRelief.findIndex(b=>b.waktu===w&&!b.pengganti);
+  if(i<0){ const ada=barisRelief.findIndex(b=>b.waktu===w); if(ada<0) return toast('Tiada kelas perlu relief pada waktu '+w); i=ada; }
   letakManual(i,g,w);
 });
 function lukisTiket(){
-  const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
+  const kumpul={}; barisRelief.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
   const tarikh=labelTarikh().penuh;
   const e=Object.entries(kumpul);
-  $('tiket').innerHTML = e.length ? e.map(([g,l])=>`<div class="tiket">${htmlKepala()}<div class="tiket-badan"><div class="kepala">TIKET RELEF · ${tarikh}</div>
+  $('tiket').innerHTML = e.length ? e.map(([g,l])=>`<div class="tiket">${htmlKepala()}<div class="tiket-badan"><div class="kepala">TIKET RELIEF · ${tarikh}</div>
     <div class="tiket-nama">${esc(nama(g))}</div>
     <table><tr><th>Waktu</th><th>Kelas</th><th>Subjek</th><th>Ganti</th></tr>${l.sort((a,b)=>a.waktu-b.waktu).map(b=>`<tr><td><b>${b.waktu}</b><span class="masa">${masaWaktu(b.waktu,b.kelas)}</span></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${esc(nama(b.guruAsal))}</td></tr>`).join('')}</table>
     <div class="ttd"><span><span class="tiket-bil">${l.length}</span> waktu</span><span>T/T: ________________</span></div></div></div>`).join('')
@@ -930,11 +931,11 @@ function lukisTiket(){
 let gambarBlob=null, gambarNama='';
 function labelTarikh(){ const d=new Date($('tarikh').value+'T00:00:00');
   return {hari:d.toLocaleDateString('ms-MY',{weekday:'long'}), penuh:d.toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'}), pendek:d.toLocaleDateString('ms-MY',{day:'2-digit',month:'short',year:'numeric'}),
-    fail:'Relef_'+d.toLocaleDateString('ms-MY',{weekday:'long'}).replace(/\s+/g,'')+'_'+[String(d.getDate()).padStart(2,'0'),String(d.getMonth()+1).padStart(2,'0'),d.getFullYear()].join('-')+'.png'}; }
+    fail:'Relief_'+d.toLocaleDateString('ms-MY',{weekday:'long'}).replace(/\s+/g,'')+'_'+[String(d.getDate()).padStart(2,'0'),String(d.getMonth()+1).padStart(2,'0'),d.getFullYear()].join('-')+'.png'}; }
 let logoImg=null;
 function janaGambar(){
   const lg=kepala().logo; if(lg&&(!logoImg||logoImg.src!==lg)){ logoImg=new Image(); logoImg.onload=()=>janaGambar(); logoImg.src=lg; return; } if(!lg) logoImg=null;
-  gambarBlob=null; const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
+  gambarBlob=null; const kumpul={}; barisRelief.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
   const e=Object.entries(kumpul); if(!e.length) return;
   const L=labelTarikh(); gambarNama=L.fail; const K=kepala();
   const W=1080,P=44,F=(w,sz)=>`${w} ${sz}px Lexend, system-ui, sans-serif`;
@@ -942,7 +943,7 @@ function janaGambar(){
   const balut=(t,f,m)=>{ x.font=f; const kata=String(t).split(/\s+/); const out=[]; let bar='';
     kata.forEach(k=>{ const cuba=bar?bar+' '+k:k; if(x.measureText(cuba).width<=m) bar=cuba; else { if(bar) out.push(bar); bar=k; } }); if(bar) out.push(bar); return out; };
   const fit=(t,m)=>{t=String(t);while(x.measureText(t).width>m&&t.length>2)t=t.slice(0,-2)+'…';return t;};
-  const ada=barisRelef.some(b=>masaWaktu(b.waktu,b.kelas)), RH=ada?66:50;
+  const ada=barisRelief.some(b=>masaWaktu(b.waktu,b.kelas)), RH=ada?66:50;
   const fNama=F(700,30), fGanti=F(500,22);
   const kad=e.map(([g,l])=>{ l.sort((a,b)=>a.waktu-b.waktu); const nm=balut(nama(g).toUpperCase(),fNama,W-2*P-200);
     const baris=l.map(b=>({b,g:balut(nama(b.guruAsal),fGanti,W-2*P-640)}));
@@ -952,12 +953,12 @@ function janaGambar(){
   x.strokeStyle='rgba(34,211,238,.06)'; x.lineWidth=1; for(let i=0;i<W;i+=36){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke();}
   // kepala surat
   let tx=P; if(logoImg){ x.fillStyle='#fff'; x.beginPath(); x.roundRect(P,40,120,120,22); x.fill(); const sk=Math.min(104/logoImg.width,104/logoImg.height); x.drawImage(logoImg,P+60-logoImg.width*sk/2,100-logoImg.height*sk/2,logoImg.width*sk,logoImg.height*sk); tx=P+148; }
-  const mw=W-tx-P; x.fillStyle='#22d3ee'; x.font=F(700,18); x.fillText(fit((K.tajuk||'JADUAL RELEF GURU').toUpperCase().split('').join('\u200A'),mw),tx,62);
-  x.fillStyle='#fff'; x.font=F(700,34); const sl=balut((K.sekolah||'Sistem Relef Guru').toUpperCase(),F(700,34),mw).slice(0,2); sl.forEach((t,i)=>x.fillText(t,tx,104+i*38));
+  const mw=W-tx-P; x.fillStyle='#22d3ee'; x.font=F(700,18); x.fillText(fit((K.tajuk||'JADUAL RELIEF GURU').toUpperCase().split('').join('\u200A'),mw),tx,62);
+  x.fillStyle='#fff'; x.font=F(700,34); const sl=balut((K.sekolah||'Sistem Relief Guru').toUpperCase(),F(700,34),mw).slice(0,2); sl.forEach((t,i)=>x.fillText(t,tx,104+i*38));
   x.fillStyle='rgba(255,255,255,.7)'; x.font=F(400,19); const inf=[K.alamat,infoKepala(K).replace(/\s{2,}/g,' · ')].filter(Boolean).join(' · '); if(inf) x.fillText(fit(inf,mw),tx,110+sl.length*38);
   const gl=x.createLinearGradient(0,0,W,0); gl.addColorStop(0,'#22d3ee'); gl.addColorStop(.5,'#f5b942'); gl.addColorStop(1,'#22d3ee'); x.fillStyle=gl; x.fillRect(0,KH-4,W,4);
   // jalur tarikh
-  x.fillStyle='#f5b942'; x.font=F(700,18); x.fillText('LAPORAN RELEF  ·  '+kad.length+' GURU  ·  '+kad.reduce((a,k)=>a+k.n,0)+' WAKTU',P,KH+48);
+  x.fillStyle='#f5b942'; x.font=F(700,18); x.fillText('LAPORAN RELIEF  ·  '+kad.length+' GURU  ·  '+kad.reduce((a,k)=>a+k.n,0)+' WAKTU',P,KH+48);
   x.fillStyle='#fff'; x.font=F(700,44); x.fillText(fit(L.penuh.toUpperCase(),W-2*P),P,KH+100);
   let y=KH+BH+30;
   kad.forEach(k=>{
@@ -973,25 +974,25 @@ function janaGambar(){
       x.fillStyle='#fff'; x.font=F(600,24); x.fillText(fit(b.kelas,230),P+150,by); x.font=F(400,22); x.fillText(fit(b.subjek,200),P+400,by);
       x.fillStyle='rgba(255,255,255,.8)'; x.font=fGanti; r.g.forEach((t,j)=>x.fillText(t,P+620,by+j*28)); yy+=h; });
     y+=k.h+26; });
-  x.fillStyle='rgba(255,255,255,.45)'; x.font=F(400,18); x.fillText('Sistem Relef Guru · dijana '+new Date().toLocaleString('ms-MY'),P,H-30);
+  x.fillStyle='rgba(255,255,255,.45)'; x.font=F(400,18); x.fillText('Sistem Relief Guru · dijana '+new Date().toLocaleString('ms-MY'),P,H-30);
   c.toBlob(b=>{gambarBlob=b;},'image/png');
 }
 $('btnKongsiGambar').onclick=async()=>{
-  if(!gambarBlob) return toast('Tiada tiket relef untuk dijadikan gambar');
+  if(!gambarBlob) return toast('Tiada tiket relief untuk dijadikan gambar');
   const f=new File([gambarBlob],gambarNama,{type:'image/png'});
-  if(navigator.canShare?.({files:[f]})){ try{ await navigator.share({files:[f],title:gambarNama.replace('.png',''),text:'Jadual Relef '+labelTarikh().penuh}); return; }catch(err){ if(err.name==='AbortError') return; } }
+  if(navigator.canShare?.({files:[f]})){ try{ await navigator.share({files:[f],title:gambarNama.replace('.png',''),text:'Jadual Relief '+labelTarikh().penuh}); return; }catch(err){ if(err.name==='AbortError') return; } }
   muatTurunGambar(); toast('Peranti ini tidak menyokong kongsi terus — gambar dimuat turun');
 };
-function muatTurunGambar(){ if(!gambarBlob) return toast('Tiada tiket relef untuk dijadikan gambar');
+function muatTurunGambar(){ if(!gambarBlob) return toast('Tiada tiket relief untuk dijadikan gambar');
   const u=URL.createObjectURL(gambarBlob),a=document.createElement('a'); a.href=u; a.download=gambarNama; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),30000); }
 $('btnMuatGambar').onclick=muatTurunGambar;
-$('kpSimpan').onclick=()=>{ const k=kepala(); Object.entries(KP_MEDAN).forEach(([f,id])=>k[f]=$(id).value.trim()); tetapan.kepala=k; simpanTetapan(); lukisKepala(); if(barisRelef.length) lukisJadual(); toast('✅ Kepala surat disimpan'); };
-$('kpBuangLogo').onclick=()=>{ tetapan.kepala={...kepala(),logo:''}; simpanTetapan(); $('kpLogo').value=''; lukisKepala(); if(barisRelef.length) lukisJadual(); };
+$('kpSimpan').onclick=()=>{ const k=kepala(); Object.entries(KP_MEDAN).forEach(([f,id])=>k[f]=$(id).value.trim()); tetapan.kepala=k; simpanTetapan(); lukisKepala(); if(barisRelief.length) lukisJadual(); toast('✅ Kepala surat disimpan'); };
+$('kpBuangLogo').onclick=()=>{ tetapan.kepala={...kepala(),logo:''}; simpanTetapan(); $('kpLogo').value=''; lukisKepala(); if(barisRelief.length) lukisJadual(); };
 $('kpLogo').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const im=new Image(); im.onload=()=>{ const m=240,sk=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas'); c.width=Math.round(im.width*sk); c.height=Math.round(im.height*sk); c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-  tetapan.kepala={...kepala(),logo:c.toDataURL('image/png')}; simpanTetapan(); lukisKepala(); if(barisRelef.length) lukisJadual(); toast('✅ Logo disimpan'); }; im.src=r.result; }; r.readAsDataURL(f); };
+  tetapan.kepala={...kepala(),logo:c.toDataURL('image/png')}; simpanTetapan(); lukisKepala(); if(barisRelief.length) lukisJadual(); toast('✅ Logo disimpan'); }; im.src=r.result; }; r.readAsDataURL(f); };
 isiBorangKepala();
 function cetak(mod){ document.body.classList.add(mod); setTimeout(()=>{ window.print(); document.body.classList.remove(mod); },50); }
-$('jadual').addEventListener('change',e=>{ if(e.target.dataset.i!==undefined){ const i=+e.target.dataset.i,g=e.target.value;if(g&&!calonSlot(barisRelef[i],i).includes(g)){toast('Guru tidak tersedia pada waktu ini');return lukisJadual();}barisRelef[i].pengganti=g;lukisJadual(); }});
+$('jadual').addEventListener('change',e=>{ if(e.target.dataset.i!==undefined){ const i=+e.target.dataset.i,g=e.target.value;if(g&&!calonSlot(barisRelief[i],i).includes(g)){toast('Guru tidak tersedia pada waktu ini');return lukisJadual();}barisRelief[i].pengganti=g;lukisJadual(); }});
 function binaSelamat(auto){
   const b=$(auto?'btnAuto':'btnManual'), asal=b.textContent;
   b.disabled=true; b.textContent='⏳ Sedang menyusun...';
@@ -1004,8 +1005,8 @@ $('btnReset').onclick=()=>{ tidakHadir.clear();Object.values(hariStatus()).forEa
 
 /* ================== WHATSAPP / SIMPAN ================== */
 $('btnWA').onclick=()=>{
-  const K=kepala(), L=labelTarikh(), kumpul={}; barisRelef.forEach(b=>(kumpul[b.pengganti||'']=kumpul[b.pengganti||'']||[]).push(b));
-  let t=`🏫 *${(K.sekolah||'SISTEM RELEF GURU').toUpperCase()}*\n━━━━━━━━━━━━━━\n📅 *RELEF · ${L.penuh.toUpperCase()}*\n━━━━━━━━━━━━━━\n`;
+  const K=kepala(), L=labelTarikh(), kumpul={}; barisRelief.forEach(b=>(kumpul[b.pengganti||'']=kumpul[b.pengganti||'']||[]).push(b));
+  let t=`🏫 *${(K.sekolah||'SISTEM RELIEF GURU').toUpperCase()}*\n━━━━━━━━━━━━━━\n📅 *RELIEF · ${L.penuh.toUpperCase()}*\n━━━━━━━━━━━━━━\n`;
   Object.entries(kumpul).sort(([a],[b])=>!a-!b).forEach(([g,l])=>{ t+=`\n👤 *${g?nama(g).toUpperCase():'⚠️ BELUM ADA GANTI'}*\n`;
     l.sort((a,b)=>a.waktu-b.waktu).forEach(b=>{ t+=`   ▸ W${b.waktu}${masaWaktu(b.waktu,b.kelas)?' ('+masaWaktu(b.waktu,b.kelas)+')':''} · ${b.kelas} · ${b.subjek}\n`; }); });
   t+='\n━━━━━━━━━━━━━━\nTerima kasih cikgu 🙏';
@@ -1014,16 +1015,16 @@ $('btnWA').onclick=()=>{
 function bacaRekod(){ try{return JSON.parse(localStorage.getItem(KUNCI_REKOD))||[];}catch{return [];} }
 $('btnSimpan').onclick=()=>{
   const tarikh=$('tarikh').value;
-  const baru = barisRelef.map(b=>({tarikh,hari:b.hari,waktu:b.waktu,kelas:b.kelas,subjek:b.subjek,guruAsal:nama(b.guruAsal),pengganti:b.pengganti,namaPengganti:b.pengganti?nama(b.pengganti):''}));
+  const baru = barisRelief.map(b=>({tarikh,hari:b.hari,waktu:b.waktu,kelas:b.kelas,subjek:b.subjek,guruAsal:nama(b.guruAsal),pengganti:b.pengganti,namaPengganti:b.pengganti?nama(b.pengganti):''}));
   const rekod = bacaRekod().filter(r=>r.tarikh!==tarikh).concat(baru);
   localStorage.setItem(KUNCI_REKOD,JSON.stringify(rekod));
-  if(DALAM_GAS){ google.script.run.withSuccessHandler(()=>toast('💾 Disimpan ke Google Sheet')).withFailureHandler(e=>toast('Gagal simpan: '+e.message)).simpanRelef(tarikh,baru); }
+  if(DALAM_GAS){ google.script.run.withSuccessHandler(()=>toast('💾 Disimpan ke Google Sheet')).withFailureHandler(e=>toast('Gagal simpan: '+e.message)).simpanRelief(tarikh,baru); }
   else toast('✔ Rekod disimpan dalam komputer ini');
   lukisStat();
 };
 function simpanRekodSenyap(){
   const tarikh=$('tarikh').value; if(!tarikh||jadualTarikh!==tarikh) return;
-  const baru = barisRelef.map(b=>({tarikh,hari:b.hari,waktu:b.waktu,kelas:b.kelas,subjek:b.subjek,guruAsal:nama(b.guruAsal),pengganti:b.pengganti,namaPengganti:b.pengganti?nama(b.pengganti):''}));
+  const baru = barisRelief.map(b=>({tarikh,hari:b.hari,waktu:b.waktu,kelas:b.kelas,subjek:b.subjek,guruAsal:nama(b.guruAsal),pengganti:b.pengganti,namaPengganti:b.pengganti?nama(b.pengganti):''}));
   localStorage.setItem(KUNCI_REKOD,JSON.stringify(bacaRekod().filter(r=>r.tarikh!==tarikh).concat(baru)));
 }
 function htmlStat(){
@@ -1035,16 +1036,16 @@ function htmlStat(){
   const nm=g=>(DATA?.guru||[]).some(x=>x.singkat===g)?nama(g):namaRek[g];
   return '<table><tr><th>Bil</th><th>Guru</th><th>Hari ini</th><th>Jumlah keseluruhan</th></tr>'+e.map(([g,n],i)=>`<tr><td>${i+1}</td><td>${esc(nm(g))}</td><td>${hari[g]||'-'}</td><td><span class="stat-bar" style="width:${Math.round(n/max*120)}px"></span><b>${n}</b></td></tr>`).join('')+'</table>';
 }
-function lukisStat(){ const h=htmlStat(); $('statRelef').innerHTML=h; if($('statHasil')) $('statHasil').innerHTML=h; }
-function togolStat(){ const b=$('statBlok'); b.hidden=!b.hidden; const bu=$('btnTogolStat'); bu.innerHTML=b.hidden?'📊 Statistik jumlah relef setiap guru ▸':'📊 Statistik jumlah relef setiap guru ▾'; if(!b.hidden) lukisStat(); }
+function lukisStat(){ const h=htmlStat(); $('statRelief').innerHTML=h; if($('statHasil')) $('statHasil').innerHTML=h; }
+function togolStat(){ const b=$('statBlok'); b.hidden=!b.hidden; const bu=$('btnTogolStat'); bu.innerHTML=b.hidden?'📊 Statistik jumlah relief setiap guru ▸':'📊 Statistik jumlah relief setiap guru ▾'; if(!b.hidden) lukisStat(); }
 $('btnResetStat').onclick=()=>{
-  if(prompt('Semua sejarah relef akan dipadam dan tidak boleh dikembalikan.\nTaip RESET untuk sahkan:')!=='RESET') return toast('Reset dibatalkan');
-  localStorage.removeItem(KUNCI_REKOD); lukisStat(); toast('🗑️ Statistik relef telah direset');
+  if(prompt('Semua sejarah relief akan dipadam dan tidak boleh dikembalikan.\nTaip RESET untuk sahkan:')!=='RESET') return toast('Reset dibatalkan');
+  localStorage.removeItem(KUNCI_REKOD); lukisStat(); toast('🗑️ Statistik relief telah direset');
 };
 
 $('btnBackup').onclick=()=>{
   const blob=new Blob([JSON.stringify({data:DATA,rekod:bacaRekod(),tetapan})],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='backup-relef-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='backup-relief-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
   toast('⬇ Fail backup dimuat turun');
 };
 $('btnPulih').onclick=()=>$('failPulih').click();
@@ -1091,9 +1092,9 @@ async function bacaData(){
 </script>
 
 <script>
-/* ================== WHATSAPP KAD RELEF ================== */
+/* ================== WHATSAPP KAD RELIEF ================== */
 (function(){
-const KT='relefTelefonGuru',KP='relefPinAdmin',KH='relefWAHantar';
+const KT='reliefTelefonGuru',KP='reliefPinAdmin',KH='reliefWAHantar';
 const baca=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
 const tulis=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 let tel=baca(KT)||{}, kunci=!!localStorage.getItem(KP);
@@ -1115,11 +1116,11 @@ new MutationObserver(lukisTel).observe($('senaraiGuru'),{childList:true}); lukis
 
 function sapaan(){const h=new Date().getHours();return h<12?'Selamat pagi':h<15?'Selamat tengah hari':h<19?'Selamat petang':'Selamat malam';}
 function kad(g,l,jenis){
-  const K=kepala(), L=labelTarikh(), sek=(K.sekolah||'Sistem Relef Guru').toUpperCase();
+  const K=kepala(), L=labelTarikh(), sek=(K.sekolah||'Sistem Relief Guru').toUpperCase();
   let t=`🏫 *${sek}*\n`;
-  if(jenis==='batal') return t+`━━━━━━━━━━━━━━━━\n🔔 *MAKLUMAN PEMBATALAN RELEF*\n📅 ${L.penuh}\n━━━━━━━━━━━━━━━━\n\nAssalamualaikum dan ${sapaan().toLowerCase()} *${nama(g)}*,\n\nDengan hormatnya dimaklumkan bahawa tugasan relef cikgu pada hari ini *telah dibatalkan* susulan perubahan jadual. Cikgu tidak perlu lagi masuk ke kelas relef yang dimaklumkan sebelum ini.\n\nMohon maaf atas sebarang kesulitan. Terima kasih atas keprihatinan cikgu 🙏`;
-  t+=`━━━━━━━━━━━━━━━━\n${jenis==='baru'?'🔄 *KAD RELEF (DIKEMAS KINI)*':'🎫 *KAD RELEF GURU*'}\n📅 ${L.penuh}\n━━━━━━━━━━━━━━━━\n\nAssalamualaikum dan ${sapaan().toLowerCase()} *${nama(g)}*,\n\n`;
-  t+= jenis==='baru' ? `Mohon maaf, terdapat *perubahan* pada jadual relef hari ini. Berikut ialah kad relef terkini untuk rujukan cikgu (sila abaikan kad sebelum ini):\n\n` : `Dengan hormatnya, cikgu dijemput untuk melaksanakan tugasan relef seperti berikut:\n\n`;
+  if(jenis==='batal') return t+`━━━━━━━━━━━━━━━━\n🔔 *MAKLUMAN PEMBATALAN RELIEF*\n📅 ${L.penuh}\n━━━━━━━━━━━━━━━━\n\nAssalamualaikum dan ${sapaan().toLowerCase()} *${nama(g)}*,\n\nDengan hormatnya dimaklumkan bahawa tugasan relief cikgu pada hari ini *telah dibatalkan* susulan perubahan jadual. Cikgu tidak perlu lagi masuk ke kelas relief yang dimaklumkan sebelum ini.\n\nMohon maaf atas sebarang kesulitan. Terima kasih atas keprihatinan cikgu 🙏`;
+  t+=`━━━━━━━━━━━━━━━━\n${jenis==='baru'?'🔄 *KAD RELIEF (DIKEMAS KINI)*':'🎫 *KAD RELIEF GURU*'}\n📅 ${L.penuh}\n━━━━━━━━━━━━━━━━\n\nAssalamualaikum dan ${sapaan().toLowerCase()} *${nama(g)}*,\n\n`;
+  t+= jenis==='baru' ? `Mohon maaf, terdapat *perubahan* pada jadual relief hari ini. Berikut ialah kad relief terkini untuk rujukan cikgu (sila abaikan kad sebelum ini):\n\n` : `Dengan hormatnya, cikgu dijemput untuk melaksanakan tugasan relief seperti berikut:\n\n`;
   l.slice().sort((a,b)=>a.waktu-b.waktu).forEach((b,i)=>{const m=masaWaktu(b.waktu,b.kelas);t+=`*${i+1}. Waktu ${b.waktu}*${m?'  ⏰ '+m:''}\n   🏷️ Kelas : *${b.kelas}*\n   📚 Subjek : ${b.subjek||'-'}\n   👤 Ganti : ${nama(b.guruAsal)}\n\n`;});
   t+=`━━━━━━━━━━━━━━━━\n📌 Jumlah: *${l.length} waktu*\n\nJasa dan kerjasama cikgu amat dihargai. Terima kasih 🙏🌷`;
   return t;
@@ -1128,7 +1129,7 @@ function cap(l){return l.map(b=>b.waktu+'|'+b.kelas+'|'+b.subjek).sort().join(';
 let antrian=[];
 function sediakan(){
   const tarikh=$('tarikh').value, rek=baca(KH)||{}, lama=rek[tarikh]||{}, kumpul={};
-  barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
+  barisRelief.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
   antrian=[];
   Object.entries(kumpul).forEach(([g,l])=>{const c=cap(l),dulu=lama[g];
     antrian.push({g,l,c,jenis:dulu?(dulu===c?'sama':'baru'):'asal'});});
@@ -1141,12 +1142,12 @@ function lukisWA(){
   $('waInfo').innerHTML=`${antrian.length} guru terlibat · <b>${baki}</b> perlu dihantar${tak?` · <span style="color:var(--merah)">${tak} tiada nombor</span>`:''}`;
   $('waMula').disabled=!baki; $('waMula').textContent=baki?`🚀 Hantar Seterusnya (${baki} lagi)`:'✅ Semua kad telah dihantar';
   const lbl={asal:['Belum hantar',''],baru:['Ada perubahan','baru'],batal:['Dibatalkan','x'],sama:['Dihantar','ok']};
-  $('waSenarai').innerHTML=antrian.map((x,i)=>{const n=normal(tel[x.g]),[t,k]=lbl[x.jenis];return `<div class="wa-baris"><span><b>${esc(nama(x.g))}</b><small>${n?'+'+n:'⚠️ Tiada nombor — tetapkan di Data & Tetapan'} · ${x.l.length} waktu</small></span><span class="wa-st ${n?k:'x'}" style="flex:none">${t}</span><button class="kedua" data-wa="${i}" ${n?'':'disabled'}>${x.jenis==='sama'?'↻':'➤'}</button></div>`;}).join('')||'<p class="bantu">Tiada relef untuk dihantar.</p>';
+  $('waSenarai').innerHTML=antrian.map((x,i)=>{const n=normal(tel[x.g]),[t,k]=lbl[x.jenis];return `<div class="wa-baris"><span><b>${esc(nama(x.g))}</b><small>${n?'+'+n:'⚠️ Tiada nombor — tetapkan di Data & Tetapan'} · ${x.l.length} waktu</small></span><span class="wa-st ${n?k:'x'}" style="flex:none">${t}</span><button class="kedua" data-wa="${i}" ${n?'':'disabled'}>${x.jenis==='sama'?'↻':'➤'}</button></div>`;}).join('')||'<p class="bantu">Tiada relief untuk dihantar.</p>';
 }
 function hantar(i){const x=antrian[i],n=normal(tel[x.g]);if(!n)return;
   const jenis=x.jenis==='sama'?(x.c==='BATAL'?'batal':'asal'):x.jenis;
   window.open('https://wa.me/'+n+'?text='+encodeURIComponent(kad(x.g,x.l,jenis)),'_blank');rekod(x);lukisWA();}
-$('btnWA').onclick=()=>{ if(!barisRelef.length){toast('Tiada relef untuk dihantar');return;} sediakan(); $('waPra').hidden=true; lukisWA(); $('dlgWA').showModal(); };
+$('btnWA').onclick=()=>{ if(!barisRelief.length){toast('Tiada relief untuk dihantar');return;} sediakan(); $('waPra').hidden=true; lukisWA(); $('dlgWA').showModal(); };
 $('waMula').onclick=()=>{const i=antrian.findIndex(x=>x.jenis!=='sama'&&normal(tel[x.g]));if(i>=0)hantar(i);};
 $('waSenarai').addEventListener('click',e=>{const b=e.target.closest('[data-wa]');if(b)hantar(+b.dataset.wa);});
 $('waPrev').onclick=()=>{const x=antrian.find(x=>x.l.length)||antrian[0];if(!x)return;const p=$('waPra');p.hidden=!p.hidden;p.textContent=kad(x.g,x.l,x.jenis==='sama'?'asal':x.jenis);};
@@ -1154,11 +1155,11 @@ $('waTutup').onclick=()=>$('dlgWA').close();
 })();
 </script>
 <script>
-(function(){var t=document.querySelectorAll('.tab-bar [data-tab]');function buka(id){t.forEach(function(b){b.classList.toggle('aktif',b.dataset.tab===id);b.setAttribute('aria-selected',b.dataset.tab===id)});document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('aktif',p.id===id)});try{localStorage.setItem('tabRelef',id)}catch(e){}window.scrollTo({top:0,behavior:'smooth'})}
+(function(){var t=document.querySelectorAll('.tab-bar [data-tab]');function buka(id){t.forEach(function(b){b.classList.toggle('aktif',b.dataset.tab===id);b.setAttribute('aria-selected',b.dataset.tab===id)});document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('aktif',p.id===id)});try{localStorage.setItem('tabRelief',id)}catch(e){}window.scrollTo({top:0,behavior:'smooth'})}
 t.forEach(function(b){b.addEventListener('click',function(){buka(b.dataset.tab)})});
 var f=document.getElementById('fail');if(f)f.addEventListener('change',function(){setTimeout(function(){buka('panelHarian')},900)});
 var h=document.getElementById('hasil');if(h)new MutationObserver(function(){if(!h.classList.contains('tersembunyi'))buka('panelHarian')}).observe(h,{attributes:true,attributeFilter:['class']});
-var s=null;try{s=localStorage.getItem('tabRelef')}catch(e){}if(s&&document.getElementById(s))buka(s);})();
+var s=null;try{s=localStorage.getItem('tabRelief')}catch(e){}if(s&&document.getElementById(s))buka(s);})();
 </script>
 </body>
 </html>
