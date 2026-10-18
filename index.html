@@ -264,6 +264,19 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
 .grid td.lajur-belum,.grid th.lajur-belum{position:relative}
 .grid td.lajur-belum::after,.grid th.lajur-belum::after{content:"";position:absolute;top:-4px;bottom:-4px;left:50%;width:10px;transform:translateX(-50%);background:rgba(255,40,40,.28);pointer-events:none;z-index:2}
 .grid th.lajur-belum::after{background:rgba(255,230,80,.55)}
+
+/* Kad 3D */
+.grid td.c-ajar,.grid td.c-relief,.grid .kotak-relief{border-radius:12px!important;line-height:1.2;vertical-align:middle;text-align:center;transition:transform .15s,box-shadow .15s}
+.grid td.c-ajar{background:linear-gradient(160deg,#fff7d6,#ffd98a);color:#5a3a00;box-shadow:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -4px 0 rgba(0,0,0,.12),0 4px 8px rgba(90,58,0,.25)}
+.grid td.c-relief{background:linear-gradient(160deg,#c9ecff,#5fb7f5);box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -4px 0 rgba(0,0,0,.18),0 5px 10px rgba(5,52,94,.35)}
+.grid td.c-relief.c-rakan{background:linear-gradient(160deg,#e3fbe9,var(--rakan))}
+.grid .kotak-relief{box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -3px 0 rgba(0,0,0,.15),0 4px 8px rgba(0,0,0,.25)}
+.grid td.c-ajar:hover,.grid td.c-relief:hover{transform:translateY(-2px)}
+.kls{display:block;font-weight:800;font-size:.82em;white-space:nowrap;letter-spacing:.2px}
+.subj{display:block;margin-top:2px;font-size:.7em;font-weight:600;opacity:.75}
+.subj+.kls{margin-top:5px;padding-top:5px;border-top:1px dashed currentColor}
+.lbl{display:block;font-size:.68em;letter-spacing:1px;opacity:.8;margin-bottom:2px}
+@media print{.grid td.c-ajar,.grid td.c-relief,.grid .kotak-relief{box-shadow:none!important;transform:none!important}}
 </style>
 </head>
 <body>
@@ -742,6 +755,7 @@ function bina(auto){
   slotAktif=null;
   lukisJadual(); $('hasil').classList.remove('tersembunyi'); $('hasil').scrollIntoView({behavior:'smooth'});
 }
+function kls(k){return String(k||'').split(/\s*,\s*/).filter(Boolean).map(x=>'<span class="kls">'+esc(x)+'</span>').join('');}
 function lukisJadualLama(){
   const h=hariDipilih(), tak=guruTakHadir();
   $('tajukHasil').textContent = `Jadual Relief — ${h}, ${new Date($('tarikh').value).toLocaleDateString('ms-MY',{day:'numeric',month:'long',year:'numeric'})}`;
@@ -804,7 +818,8 @@ function lukisGrid(){
   const ajar=(g,w)=>DATA.kelas.filter(k=>k.hari===h&&k.waktu===w&&k.guru===g);
   if(slotAktif!==null && !barisRelief[slotAktif]) slotAktif=null;
   let html='<tr><th>Guru</th>'+W.map(w=>`<th data-thw="${w}" title="Tekan untuk isi masa" class="${perluW.has(w)?'perlu':''}">${w}${labelHeader(w)}</th>`).join('')+'<th class="th-backup"><button class="kedua" data-bmasa="backup" title="Backup semua masa waktu">💾 Backup</button><button class="kedua" data-bmasa="restore" title="Restore masa dari fail backup" style="margin-top:4px">📂 Restore</button></th></tr>';
-  tak.forEach(g=>{
+  // Absent teachers with no class today are hidden: nothing to relieve.
+  tak.filter(g=>DATA.kelas.some(k=>k.hari===h&&k.guru===g)).forEach(g=>{
     html+=`<tr class="absen"><td class="nama">✖ ${g}</td>`+W.map(w=>{
       const idx=barisRelief.map((b,i)=>i).filter(i=>barisRelief[i].waktu===w&&barisRelief[i].guruAsal===g);
       const pelajaran=ajar(g,w);
@@ -812,7 +827,7 @@ function lukisGrid(){
       const sendiri=(hariStatus()[g]?.ajarSendiri||[]).includes(w);
       if(sendiri) return `<td class="c-sendiri" role="button" tabindex="0" data-keperluan="${esc(g)}" data-w="${w}" aria-label="Perlu relief ${esc(g)} waktu ${w}" title="Tekan untuk perlukan relief semula">${pelajaran.map(k=>esc(k.kelas)).join('<br>')}<br><small>AJAR SENDIRI</small></td>`;
       return `<td class="c-perlu ${idx.length&&idx.every(i=>barisRelief[i].pengganti)?'ok':''}" role="button" tabindex="0" data-keperluan="${esc(g)}" data-w="${w}" aria-label="Batalkan relief ${esc(g)} waktu ${w}" title="Tekan untuk batalkan keperluan relief; guru asal mengajar">`+idx.map(i=>{const b=barisRelief[i];
-        return `<div class="kotak-relief c-perlu ${b.pengganti?'ok':''} ${slotAktif===i?'aktif':''}">${esc(b.kelas)}<br><small>${esc(b.pengganti||'?')}</small><button class="pilih-slot" data-slot="${i}" aria-label="Pilih guru ganti ${esc(g)} waktu ${w}" title="Pilih / tukar guru ganti">↗</button></div>`;}).join('')+'</td>';
+        return `<div class="kotak-relief c-perlu ${b.pengganti?'ok':''} ${slotAktif===i?'aktif':''}">${kls(b.kelas)}<small class="subj">${esc(b.pengganti||'?')}</small><button class="pilih-slot" data-slot="${i}" aria-label="Pilih guru ganti ${esc(g)} waktu ${w}" title="Pilih / tukar guru ganti">↗</button></div>`;}).join('')+'</td>';
     }).join('')+'</tr>';
   });
   const baki=DATA.guru.filter(g=>!tak.includes(g.singkat));
@@ -821,11 +836,11 @@ function lukisGrid(){
     html+=`<tr><td class="nama" title="${esc(g.nama)}">${tetapan.freeze.includes(g.singkat)?'❄️ ':''}${esc(g.singkat)}</td>`+W.map(w=>{
       const rel=barisRelief.map((b,i)=>i).find(i=>barisRelief[i].waktu===w&&barisRelief[i].pengganti===g.singkat);
       if(rel!==undefined) {const rk=ReliefEngine.coTeachers(konteks(),barisRelief[rel]).includes(g.singkat);
-      return `<td class="c-relief ${rk?'c-rakan':''} ${slotAktif===rel?'aktif':''}" data-batal="${rel}" title="${rk?'Rakan sekelas guru tidak hadir · ':''}Seret untuk pindah; tekan untuk pilih, tekan sekali lagi untuk batal">RELIEF${rk?' 🤝':''}<br>${barisRelief[rel].kelas}</td>`;}
+      return `<td class="c-relief ${rk?'c-rakan':''} ${slotAktif===rel?'aktif':''}" data-batal="${rel}" title="${rk?'Rakan sekelas guru tidak hadir · ':''}Seret untuk pindah; tekan untuk pilih, tekan sekali lagi untuk batal"><span class="lbl">RELIEF${rk?' 🤝':''}</span>${kls(barisRelief[rel].kelas)}</td>`;}
       const a=ajar(g.singkat,w);
       if(a.length){const pulang=barisRelief.some(b=>b.waktu===w&&a.some(x=>x.kelas===b.kelas)&&ReliefEngine.coTeachers(konteks(),b).includes(g.singkat));
-      if(pulang) return `<td class="c-ajar c-pulang" data-guru="${g.singkat}" data-w="${w}" title="Rakan sekelas · boleh terima semula kad relief kelas ini">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;}
-      if(a.length) return `<td class="c-ajar">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;
+      if(pulang) return `<td class="c-ajar c-pulang" data-guru="${g.singkat}" data-w="${w}" title="Rakan sekelas · boleh terima semula kad relief kelas ini">${a.map(x=>kls(x.kelas)+'<small class="subj">'+x.subjek+'</small>').join('')}</td>`;}
+      if(a.length) return `<td class="c-ajar">${a.map(x=>kls(x.kelas)+'<small class="subj">'+x.subjek+'</small>').join('')}</td>`;
       if((hariStatus()[g.singkat]?.blocked||[]).includes(w)) return '<td class="c-tiada" title="Sekatan waktu">SEKAT</td>';
       if((DATA.free[h+'|'+w]||[]).includes(g.singkat)) return `<td class="c-free" data-guru="${g.singkat}" data-w="${w}" title="${tetapan.freeze.includes(g.singkat)?'Guru freeze · pilih secara manual':'Free'}">${tetapan.freeze.includes(g.singkat)?'❄️':''}</td>`;
       return `<td class="c-tiada c-klik" data-guru="${g.singkat}" data-w="${w}" title="Tidak bertugas · tekan untuk letak relief secara manual"></td>`;

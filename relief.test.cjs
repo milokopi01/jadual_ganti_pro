@@ -136,7 +136,8 @@
   let r=E.assign({data,day:'Isnin',absent:['X'],frozen:[]},rows).map(x=>x.pengganti);
   assert.ok(r.filter(g=>g==='AHM').length>=2,'teacher with no classes takes at least 2: '+r);
   r=E.assign({data,day:'Isnin',absent:['X'],frozen:[],history:{AHM:6}},rows).map(x=>x.pengganti);
-  assert.strictEqual(r.filter(g=>g==='AHM').length,1,'year balance: far-ahead idle teacher still gets exactly 1: '+r);
+  // Today's load comes first: free-all-day AHM still takes more than SQR/HSM (2 classes each) even with high year history.
+  assert.ok(r.filter(g=>g==='AHM').length>=2,'idle teacher must out-take busy teachers today: '+r);
   assert.deepStrictEqual(E.historyCounts([{tarikh:'2025-12-01',pengganti:'A'},{tarikh:'2026-02-01',pengganti:'A'}],'2026-03-01'),{A:1});
   console.log('zero-class ok');
 }

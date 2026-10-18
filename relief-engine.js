@@ -104,7 +104,9 @@ function candidates(ctx,row,rows,ignore=-1){
  // Balance across the whole year: reliefs already taken this year + today's reliefs,
  // plus half a point per own lesson today, so a teacher with no classes today takes
  // several reliefs before a busy teacher takes one, but nobody gets far ahead for the year.
- const burden=g=>(history[g]||0)+(counts[g]||0)+loads[g]/2;
+ // Today first: own lessons + reliefs already given today. Year history only breaks ties.
+ const today=g=>(counts[g]||0)+loads[g];
+ const burden=g=>today(g)*1000+(history[g]||0);
  // Guarantee: a teacher with no own class today who has no relief yet today goes first (at least 1 relief card).
  const idle=g=>loads[g]===0&&!(counts[g]>0)?0:1;
  const sort=list=>list.sort((a,b)=>idle(a)-idle(b)||burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));

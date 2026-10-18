@@ -1,5 +1,5 @@
 // Service worker Sistem Relief Guru — halaman: network-first, fail lain: cache-first
-const CACHE = 'relief-guru-v2c.25.2';
+const CACHE = 'relief-guru-v2c.25.5';
 const ASET = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
   './xlsx.full.min.js', './relief-engine.js?v=2.12.0'];
 
