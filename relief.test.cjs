@@ -143,7 +143,7 @@
 }
 
 
-// idle-cap: free-all-day teacher gets max 3 reliefs
+// idle-cap: free-all-day teacher gets max 2 reliefs in AUTO mode only (manual has no cap)
 {
   const assert=require('assert');const E=require('./relief-engine.js');
   const W=[1,2,3,4,5,6,7,8,9,10];
@@ -152,6 +152,10 @@
   const data={guru:['IDLE','B','X'].map(s=>({singkat:s})),waktu:{Isnin:W},free,kelas};
   const rows=W.map(w=>({waktu:w,kelas:'K'+w,guruAsal:'X'}));
   const r=E.assign({data,day:'Isnin',absent:['X'],frozen:[],maxConsecutive:99},rows).map(x=>x.pengganti);
-  assert.strictEqual(r.filter(g=>g==='IDLE').length,3,'idle cap 3: '+r);
+  assert.strictEqual(r.filter(g=>g==='IDLE').length,2,'idle cap 2: '+r);
+  const filled=rows.map((x,i)=>({...x,pengganti:r[i]}));
+  const j=filled.findIndex(x=>x.pengganti!=='IDLE');
+  // Manual mode has no cap: IDLE stays available even after reaching 2 reliefs.
+  assert.ok(E.manualCandidates({data,day:'Isnin',absent:['X'],frozen:[]},filled[j],filled,j).includes('IDLE'),'manual no cap');
   console.log('idle-cap ok');
 }

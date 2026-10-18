@@ -97,8 +97,8 @@ function candidates(ctx,row,rows,ignore=-1){
  const maxRun=ctx.maxConsecutive||3;
  const busy=(g,w)=>P.teach.has(g+'|'+w)||assigned.some(r=>r.waktu===w&&r.pengganti===g);
  const runOk=g=>{let n=1;for(let w=row.waktu-1;busy(g,w);w--)n++;for(let w=row.waktu+1;busy(g,w);w++)n++;return n<=maxRun;};
- // A teacher with no own class today takes at most 3 reliefs (needs rest too).
- const capOk=g=>!(loads[g]===0&&(counts[g]||0)>=(ctx.maxIdleRelief||3));
+ // A teacher with no own class today takes at most 2 reliefs (auto and manual).
+ const capOk=g=>!(loads[g]===0&&(counts[g]||0)>=(ctx.maxIdleRelief||2));
  const qualified=base.filter(g=>capOk(g)&&available(g,row.waktu)&&runOk(g)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(loads[g]===0||available(g,row.waktu-1)||available(g,row.waktu+1)));
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
  // Fair share by total burden today: own lessons + reliefs already given. A light-timetable
@@ -122,6 +122,7 @@ function manualCandidates(ctx,row,rows,ignore=-1){
  // Co-teachers teach this very period, so they fail the "not teaching" filter
  // below; list them first so the teacher can hand the slot back if declined.
  const co=coTeachers(ctx,row).filter(g=>!rows.some((r,i)=>i!==ignore&&r.waktu===row.waktu&&r.pengganti===g));
+ // Manual mode: admin bebas memilih mana-mana guru, tiada had relief.
  const rest=data.guru.map(g=>g.singkat).filter(g=>
   !co.includes(g)&&
   (data.waktu[day]||[]).includes(row.waktu)&&
