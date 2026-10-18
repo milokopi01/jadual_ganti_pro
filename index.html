@@ -106,7 +106,7 @@ td select{width:100%;font-size:17px;padding:10px}
 .kotak-relef{position:relative;padding:5px 28px 5px 4px;min-height:54px;display:flex;flex-direction:column;justify-content:center;border-radius:6px;cursor:pointer}.kotak-relef:focus-visible{outline:3px solid var(--kuning)}.pilih-slot{position:absolute;right:3px;top:3px;padding:3px 5px;font-size:15px;border-radius:4px;background:var(--hijau2);color:var(--hijau)}.c-sendiri{background:var(--hijau2);color:var(--hijau);cursor:pointer}.c-sendiri small{font-size:11px}
 .c-kosong{background:#f3f3f3}
 .c-tiada{background:repeating-linear-gradient(45deg,#ddd,#ddd 4px,#eee 4px,#eee 8px)}
-.tiket-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.tiket-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
 .tiket{border:2px dashed var(--hijau);border-radius:14px;padding:16px;background:#fffdf6;break-inside:avoid;page-break-inside:avoid}
 .tiket h3{margin:0 0 4px;font-size:18px;color:var(--hijau)}
 .tiket .kepala{font-size:13px;letter-spacing:.08em;color:var(--kelabu);text-transform:uppercase}
@@ -138,6 +138,41 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  .grid td,.grid th{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10px;height:30px;min-width:40px}
  .tiket{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  .tiket-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ===== LAPORAN FUTURISTIK ===== */
+:root{--neo:#0b1626;--neo2:#13263d;--siber:#22d3ee;--emas:#f5b942}
+.kepala-rasmi{position:relative;display:flex;align-items:center;gap:18px;padding:18px 22px;margin-bottom:16px;border:0;border-radius:16px;color:#fff;background:linear-gradient(120deg,var(--neo) 0%,var(--neo2) 60%,#0f5c4a 100%);overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.kepala-rasmi::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(34,211,238,.07) 0 1px,transparent 1px 22px);pointer-events:none}
+.kepala-rasmi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--siber),var(--emas),var(--siber))}
+.kepala-rasmi img{width:84px;height:84px;object-fit:contain;flex:none;background:#fff;border-radius:14px;padding:6px;box-shadow:0 0 0 2px var(--siber)}
+.kepala-rasmi .kr-teks{flex:1;text-align:left;line-height:1.3;position:relative}
+.kepala-rasmi .kr-tajuk{font-size:12px;font-weight:700;letter-spacing:.32em;color:var(--siber);text-transform:uppercase}
+.kepala-rasmi .kr-sekolah{font-size:22px;font-weight:700;letter-spacing:.02em}
+.kepala-rasmi .kr-alamat{font-size:13px;font-weight:400;opacity:.85}
+.kepala-rasmi .kr-info{font-size:11px;font-style:normal;opacity:.7;letter-spacing:.06em}
+.kr-cop{position:relative;flex:none;text-align:right;font-size:11px;letter-spacing:.2em;color:var(--emas);font-weight:700;border:1px solid var(--emas);border-radius:10px;padding:8px 12px;line-height:1.4}
+.kr-cop b{display:block;font-size:15px;letter-spacing:.04em;color:#fff}
+.tiket{border:0;border-radius:16px;padding:0;background:#fff;overflow:hidden;box-shadow:0 0 0 2px var(--neo2);break-inside:avoid;page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.tiket .kepala-rasmi{border-radius:0;margin:0;padding:10px 14px;gap:10px}.tiket .kepala-rasmi img{width:40px;height:40px;padding:3px}
+.tiket .kepala-rasmi .kr-tajuk{font-size:9px}.tiket .kepala-rasmi .kr-sekolah{font-size:13px}.tiket .kepala-rasmi .kr-alamat,.tiket .kepala-rasmi .kr-info,.tiket .kr-cop{display:none}
+.tiket-badan{padding:12px 14px 14px}
+.tiket .kepala{font-size:11px;letter-spacing:.2em;color:#0f5c4a;font-weight:700}
+.tiket-nama{margin:6px 0 8px;padding:8px 12px;border-left:4px solid var(--siber);background:#eefbfd;border-radius:0 10px 10px 0;font-size:15px;font-weight:700;color:var(--neo);line-height:1.25;text-transform:uppercase;overflow-wrap:anywhere;hyphens:auto}
+.tiket table{font-size:13px;margin:6px 0;border-collapse:separate;border-spacing:0 3px}
+.tiket th{background:var(--neo);color:var(--siber);padding:5px 8px;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.tiket td{padding:6px 8px;background:#f4f7fa;border:0;overflow-wrap:normal;word-break:normal}
+.tiket td:first-child{color:var(--neo);font-size:16px}
+.tiket .ttd{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:11px;color:#5f6f68;border-top:1px dashed #b7c3cf;padding-top:8px}
+.tiket-bil{display:inline-block;background:var(--emas);color:var(--neo);border-radius:20px;padding:0 9px;font-weight:700}
+#jadual th{background:var(--neo);color:var(--siber);letter-spacing:.08em;font-size:13px;text-transform:uppercase}
+#jadual td{overflow-wrap:anywhere}
+.cetak-tajuk h2{font-size:16px;letter-spacing:.24em;color:var(--neo);margin:4px 0 10px}
+@media print{
+ @page{size:A4 landscape;margin:10mm}
+ .kepala-rasmi,.tiket,#jadual th,.grid td,.grid th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #jadual th{background:var(--neo)!important;color:var(--siber)!important}
+ .tiket-grid{grid-template-columns:1fr 1fr 1fr;gap:10px}
 }
 </style>
 </head>
@@ -437,8 +472,10 @@ const KP_ASAL={tajuk:'JADUAL RELIF GURU',sekolah:'',alamat:'',kod:'',tel:'',faks
 const KP_MEDAN={tajuk:'kpTajuk',sekolah:'kpSekolah',alamat:'kpAlamat',kod:'kpKod',tel:'kpTel',faks:'kpFaks',email:'kpEmail'};
 function kepala(){ return {...KP_ASAL,...(tetapan.kepala||{})}; }
 function infoKepala(k){ return [k.kod&&'KOD SEK : '+k.kod,k.tel&&'TEL : '+k.tel,k.faks&&'FAX : '+k.faks].filter(Boolean).join('     '); }
-function htmlKepala(){ const k=kepala(); if(!k.sekolah&&!k.logo) return '';
-  return `<div class="kepala-rasmi">${k.logo?`<img src="${k.logo}" alt="Logo sekolah">`:''}<div class="kr-teks">${k.tajuk?`<div class="kr-tajuk">${esc(k.tajuk)}</div>`:''}${k.sekolah?`<div class="kr-sekolah">${esc(k.sekolah.toUpperCase())}</div>`:''}${k.alamat?`<div class="kr-alamat">${esc(k.alamat.toUpperCase())}</div>`:''}${infoKepala(k)?`<div class="kr-info">${esc(infoKepala(k)).replace(/ {2,}/g,m=>'&nbsp;'.repeat(m.length))}</div>`:''}${k.email?`<div class="kr-info">EMAIL RASMI : ${esc(k.email)}</div>`:''}</div></div>`; }
+function htmlKepala(){ const k={...kepala()}; if(!k.sekolah) k.sekolah='Sistem Relef Guru';
+  const tr=$('tarikh')&&$('tarikh').value?labelTarikh():null;
+  const cop=tr?`<div class="kr-cop">LAPORAN RELEF<b>${esc(tr.pendek)}</b></div>`:'';
+  return `<div class="kepala-rasmi">${k.logo?`<img src="${k.logo}" alt="Logo sekolah">`:''}<div class="kr-teks">${k.tajuk?`<div class="kr-tajuk">${esc(k.tajuk)}</div>`:''}${k.sekolah?`<div class="kr-sekolah">${esc(k.sekolah.toUpperCase())}</div>`:''}${k.alamat?`<div class="kr-alamat">${esc(k.alamat.toUpperCase())}</div>`:''}${infoKepala(k)?`<div class="kr-info">${esc(infoKepala(k)).replace(/ {2,}/g,m=>'&nbsp;'.repeat(m.length))}</div>`:''}${k.email?`<div class="kr-info">EMAIL : ${esc(k.email)}</div>`:''}</div>${cop}</div>`; }
 function lukisKepala(){ const h=htmlKepala(); $('kpPratonton').innerHTML=h||'<p class="bantu">Isi nama sekolah untuk lihat pratonton.</p>'; $('kepalaLaporan').innerHTML=h; }
 function isiBorangKepala(){ const k=kepala(); Object.entries(KP_MEDAN).forEach(([f,id])=>$(id).value=k[f]||''); lukisKepala(); }
 function simpanTetapan(){localStorage.setItem(KUNCI_TETAPAN,JSON.stringify(tetapan)); if(Array.isArray(tetapan.sesi)) localStorage.setItem(KUNCI_MASA,JSON.stringify(tetapan.sesi));}
@@ -711,52 +748,60 @@ function lukisTiket(){
   const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
   const tarikh=labelTarikh().penuh;
   const e=Object.entries(kumpul);
-  $('tiket').innerHTML = e.length ? e.map(([g,l])=>`<div class="tiket">${htmlKepala()}<div class="kepala">Tiket Relef · ${tarikh}</div>
-    <h3>${nama(g)}</h3><div class="bantu" style="margin:0;font-size:14px">Cikgu diminta masuk kelas berikut:</div>
-    <table><tr><th>Waktu</th><th>Kelas</th><th>Subjek</th><th>Ganti</th></tr>${l.sort((a,b)=>a.waktu-b.waktu).map(b=>`<tr><td><b>${b.waktu}</b><span class="masa">${masaWaktu(b.waktu,b.kelas)}</span></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td></tr>`).join('')}</table>
-    <div class="ttd">Jumlah: <b>${l.length}</b> waktu &nbsp;·&nbsp; Tandatangan guru: ____________________</div></div>`).join('')
+  $('tiket').innerHTML = e.length ? e.map(([g,l])=>`<div class="tiket">${htmlKepala()}<div class="tiket-badan"><div class="kepala">TIKET RELEF · ${tarikh}</div>
+    <div class="tiket-nama">${esc(nama(g))}</div>
+    <table><tr><th>Waktu</th><th>Kelas</th><th>Subjek</th><th>Ganti</th></tr>${l.sort((a,b)=>a.waktu-b.waktu).map(b=>`<tr><td><b>${b.waktu}</b><span class="masa">${masaWaktu(b.waktu,b.kelas)}</span></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${esc(nama(b.guruAsal))}</td></tr>`).join('')}</table>
+    <div class="ttd"><span><span class="tiket-bil">${l.length}</span> waktu</span><span>T/T: ________________</span></div></div></div>`).join('')
     : '<p class="bantu">Belum ada guru ganti dipilih.</p>';
 }
 /* ---------- GAMBAR TIKET (kongsi media sosial) ---------- */
 let gambarBlob=null, gambarNama='';
 function labelTarikh(){ const d=new Date($('tarikh').value+'T00:00:00');
-  return {hari:d.toLocaleDateString('ms-MY',{weekday:'long'}), penuh:d.toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'}),
+  return {hari:d.toLocaleDateString('ms-MY',{weekday:'long'}), penuh:d.toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'}), pendek:d.toLocaleDateString('ms-MY',{day:'2-digit',month:'short',year:'numeric'}),
     fail:'Relef_'+d.toLocaleDateString('ms-MY',{weekday:'long'}).replace(/\s+/g,'')+'_'+[String(d.getDate()).padStart(2,'0'),String(d.getMonth()+1).padStart(2,'0'),d.getFullYear()].join('-')+'.png'}; }
 let logoImg=null;
 function janaGambar(){
   const lg=kepala().logo; if(lg&&(!logoImg||logoImg.src!==lg)){ logoImg=new Image(); logoImg.onload=()=>janaGambar(); logoImg.src=lg; return; } if(!lg) logoImg=null;
   gambarBlob=null; const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
   const e=Object.entries(kumpul); if(!e.length) return;
-  const L=labelTarikh(); gambarNama=L.fail;
-  const ada=barisRelef.some(b=>masaWaktu(b.waktu,b.kelas)), W=1080,P=48,RH=ada?72:50; let H=260; e.forEach(([,l])=>H+=174+l.length*RH); H+=90;
-  const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
-  const F=(w,s)=>`${w} ${s}px Lexend, system-ui, sans-serif`;
-  const K=kepala(), KH=(K.sekolah||K.logo)?230:0; H+=KH; c.height=H;
-  x.fillStyle='#faf6ec'; x.fillRect(0,0,W,H);
-  if(KH){ x.fillStyle='#fff'; x.fillRect(0,0,W,KH); x.fillStyle='#000'; x.fillRect(P,KH-12,W-2*P,3); x.fillRect(P,KH-6,W-2*P,2);
-    if(logoImg){ const s=Math.min(170/logoImg.width,170/logoImg.height); x.drawImage(logoImg,P,(KH-12-logoImg.height*s)/2,logoImg.width*s,logoImg.height*s); }
-    const cx=logoImg?(P+190+W-P)/2:W/2; x.textAlign='center'; let ky=48;
-    const t=(s,f)=>{ if(!s) return; x.font=f; let z=s; while(x.measureText(z).width>(logoImg?W-P*2-200:W-P*2)&&z.length>3) z=z.slice(0,-1); x.fillText(z,cx,ky); ky+=36; };
-    t(K.tajuk,F(800,32)); t(K.sekolah.toUpperCase(),F(800,32)); t(K.alamat.toUpperCase(),F(700,26)); t(infoKepala(K),'italic '+F(500,21)); t(K.email&&'EMAIL RASMI : '+K.email,'italic '+F(500,21)); x.textAlign='left'; }
-  x.translate(0,KH);
-  x.fillStyle='#0f5c4a'; x.fillRect(0,0,W,200);
-  x.fillStyle='#fff'; x.font=F(600,30); x.fillText('JADUAL RELEF GURU',P,70);
-  x.font=F(700,56); x.fillText(L.penuh.toUpperCase(),P,145);
-  x.fillStyle='#e8a33d'; x.fillRect(P,172,140,8);
-  let y=250;
-  e.forEach(([g,l])=>{
-    l.sort((a,b)=>a.waktu-b.waktu); const h=110+l.length*RH+(ada?24:0);
-    x.fillStyle='#fff'; x.strokeStyle='#0f5c4a'; x.lineWidth=3; x.setLineDash([12,8]);
-    x.beginPath(); x.roundRect(P,y,W-2*P,h,20); x.fill(); x.stroke(); x.setLineDash([]);
-    x.fillStyle='#0f5c4a'; x.font=F(700,34); x.fillText(nama(g),P+28,y+50);
-    x.fillStyle='#5f6f68'; x.font=F(600,22); x.fillText('WAKTU',P+28,y+92); x.fillText('KELAS',P+170,y+92); x.fillText('SUBJEK',P+430,y+92); x.fillText('GANTI',P+640,y+92);
-    l.forEach((b,i)=>{ const yy=y+92+(i+1)*RH; x.fillStyle='#1d2b26'; x.font=F(700,28); x.fillText(String(b.waktu),P+28,yy);
-      if(masaWaktu(b.waktu,b.kelas)){ x.fillStyle='#5f6f68'; x.font=F(500,19); x.fillText(masaWaktu(b.waktu,b.kelas).replace(' – ','–'),P+28,yy+26); x.fillStyle='#1d2b26'; }
-      x.font=F(500,26); const fit=(t,m)=>{t=String(t);while(x.measureText(t).width>m&&t.length>2)t=t.slice(0,-2)+'…';return t;};
-      x.fillText(fit(b.kelas,240),P+170,yy); x.fillText(fit(b.subjek,190),P+430,yy); x.fillText(fit(nama(b.guruAsal),300),P+640,yy); });
-    y+=h+40;
-  });
-  x.fillStyle='#5f6f68'; x.font=F(500,22); x.fillText('Sistem Relef Guru · '+L.penuh,P,H-KH-40);
+  const L=labelTarikh(); gambarNama=L.fail; const K=kepala();
+  const W=1080,P=44,F=(w,sz)=>`${w} ${sz}px Lexend, system-ui, sans-serif`;
+  const c=document.createElement('canvas'); c.width=W; c.height=10; const x=c.getContext('2d');
+  const balut=(t,f,m)=>{ x.font=f; const kata=String(t).split(/\s+/); const out=[]; let bar='';
+    kata.forEach(k=>{ const cuba=bar?bar+' '+k:k; if(x.measureText(cuba).width<=m) bar=cuba; else { if(bar) out.push(bar); bar=k; } }); if(bar) out.push(bar); return out; };
+  const fit=(t,m)=>{t=String(t);while(x.measureText(t).width>m&&t.length>2)t=t.slice(0,-2)+'…';return t;};
+  const ada=barisRelef.some(b=>masaWaktu(b.waktu,b.kelas)), RH=ada?66:50;
+  const fNama=F(700,30), fGanti=F(500,22);
+  const kad=e.map(([g,l])=>{ l.sort((a,b)=>a.waktu-b.waktu); const nm=balut(nama(g).toUpperCase(),fNama,W-2*P-200);
+    const baris=l.map(b=>({b,g:balut(nama(b.guruAsal),fGanti,W-2*P-640)}));
+    const hb=baris.map(r=>Math.max(RH,r.g.length*28+20)); return {nm,baris,hb,n:l.length,h:40+nm.length*38+52+hb.reduce((a,v)=>a+v,0)+20}; });
+  const KH=200, BH=120; let H=KH+BH+30+kad.reduce((a,k)=>a+k.h+26,0)+70; c.height=H;
+  const g0=x.createLinearGradient(0,0,0,H); g0.addColorStop(0,'#0b1626'); g0.addColorStop(1,'#10233a'); x.fillStyle=g0; x.fillRect(0,0,W,H);
+  x.strokeStyle='rgba(34,211,238,.06)'; x.lineWidth=1; for(let i=0;i<W;i+=36){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke();}
+  // kepala surat
+  let tx=P; if(logoImg){ x.fillStyle='#fff'; x.beginPath(); x.roundRect(P,40,120,120,22); x.fill(); const sk=Math.min(104/logoImg.width,104/logoImg.height); x.drawImage(logoImg,P+60-logoImg.width*sk/2,100-logoImg.height*sk/2,logoImg.width*sk,logoImg.height*sk); tx=P+148; }
+  const mw=W-tx-P; x.fillStyle='#22d3ee'; x.font=F(700,18); x.fillText(fit((K.tajuk||'JADUAL RELIF GURU').toUpperCase().split('').join('\u200A'),mw),tx,62);
+  x.fillStyle='#fff'; x.font=F(700,34); const sl=balut((K.sekolah||'Sistem Relef Guru').toUpperCase(),F(700,34),mw).slice(0,2); sl.forEach((t,i)=>x.fillText(t,tx,104+i*38));
+  x.fillStyle='rgba(255,255,255,.7)'; x.font=F(400,19); const inf=[K.alamat,infoKepala(K).replace(/\s{2,}/g,' · ')].filter(Boolean).join(' · '); if(inf) x.fillText(fit(inf,mw),tx,110+sl.length*38);
+  const gl=x.createLinearGradient(0,0,W,0); gl.addColorStop(0,'#22d3ee'); gl.addColorStop(.5,'#f5b942'); gl.addColorStop(1,'#22d3ee'); x.fillStyle=gl; x.fillRect(0,KH-4,W,4);
+  // jalur tarikh
+  x.fillStyle='#f5b942'; x.font=F(700,18); x.fillText('LAPORAN RELEF  ·  '+kad.length+' GURU  ·  '+kad.reduce((a,k)=>a+k.n,0)+' WAKTU',P,KH+48);
+  x.fillStyle='#fff'; x.font=F(700,44); x.fillText(fit(L.penuh.toUpperCase(),W-2*P),P,KH+100);
+  let y=KH+BH+30;
+  kad.forEach(k=>{
+    x.fillStyle='rgba(255,255,255,.05)'; x.strokeStyle='rgba(34,211,238,.45)'; x.lineWidth=2; x.beginPath(); x.roundRect(P,y,W-2*P,k.h,20); x.fill(); x.stroke();
+    x.fillStyle='#22d3ee'; x.fillRect(P,y+24,6,k.nm.length*38+8);
+    x.fillStyle='#fff'; x.font=fNama; k.nm.forEach((t,i)=>x.fillText(t,P+28,y+56+i*38));
+    x.fillStyle='#f5b942'; x.beginPath(); x.roundRect(W-P-150,y+26,126,40,20); x.fill(); x.fillStyle='#0b1626'; x.font=F(700,20); x.textAlign='center'; x.fillText(k.n+' WAKTU',W-P-87,y+53); x.textAlign='left';
+    let yy=y+40+k.nm.length*38+14; x.fillStyle='rgba(34,211,238,.8)'; x.font=F(600,15);
+    ['WAKTU','KELAS','SUBJEK','GANTI'].forEach((t,i)=>x.fillText(t.split('').join('\u2009'),[P+28,P+150,P+400,P+620][i],yy)); yy+=14;
+    k.baris.forEach((r,i)=>{ const b=r.b,h=k.hb[i]; x.fillStyle=i%2?'rgba(255,255,255,.03)':'rgba(255,255,255,.07)'; x.fillRect(P+16,yy,W-2*P-32,h-4);
+      const by=yy+36; x.fillStyle='#22d3ee'; x.font=F(700,28); x.fillText(String(b.waktu),P+28,by);
+      if(masaWaktu(b.waktu,b.kelas)){ x.fillStyle='rgba(255,255,255,.55)'; x.font=F(400,15); x.fillText(masaWaktu(b.waktu,b.kelas).replace(' – ','–'),P+28,by+22); }
+      x.fillStyle='#fff'; x.font=F(600,24); x.fillText(fit(b.kelas,230),P+150,by); x.font=F(400,22); x.fillText(fit(b.subjek,200),P+400,by);
+      x.fillStyle='rgba(255,255,255,.8)'; x.font=fGanti; r.g.forEach((t,j)=>x.fillText(t,P+620,by+j*28)); yy+=h; });
+    y+=k.h+26; });
+  x.fillStyle='rgba(255,255,255,.45)'; x.font=F(400,18); x.fillText('Sistem Relef Guru · dijana '+new Date().toLocaleString('ms-MY'),P,H-30);
   c.toBlob(b=>{gambarBlob=b;},'image/png');
 }
 $('btnKongsiGambar').onclick=async()=>{
@@ -787,9 +832,11 @@ $('btnReset').onclick=()=>{ tidakHadir.clear();Object.values(hariStatus()).forEa
 
 /* ================== WHATSAPP / SIMPAN ================== */
 $('btnWA').onclick=()=>{
-  let t=`*${$('tajukHasil').textContent.toUpperCase()}*\n\n`;
-  barisRelef.forEach(b=>{ t+=`⏰ Waktu ${b.waktu}${masaWaktu(b.waktu,b.kelas)?' ('+masaWaktu(b.waktu,b.kelas)+')':''} | ${b.kelas} | ${b.subjek}\n   Ganti: *${b.pengganti?nama(b.pengganti):'BELUM ADA'}* (guru asal: ${nama(b.guruAsal)})\n`; });
-  t+='\nTerima kasih atas kerjasama cikgu. 🙏';
+  const K=kepala(), L=labelTarikh(), kumpul={}; barisRelef.forEach(b=>(kumpul[b.pengganti||'']=kumpul[b.pengganti||'']||[]).push(b));
+  let t=`🏫 *${(K.sekolah||'SISTEM RELEF GURU').toUpperCase()}*\n━━━━━━━━━━━━━━\n📅 *RELEF · ${L.penuh.toUpperCase()}*\n━━━━━━━━━━━━━━\n`;
+  Object.entries(kumpul).sort(([a],[b])=>!a-!b).forEach(([g,l])=>{ t+=`\n👤 *${g?nama(g).toUpperCase():'⚠️ BELUM ADA GANTI'}*\n`;
+    l.sort((a,b)=>a.waktu-b.waktu).forEach(b=>{ t+=`   ▸ W${b.waktu}${masaWaktu(b.waktu,b.kelas)?' ('+masaWaktu(b.waktu,b.kelas)+')':''} · ${b.kelas} · ${b.subjek}\n`; }); });
+  t+='\n━━━━━━━━━━━━━━\nTerima kasih cikgu 🙏';
   navigator.clipboard.writeText(t).then(()=>toast('📋 Disalin! Tampal dalam WhatsApp')).catch(()=>prompt('Salin teks ini:',t));
 };
 function bacaRekod(){ try{return JSON.parse(localStorage.getItem(KUNCI_REKOD))||[];}catch{return [];} }
