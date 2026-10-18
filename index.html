@@ -245,6 +245,14 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
 .wa-st{font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--biru-muda);color:var(--biru)}
 .wa-st.ok{background:#dcfce7;color:#15803d}.wa-st.baru{background:#fef3c7;color:#92400e}.wa-st.x{background:var(--merah2);color:var(--merah)}
 .wa-pra{white-space:pre-wrap;font:14px/1.45 system-ui;background:#e7fbe9;border-radius:14px;padding:12px;margin-top:12px}
+
+.grid-wrap{touch-action:pan-x pan-y;max-width:100%;overscroll-behavior:contain}
+@media(max-width:899px){.grid-wrap{max-height:75dvh}}
+.zoom-alat{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}.zoom-alat button{padding:6px 12px;font-size:15px}.zoom-alat small{color:var(--kelabu)}
+@media(min-width:900px){.zoom-alat small{display:none}}
+.grid td.lajur-belum,.grid th.lajur-belum{position:relative}
+.grid td.lajur-belum::after,.grid th.lajur-belum::after{content:"";position:absolute;top:-4px;bottom:-4px;left:50%;width:10px;transform:translateX(-50%);background:rgba(255,40,40,.28);pointer-events:none;z-index:2}
+.grid th.lajur-belum::after{background:rgba(255,230,80,.55)}
 </style>
 </head>
 <body>
@@ -307,7 +315,7 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
   <span><i style="background:#5fd3e8"></i>Relef diberi — seret atau tekan untuk pindah</span>
  </div>
  <p class="bantu tiada-cetak" id="arahanGrid"></p>
- <div style="overflow-x:auto" class="tiada-cetak"><table class="grid" id="grid"></table></div>
+ <div class="tiada-cetak zoom-alat" id="zoomAlat"><button class="kedua" data-zoom="-">－</button><button class="kedua" data-zoom="muat">Muat skrin</button><button class="kedua" data-zoom="+">＋</button><small>Telefon: cubit dengan dua jari untuk zoom</small></div><div style="overflow:auto" class="tiada-cetak grid-wrap" id="gridWrap"><table class="grid" id="grid"></table></div>
  <h3 style="margin-top:22px" class="tiada-cetak">📊 Statistik jumlah relef setiap guru</h3>
  <p class="bantu tiada-cetak">Sejarah kekal sehingga anda tekan Reset Statistik. Susun Automatik akan beri relef kepada guru yang paling kurang dahulu.</p>
  <div style="overflow-x:auto" class="tiada-cetak" id="statHasil"></div>
@@ -723,6 +731,37 @@ function lukisJadualLama(){
 }
 let slotAktif=null,jadualTarikh='';
 function lukisJadual(){ lukisJadualLama(); lukisGrid(); lukisTiket(); janaGambar(); simpanRekodSenyap(); lukisStat(); }
+let zoomGrid=null; // null = auto muat skrin
+function aturZoomGrid(){
+  const t=$('grid'),wr=$('gridWrap'); if(!t||!wr) return;
+  if(zoomGrid===null){
+    t.style.zoom=1;
+    const lebar=t.scrollWidth, ada=wr.clientWidth;
+    const desktop=window.matchMedia('(min-width:900px)').matches;
+    let z=lebar>0?ada/lebar:1;
+    z=desktop?Math.min(1,Math.max(.35,z)):Math.min(1,Math.max(.45,z));
+    t.style.zoom=z;
+  } else t.style.zoom=zoomGrid;
+}
+function setZoom(z){zoomGrid=Math.min(2.2,Math.max(.3,z));aturZoomGrid();}
+window.addEventListener('resize',()=>{if(zoomGrid===null) aturZoomGrid();});
+(function(){
+  const wr=$('gridWrap'),alat=$('zoomAlat');
+  alat.addEventListener('click',e=>{const b=e.target.closest('[data-zoom]');if(!b)return;
+    const kini=parseFloat($('grid').style.zoom)||1;
+    if(b.dataset.zoom==='muat'){zoomGrid=null;aturZoomGrid();}
+    else setZoom(kini*(b.dataset.zoom==='+'?1.15:1/1.15));});
+  let cubit=null;
+  const jarak=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+  wr.addEventListener('touchstart',e=>{if(e.touches.length===2){cubit={d:jarak(e.touches),z:parseFloat($('grid').style.zoom)||1,sl:wr.scrollLeft,st:wr.scrollTop,
+    cx:(e.touches[0].clientX+e.touches[1].clientX)/2-wr.getBoundingClientRect().left,cy:(e.touches[0].clientY+e.touches[1].clientY)/2-wr.getBoundingClientRect().top};seretan=null;}},{passive:true});
+  wr.addEventListener('touchmove',e=>{if(!cubit||e.touches.length!==2)return;e.preventDefault();
+    const z=Math.min(2.2,Math.max(.3,cubit.z*jarak(e.touches)/cubit.d)),k=z/cubit.z;
+    zoomGrid=z;$('grid').style.zoom=z;
+    wr.scrollLeft=(cubit.sl+cubit.cx)*k-cubit.cx;wr.scrollTop=(cubit.st+cubit.cy)*k-cubit.cy;},{passive:false});
+  wr.addEventListener('touchend',e=>{if(e.touches.length<2)cubit=null;});
+  wr.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();setZoom((parseFloat($('grid').style.zoom)||1)*Math.exp(-e.deltaY*.0015));},{passive:false});
+})();
 function lukisGrid(){
   const h=hariDipilih(), tak=guruTakHadir(), W=DATA.waktu[h]||[];
   const perluW=new Set(barisRelef.map(b=>b.waktu));
@@ -755,6 +794,9 @@ function lukisGrid(){
     }).join('')+'</tr>';
   });
   $('grid').innerHTML=html;
+  const belumW=new Set(barisRelef.filter(b=>!b.pengganti).map(b=>b.waktu));
+  $('grid').querySelectorAll('tr').forEach(tr=>{[...tr.children].forEach((c,ci)=>{const w=W[ci-1];if(ci>0&&belumW.has(w))c.classList.add('lajur-belum');});});
+  aturZoomGrid();
   $('arahanGrid').innerHTML = slotAktif!==null
     ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b>kuning atau kelabu berjalur</b> pada lajur yang sama.`
     : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relef, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal. Kad <span class="legenda-rakan">oren 🤝</span> = relef diberi kepada rakan sekelas guru tidak hadir.';
