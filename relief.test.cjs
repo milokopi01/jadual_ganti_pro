@@ -174,3 +174,19 @@
   assert.strictEqual(E.assign(ctx,[{waktu:10,kelas:'5A',guruAsal:'X'}])[0].pengganti,'MNA');
   console.log('rest-after-2 ok');
 }
+
+// no-twin: auto avoids back-to-back reliefs when another teacher fits; allows them if unavoidable
+{
+  const assert=require('assert');const E=require('./relief-engine.js');
+  const W=[1,2,3,4,5,6];const free={};W.forEach(w=>free['Isnin|'+w]=['A','B']);
+  const data={guru:['A','B','X'].map(s=>({singkat:s})),waktu:{Isnin:W},free,
+   kelas:[{hari:'Isnin',waktu:2,guru:'X',kelas:'4O'},{hari:'Isnin',waktu:3,guru:'X',kelas:'1P'}]};
+  const ctx={data,day:'Isnin',absent:['X'],frozen:[]};
+  const rows=[{waktu:2,kelas:'4O',guruAsal:'X'},{waktu:3,kelas:'1P',guruAsal:'X'}];
+  const r=E.assign(ctx,rows).map(x=>x.pengganti);
+  assert.notStrictEqual(r[0],r[1],'twin avoided: '+r);
+  data.free={};W.forEach(w=>data.free['Isnin|'+w]=['A']);data.guru=[{singkat:'A'},{singkat:'X'}];
+  const r2=E.assign({...ctx},rows).map(x=>x.pengganti);
+  assert.deepStrictEqual(r2,['A','A'],'unavoidable twin allowed');
+  console.log('no-twin ok');
+}

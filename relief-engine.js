@@ -112,7 +112,9 @@ function candidates(ctx,row,rows,ignore=-1){
  const burden=g=>today(g)*1000+(history[g]||0);
  // Guarantee: a teacher with no own class today who has no relief yet today goes first (at least 1 relief card).
  const idle=g=>loads[g]===0&&!(counts[g]>0)?0:1;
- const sort=list=>list.sort((a,b)=>idle(a)-idle(b)||burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
+ // Soft rule: avoid back-to-back reliefs (rest 1 period between reliefs); used only when no one else fits.
+ const twin=g=>assigned.some(r=>r.pengganti===g&&Math.abs(r.waktu-row.waktu)===1)?1:0;
+ const sort=list=>list.sort((a,b)=>twin(a)-twin(b)||idle(a)-idle(b)||burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
  const normal=qualified.filter(g=>!frozen.includes(g));
  if(normal.length) return sort(normal);

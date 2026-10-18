@@ -1,7 +1,7 @@
 // Service worker Sistem Relief Guru — halaman: network-first, fail lain: network-first
-const CACHE = 'relief-guru-v2c.26.0';
+const CACHE = 'relief-guru-v2c.27.0';
 const ASET = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
-  './xlsx.full.min.js', './relief-engine.js?v=2.13.0'];
+  './xlsx.full.min.js', './relief-engine.js?v=2.14.0'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.allSettled(ASET.map(a => c.add(a)))).then(() => self.skipWaiting()));
