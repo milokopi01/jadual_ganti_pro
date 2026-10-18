@@ -733,15 +733,11 @@ function bina(auto){
   const h=hariDipilih(); if(!h) return toast('Sila pilih tarikh dahulu');
   if(auto&&!mingguAktif()) return toast('Sila pilih minggu sekolah dahulu untuk imbangan relief yang tepat.');
   const tak=guruTakHadir(); if(!tak.length) return toast('Sila tanda guru yang tidak hadir');
-  const lama=jadualTarikh===$('tarikh').value?barisRelief:[];
   barisRelief = DATA.kelas.filter(k=>ReliefEngine.needsRelief(k,h,tak,hariStatus()))
     .sort((a,b)=>a.waktu-b.waktu||a.kelas.localeCompare(b.kelas))
     .map(k=>({...k,guruAsal:k.guru,pengganti:''}));
   if(auto) barisRelief=ReliefEngine.assign(konteks(),barisRelief);
-  else barisRelief.forEach((b,i)=>{
-   const old=lama.find(x=>x.hari===b.hari&&x.waktu===b.waktu&&x.kelas===b.kelas&&x.subjek===b.subjek&&x.guruAsal===b.guruAsal);
-   if(old?.pengganti&&calonSlot(b,i).includes(old.pengganti)) b.pengganti=old.pengganti;
-  });
+  // Manual: mula dengan jadual kosong (kad relief lama dikosongkan)
   jadualTarikh=$('tarikh').value;
   slotAktif=null;
   lukisJadual(); $('hasil').classList.remove('tersembunyi'); $('hasil').scrollIntoView({behavior:'smooth'});
