@@ -44,6 +44,12 @@ function weekStart(date,startDay=1){
  d.setUTCDate(d.getUTCDate()-((d.getUTCDay()-startDay+7)%7));
  return d.toISOString().slice(0,10);
 }
+// Lifetime relief history (all saved days before today), kept until the user resets it.
+function historyCounts(records,date){
+ const counts={};
+ (records||[]).filter(r=>r.tarikh<date&&r.pengganti).forEach(r=>counts[r.pengganti]=(counts[r.pengganti]||0)+1);
+ return counts;
+}
 function weeklyCounts(records,date,startDay=1){
  const start=weekStart(date,startDay), counts={};
  // Today's saved rows are replaced by the current allocation, never counted twice.
@@ -74,7 +80,7 @@ function coTeachers(ctx,row){
   .sort((a,b)=>a.localeCompare(b));
 }
 function candidates(ctx,row,rows,ignore=-1){
- const {data,day,absent,frozen,emergency,status={},weekly={}}=ctx;
+ const {data,day,absent,frozen,emergency,status={},weekly={},history={}}=ctx;
  // Priority: a present co-teacher of the same class/period takes the slot first.
  const co=coTeachers(ctx,row).filter(g=>!rows.some((r,i)=>i!==ignore&&r.waktu===row.waktu&&r.pengganti===g));
  if(co.length) return co;
@@ -88,7 +94,7 @@ function candidates(ctx,row,rows,ignore=-1){
  const base=data.guru.map(g=>g.singkat).filter(g=>!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&loads[g]<max);
  const qualified=base.filter(g=>available(g,row.waktu)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(available(g,row.waktu-1)||available(g,row.waktu+1)));
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
- const sort=list=>list.sort((a,b)=>rank(a)-rank(b)||(weekly[a]||0)+(counts[a]||0)-(weekly[b]||0)-(counts[b]||0)||loads[a]-loads[b]||a.localeCompare(b));
+ const sort=list=>list.sort((a,b)=>rank(a)-rank(b)||(history[a]||0)+(counts[a]||0)-(history[b]||0)-(counts[b]||0)||(weekly[a]||0)+(counts[a]||0)-(weekly[b]||0)-(counts[b]||0)||loads[a]-loads[b]||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
  const normal=qualified.filter(g=>!frozen.includes(g));
  const zero=normal.filter(g=>!counts[g]);
@@ -144,7 +150,7 @@ function assign(ctx,rows){
  }
  return result;
 }
-const api={dayIndex,timetableDay,normalizeTimetable,schoolWeek,weekStart,weeklyCounts,coTeachers,candidates,manualCandidates,sessionForClass,needsRelief,assign};
+const api={historyCounts,dayIndex,timetableDay,normalizeTimetable,schoolWeek,weekStart,weeklyCounts,coTeachers,candidates,manualCandidates,sessionForClass,needsRelief,assign};
 if(typeof module!=='undefined'&&module.exports) module.exports=api;
 else root.ReliefEngine=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

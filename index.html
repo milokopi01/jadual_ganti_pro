@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="xlsx.full.min.js"></script>
-<script src="relief-engine.js?v=2.11.0"></script>
+<script src="relief-engine.js?v=2.12.0"></script>
 <style>
 :root{--hijau:#0f5c4a;--hijau2:#e3efe9;--kuning:#e8a33d;--krim:#faf6ec;--teks:#1d2b26;--kelabu:#5f6f68;--merah:#b3392f;--merah2:#fbe7e4;--putih:#fff}
 *{box-sizing:border-box}
@@ -68,6 +68,19 @@ td select{width:100%;font-size:17px;padding:10px}
 .tersembunyi{display:none}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--teks);color:var(--putih);padding:14px 22px;border-radius:14px;font-weight:600;display:none;z-index:9;pointer-events:none}
 .cetak-tajuk{display:none}
+.hanya-cetak{display:none}
+.stat-bar{display:inline-block;height:12px;background:var(--kuning);border-radius:6px;vertical-align:middle;margin-right:8px}
+.kepala-rasmi{display:flex;align-items:center;gap:16px;border-bottom:3px double #000;padding:6px 0 10px;margin-bottom:14px;color:#000;background:#fff}
+.kepala-rasmi img{width:96px;height:96px;object-fit:contain;flex:none}
+.kepala-rasmi .kr-teks{flex:1;text-align:center;line-height:1.25}
+.kepala-rasmi .kr-tajuk{font-size:20px;font-weight:800}
+.kepala-rasmi .kr-sekolah{font-size:19px;font-weight:800}
+.kepala-rasmi .kr-alamat{font-size:15px;font-weight:700}
+.kepala-rasmi .kr-info{font-size:13px;font-style:italic}
+.tiket .kepala-rasmi{gap:8px;padding:0 0 6px;margin-bottom:8px}.tiket .kepala-rasmi img{width:52px;height:52px}
+.tiket .kepala-rasmi .kr-tajuk{font-size:13px}.tiket .kepala-rasmi .kr-sekolah{font-size:12px}.tiket .kepala-rasmi .kr-alamat,.tiket .kepala-rasmi .kr-info{font-size:10px}
+.kepala-borang{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:10px}
+.kepala-borang label{font-size:14px;font-weight:600}.kepala-borang input{display:block;width:100%;font:inherit;font-size:15px;padding:8px;border:2px solid #cfd8d3;border-radius:10px;margin-top:4px}
 .petunjuk{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;font-size:16px}
 .petunjuk span{display:inline-flex;align-items:center;gap:6px}
 .petunjuk i{width:22px;height:22px;border-radius:5px;display:inline-block;border:1px solid #ccc}
@@ -84,6 +97,8 @@ td select{width:100%;font-size:17px;padding:10px}
 .c-klik:hover{outline:3px solid var(--hijau)}
 .c-relef{background:#5fd3e8;color:#073b45;font-weight:700;cursor:grab;touch-action:none;user-select:none}
 .c-relef.aktif{outline:4px solid var(--kuning)}
+.c-relef.c-rakan{background:#f4a259;color:#4a2306}
+.legenda-rakan{display:inline-block;background:#f4a259;color:#4a2306;font-weight:700;padding:1px 6px;border-radius:4px}
 .c-drop{outline:3px solid var(--hijau)}
 .c-perlu{background:#7a1f17;color:#fff;font-weight:700;cursor:pointer}
 .c-perlu.ok{background:#2c8a6e}
@@ -116,6 +131,8 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  header,.langkah:not(#hasil),.tiada-cetak,.toast{display:none!important}
  body{background:#fff;font-size:13px}.langkah{box-shadow:none;padding:0}
  .cetak-tajuk{display:block;text-align:center}
+ .hanya-cetak{display:block}
+ .kepala-rasmi{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  td select{border:0;appearance:none;-webkit-appearance:none;padding:0;font-size:13px}
  th{background:#ddd;color:#000}
  .grid td,.grid th{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10px;height:30px;min-width:40px}
@@ -171,6 +188,24 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  <div class="guru-grid" id="senaraiGuru"><p class="bantu">Sila masukkan fail jadual dahulu.</p></div>
 </section>
 
+<section class="langkah" id="seksyenKepala">
+ <details>
+  <summary><b>🏫 Kepala surat rasmi sekolah</b> <span class="bantu">(dipaparkan pada semua laporan, tiket dan gambar)</span></summary>
+  <div class="kepala-borang">
+   <label>Tajuk laporan<input id="kpTajuk"></label>
+   <label>Nama sekolah<input id="kpSekolah"></label>
+   <label>Alamat<input id="kpAlamat"></label>
+   <label>Kod sekolah<input id="kpKod"></label>
+   <label>No. telefon<input id="kpTel"></label>
+   <label>No. faks<input id="kpFaks"></label>
+   <label>Email rasmi<input id="kpEmail"></label>
+   <label>Logo sekolah<input type="file" id="kpLogo" accept="image/*"></label>
+  </div>
+  <div class="baris" style="margin-top:10px"><button id="kpSimpan">💾 Simpan kepala surat</button><button class="kedua" id="kpBuangLogo">🗑️ Buang logo</button></div>
+  <p class="bantu">Pratonton:</p>
+  <div id="kpPratonton"></div>
+ </details>
+</section>
 <section class="langkah" id="tetapanGuru">
  <h2>❄️ Freeze guru <span id="jumlahFreeze" class="tag">0</span></h2>
  <div class="baris">
@@ -195,7 +230,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
 </section>
 
 <section class="langkah tersembunyi" id="hasil">
- <div class="cetak-tajuk"><h2>JADUAL RELEF GURU</h2></div>
+ <div id="kepalaLaporan"></div><div class="cetak-tajuk"><h2>JADUAL RELEF GURU</h2></div>
  <h2><span class="no tiada-cetak">5</span> <span id="tajukHasil">Jadual Relef</span></h2>
  <div class="ringkas tiada-cetak" id="ringkasan"></div>
  <div class="petunjuk tiada-cetak">
@@ -207,8 +242,10 @@ body.cetak-laporan #seksyenTiket{display:none!important}
  </div>
  <p class="bantu tiada-cetak" id="arahanGrid"></p>
  <div style="overflow-x:auto"><table class="grid" id="grid"></table></div>
- <h3 style="margin-top:22px">Senarai relef</h3>
- <div style="overflow-x:auto"><table id="jadual"></table></div>
+ <h3 style="margin-top:22px" class="tiada-cetak">📊 Statistik jumlah relef setiap guru</h3>
+ <p class="bantu tiada-cetak">Sejarah kekal sehingga anda tekan Reset Statistik. Susun Automatik akan beri relef kepada guru yang paling kurang dahulu.</p>
+ <div style="overflow-x:auto" class="tiada-cetak" id="statHasil"></div>
+ <div class="hanya-cetak"><h3 style="margin-top:22px">Senarai relef</h3><div style="overflow-x:auto"><table id="jadual"></table></div></div>
  <div class="baris tiada-cetak" style="margin-top:16px">
   <button onclick="cetak('cetak-laporan')">🖨️ Cetak Laporan Penuh</button>
   <button onclick="cetak('cetak-tiket')">🎫 Cetak Tiket Guru</button>
@@ -226,9 +263,9 @@ body.cetak-laporan #seksyenTiket{display:none!important}
 </section>
 
 <section class="langkah tiada-cetak" id="seksyenStat">
- <h2>📊 Jumlah relef guru (bulan ini)</h2>
- <p class="bantu">Dikira daripada rekod yang disimpan dalam komputer / peranti ini sahaja.</p>
- <div class="baris" style="margin-bottom:12px"><button class="kedua" id="btnBackup">⬇ Simpan Salinan (Backup)</button><button class="kedua" id="btnPulih">⬆ Pulihkan Backup</button><input type="file" id="failPulih" accept=".json" hidden></div>
+ <h2>📊 Statistik jumlah relef guru (keseluruhan)</h2>
+ <p class="bantu">Sejarah relef disimpan berasingan dan <b>tidak hilang</b> walaupun fail Excel baharu dimuat naik. Ia hanya dipadam jika anda tekan Reset Statistik.</p>
+ <div class="baris" style="margin-bottom:12px"><button class="kedua" id="btnBackup">⬇ Simpan Salinan (Backup)</button><button class="kedua" id="btnPulih">⬆ Pulihkan Backup</button><button class="amaran" id="btnResetStat">🗑️ Reset Statistik</button><input type="file" id="failPulih" accept=".json" hidden></div>
  <p class="bantu" style="display:none"></p>
  <div id="statRelef" class="bantu">Belum ada rekod.</div>
 </section>
@@ -396,6 +433,14 @@ $('senaraiGuru').addEventListener('change',e=>{ if(e.target.type==='checkbox'){ 
 $('cari').addEventListener('input',lukisGuru);
 const guruTakHadir = ()=>[...tidakHadir];
 function hariStatus(){const date=$('tarikh').value; return tetapan.harian[date] ||= {};}
+const KP_ASAL={tajuk:'JADUAL RELIF GURU',sekolah:'',alamat:'',kod:'',tel:'',faks:'',email:'',logo:''};
+const KP_MEDAN={tajuk:'kpTajuk',sekolah:'kpSekolah',alamat:'kpAlamat',kod:'kpKod',tel:'kpTel',faks:'kpFaks',email:'kpEmail'};
+function kepala(){ return {...KP_ASAL,...(tetapan.kepala||{})}; }
+function infoKepala(k){ return [k.kod&&'KOD SEK : '+k.kod,k.tel&&'TEL : '+k.tel,k.faks&&'FAX : '+k.faks].filter(Boolean).join('     '); }
+function htmlKepala(){ const k=kepala(); if(!k.sekolah&&!k.logo) return '';
+  return `<div class="kepala-rasmi">${k.logo?`<img src="${k.logo}" alt="Logo sekolah">`:''}<div class="kr-teks">${k.tajuk?`<div class="kr-tajuk">${esc(k.tajuk)}</div>`:''}${k.sekolah?`<div class="kr-sekolah">${esc(k.sekolah.toUpperCase())}</div>`:''}${k.alamat?`<div class="kr-alamat">${esc(k.alamat.toUpperCase())}</div>`:''}${infoKepala(k)?`<div class="kr-info">${esc(infoKepala(k)).replace(/ {2,}/g,m=>'&nbsp;'.repeat(m.length))}</div>`:''}${k.email?`<div class="kr-info">EMAIL RASMI : ${esc(k.email)}</div>`:''}</div></div>`; }
+function lukisKepala(){ const h=htmlKepala(); $('kpPratonton').innerHTML=h||'<p class="bantu">Isi nama sekolah untuk lihat pratonton.</p>'; $('kepalaLaporan').innerHTML=h; }
+function isiBorangKepala(){ const k=kepala(); Object.entries(KP_MEDAN).forEach(([f,id])=>$(id).value=k[f]||''); lukisKepala(); }
 function simpanTetapan(){localStorage.setItem(KUNCI_TETAPAN,JSON.stringify(tetapan)); if(Array.isArray(tetapan.sesi)) localStorage.setItem(KUNCI_MASA,JSON.stringify(tetapan.sesi));}
 function statusHarianKePilihan(){Object.entries(hariStatus()).forEach(([g,s])=>{if(s.reason&&s.reason!=='Hadir') tidakHadir.add(g);});}
 function mingguAktif(){return ReliefEngine.schoolWeek(DATA?.hari||[],tetapan.mingguSekolah||'auto');}
@@ -406,7 +451,7 @@ function lukisMinggu(){
  el.textContent=week?(week.label+(date?' · Rekod '+ReliefEngine.weekStart(date,week.startDay)+' hingga '+date:'')):(DATA?'Minggu sekolah tidak dapat dipastikan. Pilih Ahad–Khamis atau Isnin–Jumaat.':'Muatkan jadual atau pilih minggu sekolah.');
 }
 $('mingguSekolah').onchange=()=>{tetapan.mingguSekolah=$('mingguSekolah').value;simpanTetapan();lukisMinggu();sembunyiHasil();};
-function konteks(){return {clash:bentrok,data:DATA,day:hariDipilih(),absent:guruTakHadir(),frozen:tetapan.freeze,emergency:$('kecemasan').checked,status:hariStatus(),weekly:ReliefEngine.weeklyCounts(bacaRekod(),$('tarikh').value,mingguAktif()?.startDay??1)};}
+function konteks(){return {clash:bentrok,data:DATA,day:hariDipilih(),absent:guruTakHadir(),frozen:tetapan.freeze,emergency:$('kecemasan').checked,status:hariStatus(),weekly:ReliefEngine.weeklyCounts(bacaRekod(),$('tarikh').value,mingguAktif()?.startDay??1),history:ReliefEngine.historyCounts(bacaRekod(),$('tarikh').value)};}
 function calonSlot(b,i){return ReliefEngine.manualCandidates(konteks(),b,barisRelef,i);}
 function lukisFreeze(){
  const tersedia=(DATA?.guru||[]).filter(g=>!tetapan.freeze.includes(g.singkat)).sort((a,b)=>a.nama.localeCompare(b.nama,'ms'));
@@ -551,7 +596,7 @@ function lukisJadualLama(){
   $('ringkasan').innerHTML = `<div><b>${tak.length}</b>Guru tidak hadir</div><div><b>${barisRelef.length}</b>Waktu perlu relef</div><div><b>${diisi}</b>Sudah ada ganti</div><div><b>${barisRelef.length-diisi}</b>Belum ada ganti</div>`;
 }
 let slotAktif=null,jadualTarikh='';
-function lukisJadual(){ lukisJadualLama(); lukisGrid(); lukisTiket(); janaGambar(); }
+function lukisJadual(){ lukisJadualLama(); lukisGrid(); lukisTiket(); janaGambar(); simpanRekodSenyap(); lukisStat(); }
 function lukisGrid(){
   const h=hariDipilih(), tak=guruTakHadir(), W=DATA.waktu[h]||[];
   const perluW=new Set(barisRelef.map(b=>b.waktu));
@@ -574,7 +619,8 @@ function lukisGrid(){
   [...sejuk,...baki.filter(g=>!tetapan.freeze.includes(g.singkat))].forEach(g=>{
     html+=`<tr><td class="nama" title="${esc(g.nama)}">${tetapan.freeze.includes(g.singkat)?'❄️ ':''}${esc(g.singkat)}</td>`+W.map(w=>{
       const rel=barisRelef.map((b,i)=>i).find(i=>barisRelef[i].waktu===w&&barisRelef[i].pengganti===g.singkat);
-      if(rel!==undefined) return `<td class="c-relef ${slotAktif===rel?'aktif':''}" data-batal="${rel}" title="Seret untuk pindah; tekan untuk pilih, tekan sekali lagi untuk batal">RELEF<br>${barisRelef[rel].kelas}</td>`;
+      if(rel!==undefined) {const rk=ReliefEngine.coTeachers(konteks(),barisRelef[rel]).includes(g.singkat);
+      return `<td class="c-relef ${rk?'c-rakan':''} ${slotAktif===rel?'aktif':''}" data-batal="${rel}" title="${rk?'Rakan sekelas guru tidak hadir · ':''}Seret untuk pindah; tekan untuk pilih, tekan sekali lagi untuk batal">RELEF${rk?' 🤝':''}<br>${barisRelef[rel].kelas}</td>`;}
       const a=ajar(g.singkat,w);
       if(a.length) return `<td class="c-ajar">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;
       if((hariStatus()[g.singkat]?.blocked||[]).includes(w)) return '<td class="c-tiada" title="Sekatan waktu">SEKAT</td>';
@@ -585,7 +631,7 @@ function lukisGrid(){
   $('grid').innerHTML=html;
   $('arahanGrid').innerHTML = slotAktif!==null
     ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b>kuning atau kelabu berjalur</b> pada lajur yang sama.`
-    : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relef, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal.';
+    : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relef, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal. Kad <span class="legenda-rakan">oren 🤝</span> = relef diberi kepada rakan sekelas guru tidak hadir.';
 }
 function tukarKeperluan(g,w){
   const st=hariStatus();st[g] ||= {reason:'Tidak hadir'};
@@ -665,7 +711,7 @@ function lukisTiket(){
   const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
   const tarikh=labelTarikh().penuh;
   const e=Object.entries(kumpul);
-  $('tiket').innerHTML = e.length ? e.map(([g,l])=>`<div class="tiket"><div class="kepala">Tiket Relef · ${tarikh}</div>
+  $('tiket').innerHTML = e.length ? e.map(([g,l])=>`<div class="tiket">${htmlKepala()}<div class="kepala">Tiket Relef · ${tarikh}</div>
     <h3>${nama(g)}</h3><div class="bantu" style="margin:0;font-size:14px">Cikgu diminta masuk kelas berikut:</div>
     <table><tr><th>Waktu</th><th>Kelas</th><th>Subjek</th><th>Ganti</th></tr>${l.sort((a,b)=>a.waktu-b.waktu).map(b=>`<tr><td><b>${b.waktu}</b><span class="masa">${masaWaktu(b.waktu,b.kelas)}</span></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td></tr>`).join('')}</table>
     <div class="ttd">Jumlah: <b>${l.length}</b> waktu &nbsp;·&nbsp; Tandatangan guru: ____________________</div></div>`).join('')
@@ -676,14 +722,23 @@ let gambarBlob=null, gambarNama='';
 function labelTarikh(){ const d=new Date($('tarikh').value+'T00:00:00');
   return {hari:d.toLocaleDateString('ms-MY',{weekday:'long'}), penuh:d.toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'}),
     fail:'Relef_'+d.toLocaleDateString('ms-MY',{weekday:'long'}).replace(/\s+/g,'')+'_'+[String(d.getDate()).padStart(2,'0'),String(d.getMonth()+1).padStart(2,'0'),d.getFullYear()].join('-')+'.png'}; }
+let logoImg=null;
 function janaGambar(){
+  const lg=kepala().logo; if(lg&&(!logoImg||logoImg.src!==lg)){ logoImg=new Image(); logoImg.onload=()=>janaGambar(); logoImg.src=lg; return; } if(!lg) logoImg=null;
   gambarBlob=null; const kumpul={}; barisRelef.filter(b=>b.pengganti).forEach(b=>(kumpul[b.pengganti]=kumpul[b.pengganti]||[]).push(b));
   const e=Object.entries(kumpul); if(!e.length) return;
   const L=labelTarikh(); gambarNama=L.fail;
   const ada=barisRelef.some(b=>masaWaktu(b.waktu,b.kelas)), W=1080,P=48,RH=ada?72:50; let H=260; e.forEach(([,l])=>H+=174+l.length*RH); H+=90;
   const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
   const F=(w,s)=>`${w} ${s}px Lexend, system-ui, sans-serif`;
+  const K=kepala(), KH=(K.sekolah||K.logo)?230:0; H+=KH; c.height=H;
   x.fillStyle='#faf6ec'; x.fillRect(0,0,W,H);
+  if(KH){ x.fillStyle='#fff'; x.fillRect(0,0,W,KH); x.fillStyle='#000'; x.fillRect(P,KH-12,W-2*P,3); x.fillRect(P,KH-6,W-2*P,2);
+    if(logoImg){ const s=Math.min(170/logoImg.width,170/logoImg.height); x.drawImage(logoImg,P,(KH-12-logoImg.height*s)/2,logoImg.width*s,logoImg.height*s); }
+    const cx=logoImg?(P+190+W-P)/2:W/2; x.textAlign='center'; let ky=48;
+    const t=(s,f)=>{ if(!s) return; x.font=f; let z=s; while(x.measureText(z).width>(logoImg?W-P*2-200:W-P*2)&&z.length>3) z=z.slice(0,-1); x.fillText(z,cx,ky); ky+=36; };
+    t(K.tajuk,F(800,32)); t(K.sekolah.toUpperCase(),F(800,32)); t(K.alamat.toUpperCase(),F(700,26)); t(infoKepala(K),'italic '+F(500,21)); t(K.email&&'EMAIL RASMI : '+K.email,'italic '+F(500,21)); x.textAlign='left'; }
+  x.translate(0,KH);
   x.fillStyle='#0f5c4a'; x.fillRect(0,0,W,200);
   x.fillStyle='#fff'; x.font=F(600,30); x.fillText('JADUAL RELEF GURU',P,70);
   x.font=F(700,56); x.fillText(L.penuh.toUpperCase(),P,145);
@@ -701,7 +756,7 @@ function janaGambar(){
       x.fillText(fit(b.kelas,240),P+170,yy); x.fillText(fit(b.subjek,190),P+430,yy); x.fillText(fit(nama(b.guruAsal),300),P+640,yy); });
     y+=h+40;
   });
-  x.fillStyle='#5f6f68'; x.font=F(500,22); x.fillText('Sistem Relef Guru · '+L.penuh,P,H-40);
+  x.fillStyle='#5f6f68'; x.font=F(500,22); x.fillText('Sistem Relef Guru · '+L.penuh,P,H-KH-40);
   c.toBlob(b=>{gambarBlob=b;},'image/png');
 }
 $('btnKongsiGambar').onclick=async()=>{
@@ -713,6 +768,11 @@ $('btnKongsiGambar').onclick=async()=>{
 function muatTurunGambar(){ if(!gambarBlob) return toast('Tiada tiket relef untuk dijadikan gambar');
   const u=URL.createObjectURL(gambarBlob),a=document.createElement('a'); a.href=u; a.download=gambarNama; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),30000); }
 $('btnMuatGambar').onclick=muatTurunGambar;
+$('kpSimpan').onclick=()=>{ const k=kepala(); Object.entries(KP_MEDAN).forEach(([f,id])=>k[f]=$(id).value.trim()); tetapan.kepala=k; simpanTetapan(); lukisKepala(); if(barisRelef.length) lukisJadual(); toast('✅ Kepala surat disimpan'); };
+$('kpBuangLogo').onclick=()=>{ tetapan.kepala={...kepala(),logo:''}; simpanTetapan(); $('kpLogo').value=''; lukisKepala(); if(barisRelef.length) lukisJadual(); };
+$('kpLogo').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const im=new Image(); im.onload=()=>{ const m=240,sk=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas'); c.width=Math.round(im.width*sk); c.height=Math.round(im.height*sk); c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  tetapan.kepala={...kepala(),logo:c.toDataURL('image/png')}; simpanTetapan(); lukisKepala(); if(barisRelef.length) lukisJadual(); toast('✅ Logo disimpan'); }; im.src=r.result; }; r.readAsDataURL(f); };
+isiBorangKepala();
 function cetak(mod){ document.body.classList.add(mod); setTimeout(()=>{ window.print(); document.body.classList.remove(mod); },50); }
 $('jadual').addEventListener('change',e=>{ if(e.target.dataset.i!==undefined){ const i=+e.target.dataset.i,g=e.target.value;if(g&&!calonSlot(barisRelef[i],i).includes(g)){toast('Guru tidak tersedia pada waktu ini');return lukisJadual();}barisRelef[i].pengganti=g;lukisJadual(); }});
 function binaSelamat(auto){
@@ -742,10 +802,25 @@ $('btnSimpan').onclick=()=>{
   else toast('✔ Rekod disimpan dalam komputer ini');
   lukisStat();
 };
-function lukisStat(){
-  if(!DATA) return; const c=jumlahRelefBulan(); const e=Object.entries(c).sort((a,b)=>b[1]-a[1]);
-  $('statRelef').innerHTML = e.length ? '<table><tr><th>Guru</th><th>Jumlah relef</th></tr>'+e.map(([g,n])=>`<tr><td>${nama(g)}</td><td><b>${n}</b></td></tr>`).join('')+'</table>' : 'Belum ada rekod bulan ini.';
+function simpanRekodSenyap(){
+  const tarikh=$('tarikh').value; if(!tarikh||jadualTarikh!==tarikh) return;
+  const baru = barisRelef.map(b=>({tarikh,hari:b.hari,waktu:b.waktu,kelas:b.kelas,subjek:b.subjek,guruAsal:nama(b.guruAsal),pengganti:b.pengganti,namaPengganti:b.pengganti?nama(b.pengganti):''}));
+  localStorage.setItem(KUNCI_REKOD,JSON.stringify(bacaRekod().filter(r=>r.tarikh!==tarikh).concat(baru)));
 }
+function htmlStat(){
+  const r=bacaRekod(), tarikh=$('tarikh').value||'', c={}, hari={}, namaRek={};
+  r.forEach(x=>{ if(!x.pengganti) return; namaRek[x.pengganti]=x.namaPengganti||x.pengganti; if(x.tarikh===tarikh) hari[x.pengganti]=(hari[x.pengganti]||0)+1; c[x.pengganti]=(c[x.pengganti]||0)+1; });
+  (DATA?.guru||[]).forEach(g=>{ c[g.singkat] ||= 0; });
+  const e=Object.entries(c).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])); if(!e.length) return 'Belum ada rekod.';
+  const max=Math.max(1,...e.map(x=>x[1]));
+  const nm=g=>(DATA?.guru||[]).some(x=>x.singkat===g)?nama(g):namaRek[g];
+  return '<table><tr><th>Bil</th><th>Guru</th><th>Hari ini</th><th>Jumlah keseluruhan</th></tr>'+e.map(([g,n],i)=>`<tr><td>${i+1}</td><td>${esc(nm(g))}</td><td>${hari[g]||'-'}</td><td><span class="stat-bar" style="width:${Math.round(n/max*120)}px"></span><b>${n}</b></td></tr>`).join('')+'</table>';
+}
+function lukisStat(){ const h=htmlStat(); $('statRelef').innerHTML=h; if($('statHasil')) $('statHasil').innerHTML=h; }
+$('btnResetStat').onclick=()=>{
+  if(prompt('Semua sejarah relef akan dipadam dan tidak boleh dikembalikan.\nTaip RESET untuk sahkan:')!=='RESET') return toast('Reset dibatalkan');
+  localStorage.removeItem(KUNCI_REKOD); lukisStat(); toast('🗑️ Statistik relef telah direset');
+};
 
 $('btnBackup').onclick=()=>{
   const blob=new Blob([JSON.stringify({data:DATA,rekod:bacaRekod(),tetapan})],{type:'application/json'});
