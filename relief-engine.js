@@ -99,16 +99,12 @@ function candidates(ctx,row,rows,ignore=-1){
  const runOk=g=>{let n=1;for(let w=row.waktu-1;busy(g,w);w--)n++;for(let w=row.waktu+1;busy(g,w);w++)n++;return n<=maxRun;};
  const qualified=base.filter(g=>available(g,row.waktu)&&runOk(g)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(available(g,row.waktu-1)||available(g,row.waktu+1)));
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
- const sort=list=>list.sort((a,b)=>rank(a)-rank(b)||(history[a]||0)+(counts[a]||0)-(history[b]||0)-(counts[b]||0)||(weekly[a]||0)+(counts[a]||0)-(weekly[b]||0)-(counts[b]||0)||loads[a]-loads[b]||a.localeCompare(b));
+ // Fair share by total burden today: own lessons + reliefs already given. A light-timetable
+ // teacher may take several reliefs before a packed teacher takes even one.
+ const burden=g=>loads[g]+(counts[g]||0);
+ const sort=list=>list.sort((a,b)=>burden(a)-burden(b)||rank(a)-rank(b)||(history[a]||0)-(history[b]||0)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
  const normal=qualified.filter(g=>!frozen.includes(g));
- const zero=normal.filter(g=>!counts[g]);
- if(zero.length) return sort(zero);
- const reserve=emergency?qualified.filter(g=>frozen.includes(g)&&!counts[g]):[];
- if(reserve.length) return sort(reserve);
- // A second slot is forbidden while ANY other eligible, present teacher has zero relief.
- const capPool=base.filter(g=>(!frozen.includes(g)||emergency)&&periods.some(w=>available(g,w)&&(available(g,w-1)||available(g,w+1))));
- if(capPool.some(g=>!counts[g])) return [];
  if(normal.length) return sort(normal);
  return emergency?sort(qualified.filter(g=>frozen.includes(g))):[];
 }
