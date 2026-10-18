@@ -92,7 +92,12 @@ function candidates(ctx,row,rows,ignore=-1){
   !(status[g]?.blocked||[]).includes(w)&&!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&
   !assigned.some(r=>r.waktu===w&&r.pengganti===g);
  const base=data.guru.map(g=>g.singkat).filter(g=>!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&loads[g]<max);
- const qualified=base.filter(g=>available(g,row.waktu)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(available(g,row.waktu-1)||available(g,row.waktu+1)));
+ // Never stack a relief onto an already packed stretch: the run of consecutive busy
+ // periods (own lessons + reliefs) including this slot must stay within the limit.
+ const maxRun=ctx.maxConsecutive||3;
+ const busy=(g,w)=>P.teach.has(g+'|'+w)||assigned.some(r=>r.waktu===w&&r.pengganti===g);
+ const runOk=g=>{let n=1;for(let w=row.waktu-1;busy(g,w);w--)n++;for(let w=row.waktu+1;busy(g,w);w++)n++;return n<=maxRun;};
+ const qualified=base.filter(g=>available(g,row.waktu)&&runOk(g)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(available(g,row.waktu-1)||available(g,row.waktu+1)));
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
  const sort=list=>list.sort((a,b)=>rank(a)-rank(b)||(history[a]||0)+(counts[a]||0)-(history[b]||0)-(counts[b]||0)||(weekly[a]||0)+(counts[a]||0)-(weekly[b]||0)-(counts[b]||0)||loads[a]-loads[b]||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
