@@ -112,8 +112,9 @@ function candidates(ctx,row,rows,ignore=-1){
  const burden=g=>today(g)*1000+(history[g]||0);
  // Guarantee: a teacher with no own class today who has no relief yet today goes first (at least 1 relief card).
  const idle=g=>loads[g]===0&&!(counts[g]>0)?0:1;
- // Soft rule: avoid back-to-back reliefs (rest 1 period between reliefs); used only when no one else fits.
- const twin=g=>assigned.some(r=>r.pengganti===g&&Math.abs(r.waktu-row.waktu)===1)?1:0;
+ // Soft rule: a relief must not touch another busy period (own lesson or relief); used only when no rested teacher fits.
+ // Rest = the period right before AND right after this slot is free (no own lesson, no relief).
+ const twin=g=>busy(g,row.waktu-1)||busy(g,row.waktu+1)?1:0;
  const sort=list=>list.sort((a,b)=>twin(a)-twin(b)||idle(a)-idle(b)||burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
  const normal=qualified.filter(g=>!frozen.includes(g));
@@ -161,6 +162,18 @@ function assign(ctx,rows){
    .sort((a,b)=>a.n-b.n||a.r.waktu-b.r.waktu);
   for(const {r} of pending){const list=candidates(ctx,r,result);if(list.length){r.pengganti=list[0];changed=true;}}
   if(!changed) break;
+ }
+ // Repair: a relief placed early may sit next to a later one. Move it to a rested teacher when one fits.
+ const touches=(r,i)=>{const P=prep(ctx),g=r.pengganti;const b=w=>P.teach.has(g+'|'+w)||result.some((x,j)=>j!==i&&x.pengganti===g&&x.waktu===w);return b(r.waktu-1)||b(r.waktu+1);};
+ for(let round=0;round<3;round++){
+  let moved=false;
+  result.forEach((r,i)=>{
+   if(!r.pengganti||coTeachers(ctx,r).includes(r.pengganti)||!touches(r,i)) return;
+   const old=r.pengganti, list=candidates(ctx,r,result,i);
+   const pick=list.find(g=>{r.pengganti=g;const ok=!touches(r,i);r.pengganti=old;return ok;});
+   if(pick&&pick!==old){r.pengganti=pick;moved=true;}
+  });
+  if(!moved) break;
  }
  return result;
 }

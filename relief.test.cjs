@@ -190,3 +190,16 @@
   assert.deepStrictEqual(r2,['A','A'],'unavoidable twin allowed');
   console.log('no-twin ok');
 }
+
+// rest-around: relief right after own lesson goes to a rested teacher when one is free (2 EMERALD case)
+{
+  const assert=require('assert');const E=require('./relief-engine.js');
+  const W=[1,2,3,4,5,6,7,8];const free={};W.forEach(w=>free['Isnin|'+w]=['A','B']);
+  const data={guru:['A','B','X'].map(s=>({singkat:s})),waktu:{Isnin:W},free,
+   kelas:[{hari:'Isnin',waktu:3,guru:'A',kelas:'1O'},{hari:'Isnin',waktu:5,guru:'A',kelas:'1O'},{hari:'Isnin',waktu:2,guru:'B',kelas:'1P'},
+   {hari:'Isnin',waktu:6,guru:'X',kelas:'2E'},{hari:'Isnin',waktu:7,guru:'X',kelas:'2F'},{hari:'Isnin',waktu:8,guru:'X',kelas:'2G'},{hari:'Isnin',waktu:1,guru:'X',kelas:'2H'},{hari:'Isnin',waktu:1,guru:'B',kelas:'1Q'},{hari:'Isnin',waktu:8,guru:'B',kelas:'1R'}]};
+  data.free['Isnin|3']=['B'];data.free['Isnin|5']=['B'];data.free['Isnin|2']=['A'];data.free['Isnin|1']=['A'];data.free['Isnin|8']=['A'];
+  const r=E.assign({data,day:'Isnin',absent:['X'],frozen:[]},[{waktu:6,kelas:'2E',guruAsal:'X'}]);
+  assert.strictEqual(r[0].pengganti,'B','rested B must take slot 6, not A right after own lesson');
+  console.log('rest-around ok');
+}
