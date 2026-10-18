@@ -8,7 +8,7 @@ test('teacher with fewer lifetime reliefs is picked first',()=>{
  assert.strictEqual(E.assign({...base,history:{CITRA:5,DINA:2}},rows)[0].pengganti,'DINA');
  assert.strictEqual(E.assign({...base,history:{CITRA:1,DINA:4}},rows)[0].pengganti,'CITRA');
 });
-test('historyCounts counts saved days before today only',()=>{
+test('historyCounts counts saved days this year before today only',()=>{
  const r=[{tarikh:'2026-10-01',pengganti:'DINA'},{tarikh:'2026-10-18',pengganti:'DINA'},{tarikh:'2025-01-05',pengganti:'CITRA'}];
- assert.deepStrictEqual(E.historyCounts(r,'2026-10-18'),{DINA:1,CITRA:1});
+ assert.deepStrictEqual(E.historyCounts(r,'2026-10-18'),{DINA:1});
 });

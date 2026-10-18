@@ -771,6 +771,7 @@ function aturZoomGrid(){
   if(zoomGrid===null){
     t.style.zoom=1;
     const lebar=t.scrollWidth, ada=wr.clientWidth;
+    if(!ada||!lebar) return; // hidden tab: refit when it becomes visible
     const desktop=window.matchMedia('(min-width:900px)').matches;
     let z=lebar>0?ada/lebar:1;
     z=desktop?Math.min(1,Math.max(.35,z)):Math.min(1,Math.max(.45,z));
@@ -778,7 +779,11 @@ function aturZoomGrid(){
   } else t.style.zoom=zoomGrid;
 }
 function setZoom(z){zoomGrid=Math.min(2.2,Math.max(.3,z));aturZoomGrid();}
+// Auto-fit after every redraw, once layout and fonts settle, and whenever the grid becomes visible.
+function muatAuto(){ if(zoomGrid!==null) return; aturZoomGrid(); requestAnimationFrame(()=>{aturZoomGrid(); setTimeout(()=>{if(zoomGrid===null)aturZoomGrid();},300);}); }
 window.addEventListener('resize',()=>{if(zoomGrid===null) aturZoomGrid();});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(muatAuto);
+if(window.ResizeObserver) new ResizeObserver(()=>{if(zoomGrid===null) aturZoomGrid();}).observe($('gridWrap'));
 (function(){
   const wr=$('gridWrap'),alat=$('zoomAlat');
   alat.addEventListener('click',e=>{const b=e.target.closest('[data-zoom]');if(!b)return;
@@ -832,7 +837,7 @@ function lukisGrid(){
   $('grid').innerHTML=html;
   const belumW=new Set(barisRelef.filter(b=>!b.pengganti).map(b=>b.waktu));
   $('grid').querySelectorAll('tr').forEach(tr=>{[...tr.children].forEach((c,ci)=>{const w=W[ci-1];if(ci>0&&belumW.has(w))c.classList.add('lajur-belum');});});
-  aturZoomGrid();
+  zoomGrid=null; muatAuto();
   $('arahanGrid').innerHTML = slotAktif!==null
     ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b>kuning atau kelabu berjalur</b> pada lajur yang sama.`
     : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relef, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal. Kad <span class="legenda-rakan">hijau 🤝</span> = relef diberi kepada rakan sekelas guru tidak hadir.';

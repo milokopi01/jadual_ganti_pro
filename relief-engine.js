@@ -47,7 +47,7 @@ function weekStart(date,startDay=1){
 // Lifetime relief history (all saved days before today), kept until the user resets it.
 function historyCounts(records,date){
  const counts={};
- (records||[]).filter(r=>r.tarikh<date&&r.pengganti).forEach(r=>counts[r.pengganti]=(counts[r.pengganti]||0)+1);
+ (records||[]).filter(r=>r.tarikh<date&&String(r.tarikh).slice(0,4)===String(date).slice(0,4)&&r.pengganti).forEach(r=>counts[r.pengganti]=(counts[r.pengganti]||0)+1);
  return counts;
 }
 function weeklyCounts(records,date,startDay=1){
@@ -101,8 +101,11 @@ function candidates(ctx,row,rows,ignore=-1){
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
  // Fair share by total burden today: own lessons + reliefs already given. A light-timetable
  // teacher may take several reliefs before a packed teacher takes even one.
- const burden=g=>loads[g]+(counts[g]||0);
- const sort=list=>list.sort((a,b)=>burden(a)-burden(b)||rank(a)-rank(b)||(history[a]||0)-(history[b]||0)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
+ // Balance across the whole year: reliefs already taken this year + today's reliefs,
+ // plus half a point per own lesson today, so a teacher with no classes today takes
+ // several reliefs before a busy teacher takes one, but nobody gets far ahead for the year.
+ const burden=g=>(history[g]||0)+(counts[g]||0)+loads[g]/2;
+ const sort=list=>list.sort((a,b)=>burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
  const normal=qualified.filter(g=>!frozen.includes(g));
  if(normal.length) return sort(normal);
