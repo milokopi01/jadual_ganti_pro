@@ -97,7 +97,9 @@ function candidates(ctx,row,rows,ignore=-1){
  const maxRun=ctx.maxConsecutive||3;
  const busy=(g,w)=>P.teach.has(g+'|'+w)||assigned.some(r=>r.waktu===w&&r.pengganti===g);
  const runOk=g=>{let n=1;for(let w=row.waktu-1;busy(g,w);w--)n++;for(let w=row.waktu+1;busy(g,w);w++)n++;return n<=maxRun;};
- const qualified=base.filter(g=>available(g,row.waktu)&&runOk(g)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(loads[g]===0||available(g,row.waktu-1)||available(g,row.waktu+1)));
+ // A teacher with no own class today takes at most 3 reliefs (needs rest too).
+ const capOk=g=>!(loads[g]===0&&(counts[g]||0)>=(ctx.maxIdleRelief||3));
+ const qualified=base.filter(g=>capOk(g)&&available(g,row.waktu)&&runOk(g)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(loads[g]===0||available(g,row.waktu-1)||available(g,row.waktu+1)));
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
  // Fair share by total burden today: own lessons + reliefs already given. A light-timetable
  // teacher may take several reliefs before a packed teacher takes even one.

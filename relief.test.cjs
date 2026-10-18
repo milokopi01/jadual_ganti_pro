@@ -142,3 +142,16 @@
   console.log('zero-class ok');
 }
 
+
+// idle-cap: free-all-day teacher gets max 3 reliefs
+{
+  const assert=require('assert');const E=require('./relief-engine.js');
+  const W=[1,2,3,4,5,6,7,8,9,10];
+  const kelas=W.map(w=>({hari:'Isnin',waktu:w,guru:'X',kelas:'K'+w})).concat([{hari:'Isnin',waktu:1,guru:'B',kelas:'Z'}]);
+  const free={};W.forEach(w=>free['Isnin|'+w]=['IDLE','B']);
+  const data={guru:['IDLE','B','X'].map(s=>({singkat:s})),waktu:{Isnin:W},free,kelas};
+  const rows=W.map(w=>({waktu:w,kelas:'K'+w,guruAsal:'X'}));
+  const r=E.assign({data,day:'Isnin',absent:['X'],frozen:[],maxConsecutive:99},rows).map(x=>x.pengganti);
+  assert.strictEqual(r.filter(g=>g==='IDLE').length,3,'idle cap 3: '+r);
+  console.log('idle-cap ok');
+}
