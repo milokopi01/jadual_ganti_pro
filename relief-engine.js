@@ -61,8 +61,23 @@ function prep(ctx){
  p={teach,loads,max:Math.max(0,...Object.values(loads)),free,periods:new Set(data.waktu[day]||[])};
  PREP.set(ctx,p); return p;
 }
+// Co-teachers: other teachers timetabled in the SAME class at the SAME period.
+// When one is absent, a present co-teacher is already in that classroom, so they
+// are the natural first relief pick even though they are not "free".
+function coTeachers(ctx,row){
+ const {data,day,absent=[],status={}}=ctx;
+ return data.kelas
+  .filter(k=>k.hari===day&&k.waktu===row.waktu&&k.kelas===row.kelas&&k.guru!==row.guruAsal)
+  .map(k=>k.guru)
+  .filter((g,i,a)=>a.indexOf(g)===i)
+  .filter(g=>!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir'))
+  .sort((a,b)=>a.localeCompare(b));
+}
 function candidates(ctx,row,rows,ignore=-1){
  const {data,day,absent,frozen,emergency,status={},weekly={}}=ctx;
+ // Priority: a present co-teacher of the same class/period takes the slot first.
+ const co=coTeachers(ctx,row).filter(g=>!rows.some((r,i)=>i!==ignore&&r.waktu===row.waktu&&r.pengganti===g));
+ if(co.length) return co;
  const P=prep(ctx), periods=[...P.periods], assigned=rows.filter((r,i)=>i!==ignore&&r.pengganti);
  const loads=P.loads, max=P.max;
  const counts={}; assigned.forEach(r=>counts[r.pengganti]=(counts[r.pengganti]||0)+1);
@@ -88,7 +103,11 @@ function candidates(ctx,row,rows,ignore=-1){
 }
 function manualCandidates(ctx,row,rows,ignore=-1){
  const {data,day,absent=[],status={}}=ctx;
- return data.guru.map(g=>g.singkat).filter(g=>
+ // Co-teachers teach this very period, so they fail the "not teaching" filter
+ // below; list them first so the teacher can hand the slot back if declined.
+ const co=coTeachers(ctx,row).filter(g=>!rows.some((r,i)=>i!==ignore&&r.waktu===row.waktu&&r.pengganti===g));
+ const rest=data.guru.map(g=>g.singkat).filter(g=>
+  !co.includes(g)&&
   (data.waktu[day]||[]).includes(row.waktu)&&
   // Manual only: teachers off the free list (tidak bertugas) may be placed by hand, never by the auto engine.
   !data.kelas.some(k=>k.hari===day&&k.waktu===row.waktu&&k.guru===g)&&
@@ -97,6 +116,7 @@ function manualCandidates(ctx,row,rows,ignore=-1){
   !rows.some((r,i)=>i!==ignore&&r.waktu===row.waktu&&r.pengganti===g)&&
   !(ctx.clash&&ctx.clash(g,row,rows,ignore))
  ).sort((a,b)=>a.localeCompare(b));
+ return co.concat(rest);
 }
 function sessionForClass(sessions,kelas){
  const k=String(kelas||'').split(',')[0].trim().toUpperCase();
@@ -124,7 +144,7 @@ function assign(ctx,rows){
  }
  return result;
 }
-const api={dayIndex,timetableDay,normalizeTimetable,schoolWeek,weekStart,weeklyCounts,candidates,manualCandidates,sessionForClass,needsRelief,assign};
+const api={dayIndex,timetableDay,normalizeTimetable,schoolWeek,weekStart,weeklyCounts,coTeachers,candidates,manualCandidates,sessionForClass,needsRelief,assign};
 if(typeof module!=='undefined'&&module.exports) module.exports=api;
 else root.ReliefEngine=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

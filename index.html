@@ -153,7 +153,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <select id="mingguSekolah"><option value="auto">Automatik ikut jadual</option><option value="sunday">Ahad–Khamis</option><option value="monday">Isnin–Jumaat</option></select>
  </div>
  <div id="statusMinggu" class="status" role="status"></div>
- <details class="status-harian" id="kotakMasa">
+ <details class="status-harian" id="kotakMasa" hidden style="display:none">
   <summary>⏰ Sesi operasi &amp; masa setiap waktu</summary>
   <p class="bantu" style="margin-top:10px;font-size:15px">Sekolah boleh ada beberapa sesi (cth. Tahap 1 &amp; Tahap 2) dengan masa rehat berbeza. Tetapkan kelas bagi setiap sesi (awalan nama kelas, cth. <b>1,2,3</b>). Anda juga boleh tekan nombor waktu pada grid untuk isi masa terus. Guru yang sama dikongsi — sistem tidak akan beri relef jika masa bertindih dengan kelas guru itu dalam sesi lain.</p>
   <div id="senaraiMasa"></div>
@@ -542,7 +542,8 @@ function lukisJadualLama(){
       const dipakai = barisRelef.filter((x,j)=>j!==i&&x.waktu===b.waktu&&x.pengganti).map(x=>x.pengganti);
       const calon = calonSlot(b,i);
       if(b.pengganti&&!calon.includes(b.pengganti)) calon.unshift(b.pengganti);
-      const opt = ['<option value="">— Pilih guru —</option>'].concat(calon.map(g=>`<option value="${g}" ${g===b.pengganti?'selected':''}>${nama(g)}</option>`));
+      const rakan = ReliefEngine.coTeachers(konteks(),b);
+      const opt = ['<option value="">— Pilih guru —</option>'].concat(calon.map(g=>`<option value="${g}" ${g===b.pengganti?'selected':''}>${nama(g)}${rakan.includes(g)?' (rakan sekelas)':''}</option>`));
       return `<tr class="${b.pengganti?'':'tiada'}"><td><b>${b.waktu}</b><span class="masa">${masaWaktu(b.waktu,b.kelas)}</span></td><td>${b.kelas}</td><td>${b.subjek}</td><td>${nama(b.guruAsal)}</td>
         <td><select data-i="${i}">${opt.join('')}</select>${calon.length?'':'<div class="kecil" style="color:var(--merah)">Tiada guru tersedia pada waktu ini</div>'}</td></tr>`;
     }).join('');
