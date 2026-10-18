@@ -115,7 +115,9 @@ function candidates(ctx,row,rows,ignore=-1){
  // Soft rule: a relief must not touch another busy period (own lesson or relief); used only when no rested teacher fits.
  // Rest = the period right before AND right after this slot is free (no own lesson, no relief).
  const twin=g=>busy(g,row.waktu-1)||busy(g,row.waktu+1)?1:0;
- const sort=list=>list.sort((a,b)=>twin(a)-twin(b)||idle(a)-idle(b)||burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
+ // Soft rule: avoid a 3rd relief in one day; only when nobody else fits.
+ const over=g=>(counts[g]||0)>=(ctx.softDailyRelief||2)?1:0;
+ const sort=list=>list.sort((a,b)=>over(a)-over(b)||twin(a)-twin(b)||idle(a)-idle(b)||burden(a)-burden(b)||loads[a]-loads[b]||rank(a)-rank(b)||(weekly[a]||0)-(weekly[b]||0)||a.localeCompare(b));
  // A frozen teacher is never a normal candidate. Emergency still obeys every hard filter.
  const normal=qualified.filter(g=>!frozen.includes(g));
  if(normal.length) return sort(normal);
@@ -172,6 +174,17 @@ function assign(ctx,rows){
    const old=r.pengganti, list=candidates(ctx,r,result,i);
    const pick=list.find(g=>{r.pengganti=g;const ok=!touches(r,i);r.pengganti=old;return ok;});
    if(pick&&pick!==old){r.pengganti=pick;moved=true;}
+  });
+  if(!moved) break;
+ }
+ // Repair: move a 3rd+ relief to a teacher with fewer than 2 when one fits.
+ const lim=ctx.softDailyRelief||2, cnt=g=>result.filter(x=>x.pengganti===g).length;
+ for(let round=0;round<3;round++){
+  let moved=false;
+  result.forEach((r,i)=>{
+   if(!r.pengganti||coTeachers(ctx,r).includes(r.pengganti)||cnt(r.pengganti)<=lim) return;
+   const pick=candidates(ctx,r,result,i).find(g=>g!==r.pengganti&&cnt(g)<lim);
+   if(pick){r.pengganti=pick;moved=true;}
   });
   if(!moved) break;
  }

@@ -203,3 +203,22 @@
   assert.strictEqual(r[0].pengganti,'B','rested B must take slot 6, not A right after own lesson');
   console.log('rest-around ok');
 }
+
+// soft daily limit: avoid more than 2 reliefs per teacher per day
+{
+  const test=require('node:test'),assert=require('node:assert');
+  const E=require('./relief-engine.js');
+  const mk=guru=>{const free={};[1,2,3,4,5,6,7,8].forEach(w=>free['ISNIN|'+w]=guru);return {hari:['ISNIN'],guru:[...guru,'X'].map(s=>({singkat:s})),waktu:{ISNIN:[1,2,3,4,5,6,7,8,9]},free,
+   kelas:[...guru.map((g,i)=>({hari:'ISNIN',waktu:9,kelas:'9'+i,subjek:'BM',guru:g})),...[1,3,5,7].map(w=>({hari:'ISNIN',waktu:w,kelas:'1A',subjek:'MT',guru:'X'}))]};};
+  const rows=()=>[1,3,5,7].map(w=>({hari:'ISNIN',waktu:w,kelas:'1A',subjek:'MT',guruAsal:'X',pengganti:''}));
+  const ctx=d=>({data:d,day:'ISNIN',absent:['X'],frozen:[],emergency:false,status:{},weekly:{}});
+  test('auto: nobody gets more than 2 reliefs when another teacher is free',()=>{
+   const out=E.assign(ctx(mk(['A','B'])),rows());
+   const c={};out.forEach(r=>c[r.pengganti]=(c[r.pengganti]||0)+1);
+   assert.deepStrictEqual(c,{A:2,B:2});
+  });
+  test('auto: 3rd relief allowed only when no other teacher can take it',()=>{
+   const out=E.assign(ctx(mk(['A'])),rows());
+   assert.ok(out.filter(r=>r.pengganti==='A').length>2);
+  });
+}
