@@ -266,7 +266,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
 
 <section class="langkah tersembunyi" id="hasil">
  <div id="kepalaLaporan"></div><div class="cetak-tajuk"><h2>JADUAL RELEF GURU</h2></div>
- <h2><span class="no tiada-cetak">5</span> <span id="tajukHasil">Jadual Relef</span></h2>
+ <h2 class="tiada-cetak"><span class="no">5</span> <span id="tajukHasil">Jadual Relef</span></h2>
  <div class="ringkas tiada-cetak" id="ringkasan"></div>
  <div class="petunjuk tiada-cetak">
   <span><i style="background:#7a1f17"></i>Perlu relef</span>
@@ -276,7 +276,7 @@ body.cetak-laporan #seksyenTiket{display:none!important}
   <span><i style="background:#5fd3e8"></i>Relef diberi — seret atau tekan untuk pindah</span>
  </div>
  <p class="bantu tiada-cetak" id="arahanGrid"></p>
- <div style="overflow-x:auto"><table class="grid" id="grid"></table></div>
+ <div style="overflow-x:auto" class="tiada-cetak"><table class="grid" id="grid"></table></div>
  <h3 style="margin-top:22px" class="tiada-cetak">📊 Statistik jumlah relef setiap guru</h3>
  <p class="bantu tiada-cetak">Sejarah kekal sehingga anda tekan Reset Statistik. Susun Automatik akan beri relef kepada guru yang paling kurang dahulu.</p>
  <div style="overflow-x:auto" class="tiada-cetak" id="statHasil"></div>
@@ -468,7 +468,7 @@ $('senaraiGuru').addEventListener('change',e=>{ if(e.target.type==='checkbox'){ 
 $('cari').addEventListener('input',lukisGuru);
 const guruTakHadir = ()=>[...tidakHadir];
 function hariStatus(){const date=$('tarikh').value; return tetapan.harian[date] ||= {};}
-const KP_ASAL={tajuk:'JADUAL RELIF GURU',sekolah:'',alamat:'',kod:'',tel:'',faks:'',email:'',logo:''};
+const KP_ASAL={tajuk:'JADUAL RELEF GURU',sekolah:'',alamat:'',kod:'',tel:'',faks:'',email:'',logo:''};
 const KP_MEDAN={tajuk:'kpTajuk',sekolah:'kpSekolah',alamat:'kpAlamat',kod:'kpKod',tel:'kpTel',faks:'kpFaks',email:'kpEmail'};
 function kepala(){ return {...KP_ASAL,...(tetapan.kepala||{})}; }
 function infoKepala(k){ return [k.kod&&'KOD SEK : '+k.kod,k.tel&&'TEL : '+k.tel,k.faks&&'FAX : '+k.faks].filter(Boolean).join('     '); }
@@ -780,7 +780,7 @@ function janaGambar(){
   x.strokeStyle='rgba(34,211,238,.06)'; x.lineWidth=1; for(let i=0;i<W;i+=36){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke();}
   // kepala surat
   let tx=P; if(logoImg){ x.fillStyle='#fff'; x.beginPath(); x.roundRect(P,40,120,120,22); x.fill(); const sk=Math.min(104/logoImg.width,104/logoImg.height); x.drawImage(logoImg,P+60-logoImg.width*sk/2,100-logoImg.height*sk/2,logoImg.width*sk,logoImg.height*sk); tx=P+148; }
-  const mw=W-tx-P; x.fillStyle='#22d3ee'; x.font=F(700,18); x.fillText(fit((K.tajuk||'JADUAL RELIF GURU').toUpperCase().split('').join('\u200A'),mw),tx,62);
+  const mw=W-tx-P; x.fillStyle='#22d3ee'; x.font=F(700,18); x.fillText(fit((K.tajuk||'JADUAL RELEF GURU').toUpperCase().split('').join('\u200A'),mw),tx,62);
   x.fillStyle='#fff'; x.font=F(700,34); const sl=balut((K.sekolah||'Sistem Relef Guru').toUpperCase(),F(700,34),mw).slice(0,2); sl.forEach((t,i)=>x.fillText(t,tx,104+i*38));
   x.fillStyle='rgba(255,255,255,.7)'; x.font=F(400,19); const inf=[K.alamat,infoKepala(K).replace(/\s{2,}/g,' · ')].filter(Boolean).join(' · '); if(inf) x.fillText(fit(inf,mw),tx,110+sl.length*38);
   const gl=x.createLinearGradient(0,0,W,0); gl.addColorStop(0,'#22d3ee'); gl.addColorStop(.5,'#f5b942'); gl.addColorStop(1,'#22d3ee'); x.fillStyle=gl; x.fillRect(0,KH-4,W,4);
