@@ -41,6 +41,16 @@ input[type=date],select{font:inherit;font-size:19px;padding:12px 14px;border:2px
 .upload b{color:var(--hijau)}
 .status{margin-top:12px;padding:12px 16px;border-radius:12px;background:var(--hijau2);color:var(--hijau);font-weight:600}
 .status.ralat{background:var(--merah2);color:var(--merah)}
+.dd-guru{border-radius:16px;background:linear-gradient(145deg,#ffffff,#eef5ff);box-shadow:6px 6px 14px var(--bayang),-5px -5px 12px var(--sinar)}
+.dd-guru>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;font-weight:700;font-size:17px}
+.dd-guru>summary::-webkit-details-marker{display:none}
+.dd-anak{transition:transform .2s}.dd-guru[open] .dd-anak{transform:rotate(180deg)}
+.dd-panel{padding:0 14px 14px}
+.dd-cari{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;background:inherit;padding-top:4px}
+.dd-cari .cari{margin-bottom:10px}.dd-kira{white-space:nowrap;font-size:14px;color:var(--kelabu);margin-bottom:10px}
+.dd-panel .guru-grid{max-height:min(55vh,460px);overflow-y:auto;padding:6px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.dd-cip{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.dd-cip button{border:0;border-radius:999px;padding:7px 12px;background:var(--merah2);color:var(--merah);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
 .guru-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .guru{display:flex;align-items:center;gap:12px;padding:14px;border:2px solid #dde5e0;border-radius:14px;cursor:pointer;background:var(--putih);user-select:none}
 .guru input{width:26px;height:26px;accent-color:var(--merah)}
@@ -290,9 +300,15 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
 
 <section class="langkah penuh" id="langkah3">
  <h2><span class="no">2</span> Tanda guru yang tidak hadir</h2>
- <p class="bantu">Tekan pada nama guru. Kotak bertukar merah bila dipilih.</p>
- <input class="cari" id="cari" placeholder="🔎 Cari nama guru...">
- <div class="guru-grid" id="senaraiGuru"><p class="bantu">Sila masukkan fail jadual dahulu.</p></div>
+ <p class="bantu">Buka senarai, cari nama, dan tekan guru yang tidak hadir. Kotak bertukar merah bila dipilih.</p>
+ <details class="dd-guru" id="ddGuru">
+  <summary><span id="ddRingkas">Pilih guru tidak hadir</span><span class="dd-anak">▾</span></summary>
+  <div class="dd-panel">
+   <div class="dd-cari"><input class="cari" id="cari" type="search" autocomplete="off" placeholder="🔎 Taip nama guru..."><span class="dd-kira" id="ddKira"></span></div>
+   <div class="guru-grid" id="senaraiGuru"><p class="bantu">Sila masukkan fail jadual dahulu.</p></div>
+  </div>
+ </details>
+ <div class="dd-cip" id="ddCip"></div>
 </section>
 <section class="langkah penuh" id="langkah4">
  <h2><span class="no">3</span> Susun jadual relef</h2>
@@ -316,9 +332,14 @@ button.wa:active:not(:disabled){box-shadow:0 1px 0 #15803d}
  </div>
  <p class="bantu tiada-cetak" id="arahanGrid"></p>
  <div class="tiada-cetak zoom-alat" id="zoomAlat"><button class="kedua" data-zoom="-">－</button><button class="kedua" data-zoom="muat">Muat skrin</button><button class="kedua" data-zoom="+">＋</button><small>Telefon: cubit dengan dua jari untuk zoom</small></div><div style="overflow:auto" class="tiada-cetak grid-wrap" id="gridWrap"><table class="grid" id="grid"></table></div>
- <h3 style="margin-top:22px" class="tiada-cetak">📊 Statistik jumlah relef setiap guru</h3>
- <p class="bantu tiada-cetak">Sejarah kekal sehingga anda tekan Reset Statistik. Susun Automatik akan beri relef kepada guru yang paling kurang dahulu.</p>
- <div style="overflow-x:auto" class="tiada-cetak" id="statHasil"></div>
+ <div class="baris tiada-cetak" style="margin-top:22px">
+  <button class="kedua" id="btnTogolStat" onclick="togolStat()">📊 Statistik jumlah relef setiap guru ▸</button>
+ </div>
+ <div id="statBlok" hidden>
+  <h3 class="tiada-cetak" style="margin-top:12px">📊 Statistik jumlah relef setiap guru</h3>
+  <p class="bantu tiada-cetak">Sejarah kekal sehingga anda tekan Reset Statistik. Susun Automatik akan beri relef kepada guru yang paling kurang dahulu.</p>
+  <div style="overflow-x:auto" class="tiada-cetak" id="statHasil"></div>
+ </div>
  <div class="hanya-cetak"><h3 style="margin-top:22px">Senarai relef</h3><div style="overflow-x:auto"><table id="jadual"></table></div></div>
  <div class="baris tiada-cetak" style="margin-top:16px">
   <button onclick="cetak('cetak-laporan')">🖨️ Cetak Laporan Penuh</button>
@@ -553,16 +574,28 @@ function lukisGuru(){
   if(!DATA) return;
   const h=hariDipilih(), q=$('cari').value.toLowerCase();
   const pilih = tidakHadir;
-  $('senaraiGuru').innerHTML = DATA.guru.filter(g=>(g.nama+g.singkat).toLowerCase().includes(q)).map(g=>{
+  $('senaraiGuru').innerHTML = DATA.guru.map(g=>{
     const n = h? DATA.kelas.filter(k=>k.hari===h&&k.guru===g.singkat).length : 0;
     const on = pilih.has(g.singkat);
-    return `<label class="guru ${on?'pilih':''}"><input type="checkbox" value="${esc(g.singkat)}" ${on?'checked':''}>
+    return `<label class="guru ${on?'pilih':''}" data-k="${esc(normCari(g.nama+' '+g.singkat))}"><input type="checkbox" value="${esc(g.singkat)}" ${on?'checked':''}>
       <span><b>${esc(g.nama)}</b><br><span class="kecil">${g.singkat}${h?` · ${n} waktu mengajar hari ${h}`:''}</span></span></label>`;
-  }).join('') || '<p class="bantu">Tiada guru dijumpai.</p>';
+  }).join('') || '<p class="bantu">Tiada guru.</p>';
+  $('senaraiGuru').insertAdjacentHTML('beforeend','<p class="bantu" id="ddTiada" hidden>Tiada guru dijumpai.</p>');
+  tapisGuru(); lukisCip();
   if(h && !DATA.hari.includes(h)) $('senaraiGuru').insertAdjacentHTML('afterbegin',`<p class="status ralat" style="grid-column:1/-1">Hari ${h} tiada dalam jadual sekolah.</p>`);
 }
-$('senaraiGuru').addEventListener('change',e=>{ if(e.target.type==='checkbox'){ const g=e.target.value; if(e.target.checked) tidakHadir.add(g); else tidakHadir.delete(g); const st=hariStatus(); st[g]={...(st[g]||{}),reason:e.target.checked?'Tidak hadir':'Hadir',ajarSendiri:[]}; simpanTetapan(); e.target.closest('.guru').classList.toggle('pilih',e.target.checked); lukisTetapan(); sembunyiHasil(); }});
-$('cari').addEventListener('input',lukisGuru);
+$('senaraiGuru').addEventListener('change',e=>{ if(e.target.type==='checkbox'){ const g=e.target.value; if(e.target.checked) tidakHadir.add(g); else tidakHadir.delete(g); const st=hariStatus(); st[g]={...(st[g]||{}),reason:e.target.checked?'Tidak hadir':'Hadir',ajarSendiri:[]}; simpanTetapan(); e.target.closest('.guru').classList.toggle('pilih',e.target.checked); lukisCip(); lukisTetapan(); sembunyiHasil(); }});
+function normCari(t){return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();}
+function tapisGuru(){ const q=normCari($('cari').value).split(' ').filter(Boolean); let n=0, jum=0;
+  $('senaraiGuru').querySelectorAll('.guru').forEach(el=>{ jum++; const ok=q.every(w=>el.dataset.k.includes(w)); el.style.display=ok?'':'none'; if(ok)n++; });
+  const t=$('ddTiada'); if(t) t.hidden=n>0||!jum; $('ddKira').textContent=jum?`${n}/${jum}`:''; }
+function lukisCip(){ if(!DATA) return; const pil=DATA.guru.filter(g=>tidakHadir.has(g.singkat));
+  $('ddRingkas').textContent = pil.length? `🔴 ${pil.length} guru tidak hadir dipilih` : 'Pilih guru tidak hadir';
+  $('ddCip').innerHTML = pil.map(g=>`<button type="button" data-buang="${esc(g.singkat)}" title="Buang">${esc(g.nama)} ✕</button>`).join(''); }
+let rafCari=0; $('cari').addEventListener('input',()=>{ cancelAnimationFrame(rafCari); rafCari=requestAnimationFrame(tapisGuru); });
+$('cari').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); const el=[...$('senaraiGuru').querySelectorAll('.guru')].find(x=>x.style.display!=='none'); if(el) el.querySelector('input').click(); } if(e.key==='Escape'){ $('cari').value=''; tapisGuru(); }});
+$('ddGuru').addEventListener('toggle',()=>{ if($('ddGuru').open && matchMedia('(pointer:fine)').matches) setTimeout(()=>$('cari').focus(),30); });
+$('ddCip').addEventListener('click',e=>{ const b=e.target.closest('[data-buang]'); if(!b) return; const cb=[...$('senaraiGuru').querySelectorAll('input[type=checkbox]')].find(c=>c.value===b.dataset.buang); if(cb) cb.click(); });
 const guruTakHadir = ()=>[...tidakHadir];
 function hariStatus(){const date=$('tarikh').value; return tetapan.harian[date] ||= {};}
 const KP_ASAL={tajuk:'JADUAL RELEF GURU',sekolah:'',alamat:'',kod:'',tel:'',faks:'',email:'',logo:''};
@@ -995,6 +1028,7 @@ function htmlStat(){
   return '<table><tr><th>Bil</th><th>Guru</th><th>Hari ini</th><th>Jumlah keseluruhan</th></tr>'+e.map(([g,n],i)=>`<tr><td>${i+1}</td><td>${esc(nm(g))}</td><td>${hari[g]||'-'}</td><td><span class="stat-bar" style="width:${Math.round(n/max*120)}px"></span><b>${n}</b></td></tr>`).join('')+'</table>';
 }
 function lukisStat(){ const h=htmlStat(); $('statRelef').innerHTML=h; if($('statHasil')) $('statHasil').innerHTML=h; }
+function togolStat(){ const b=$('statBlok'); b.hidden=!b.hidden; const bu=$('btnTogolStat'); bu.innerHTML=b.hidden?'📊 Statistik jumlah relef setiap guru ▸':'📊 Statistik jumlah relef setiap guru ▾'; if(!b.hidden) lukisStat(); }
 $('btnResetStat').onclick=()=>{
   if(prompt('Semua sejarah relef akan dipadam dan tidak boleh dikembalikan.\nTaip RESET untuk sahkan:')!=='RESET') return toast('Reset dibatalkan');
   localStorage.removeItem(KUNCI_REKOD); lukisStat(); toast('🗑️ Statistik relef telah direset');
