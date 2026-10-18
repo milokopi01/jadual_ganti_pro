@@ -1,7 +1,7 @@
-// Service worker Sistem Relief Guru — halaman: network-first, fail lain: cache-first
-const CACHE = 'relief-guru-v2c.25.6';
+// Service worker Sistem Relief Guru — halaman: network-first, fail lain: network-first
+const CACHE = 'relief-guru-v2c.26.0';
 const ASET = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
-  './xlsx.full.min.js', './relief-engine.js?v=2.12.0'];
+  './xlsx.full.min.js', './relief-engine.js?v=2.13.0'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.allSettled(ASET.map(a => c.add(a)))).then(() => self.skipWaiting()));
@@ -21,8 +21,9 @@ self.addEventListener('fetch', e => {
     return;
   }
   if(new URL(req.url).origin!==self.location.origin) return;
-  e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(r => {
+  // Network-first so a new relief engine always reaches the user; cache only when offline.
+  e.respondWith(fetch(req).then(r => {
     if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
     return r;
-  })));
+  }).catch(() => caches.match(req)));
 });

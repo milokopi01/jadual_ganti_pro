@@ -159,3 +159,18 @@
   assert.ok(E.manualCandidates({data,day:'Isnin',absent:['X'],frozen:[]},filled[j],filled,j).includes('IDLE'),'manual no cap');
   console.log('idle-cap ok');
 }
+
+// rest-after-2: no auto relief right after 2 back-to-back periods (MNA case)
+{
+  const assert=require('assert');const E=require('./relief-engine.js');
+  const W=[1,2,3,4,5,6,7,8,9,10,11];
+  const free={};W.forEach(w=>free['Isnin|'+w]=['MNA']);
+  const data={guru:['MNA','X'].map(s=>({singkat:s})),waktu:{Isnin:W},free,
+   kelas:[{hari:'Isnin',waktu:8,guru:'MNA',kelas:'5D'},{hari:'Isnin',waktu:9,guru:'MNA',kelas:'5D'},{hari:'Isnin',waktu:10,guru:'X',kelas:'5A'},{hari:'Isnin',waktu:5,guru:'X',kelas:'5B'}]};
+  const ctx={data,day:'Isnin',absent:['X'],frozen:[]};
+  assert.strictEqual(E.assign(ctx,[{waktu:10,kelas:'5A',guruAsal:'X'}])[0].pengganti,'','waktu 10 after 8-9 must stay empty');
+  // One lesson then a relief is fine (2 in a row).
+  data.kelas=data.kelas.filter(k=>k.waktu!==8);
+  assert.strictEqual(E.assign(ctx,[{waktu:10,kelas:'5A',guruAsal:'X'}])[0].pengganti,'MNA');
+  console.log('rest-after-2 ok');
+}

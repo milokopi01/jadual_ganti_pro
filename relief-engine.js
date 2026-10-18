@@ -94,10 +94,11 @@ function candidates(ctx,row,rows,ignore=-1){
  const base=data.guru.map(g=>g.singkat).filter(g=>!absent.includes(g)&&(!status[g]?.reason||status[g].reason==='Hadir')&&loads[g]<max);
  // Never stack a relief onto an already packed stretch: the run of consecutive busy
  // periods (own lessons + reliefs) including this slot must stay within the limit.
- const maxRun=ctx.maxConsecutive||3;
+ // Limit 2: after 2 back-to-back periods the teacher must rest before any relief.
+ const maxRun=ctx.maxConsecutive||2;
  const busy=(g,w)=>P.teach.has(g+'|'+w)||assigned.some(r=>r.waktu===w&&r.pengganti===g);
  const runOk=g=>{let n=1;for(let w=row.waktu-1;busy(g,w);w--)n++;for(let w=row.waktu+1;busy(g,w);w++)n++;return n<=maxRun;};
- // A teacher with no own class today takes at most 2 reliefs (auto and manual).
+ // AUTO only: a teacher with no own class today takes at most 2 reliefs (manual has no cap).
  const capOk=g=>!(loads[g]===0&&(counts[g]||0)>=(ctx.maxIdleRelief||2));
  const qualified=base.filter(g=>capOk(g)&&available(g,row.waktu)&&runOk(g)&&!(ctx.clash&&ctx.clash(g,row,rows,ignore))&&(loads[g]===0||available(g,row.waktu-1)||available(g,row.waktu+1)));
  const rank=g=>available(g,row.waktu-1)&&available(g,row.waktu+1)?0:available(g,row.waktu+1)?1:2;
