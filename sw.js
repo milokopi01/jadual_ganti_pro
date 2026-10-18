@@ -1,5 +1,5 @@
 // Service worker Sistem Relef Guru — halaman: network-first, fail lain: cache-first
-const CACHE = 'relef-guru-v2c.22.0';
+const CACHE = 'relef-guru-v2c.25.0';
 const ASET = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
   './xlsx.full.min.js', './relief-engine.js?v=2.12.0'];
 

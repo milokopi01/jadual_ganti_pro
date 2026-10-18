@@ -18,7 +18,7 @@
 <script src="xlsx.full.min.js"></script>
 <script src="relief-engine.js?v=2.12.0"></script>
 <style>
-:root{--hijau:#1e6fd9;--hijau2:#e3f0ff;--kuning:#38bdf8;--krim:#eef5ff;--teks:#0f2747;--kelabu:#5b7290;--merah:#b3392f;--merah2:#fbe7e4;--putih:#fff}
+:root{--hijau:#1e6fd9;--hijau2:#e3f0ff;--kuning:#38bdf8;--krim:#eef5ff;--teks:#0f2747;--kelabu:#5b7290;--merah:#b3392f;--merah2:#fbe7e4;--putih:#fff;--rakan:#9be3b6;--rakan2:#0e4a2a;--rakan-bayang:#4ea87a}
 *{box-sizing:border-box}
 body{margin:0;font-family:Lexend,system-ui,sans-serif;background:var(--krim);color:var(--teks);font-size:19px;line-height:1.5}
 header{background:var(--hijau);color:var(--putih);padding:18px 20px;display:flex;align-items:center;gap:14px}
@@ -107,9 +107,10 @@ td select{width:100%;font-size:17px;padding:10px}
 .c-klik:hover{outline:3px solid var(--hijau)}
 .c-relef{background:#5fd3e8;color:#073b45;font-weight:700;cursor:grab;touch-action:none;user-select:none}
 .c-relef.aktif{outline:4px solid var(--kuning)}
-.c-relef.c-rakan{background:#f4a259;color:#4a2306}
-.legenda-rakan{display:inline-block;background:#f4a259;color:#4a2306;font-weight:700;padding:1px 6px;border-radius:4px}
+.c-relef.c-rakan{background:var(--rakan);color:var(--rakan2);box-shadow:0 3px 0 var(--rakan-bayang)}
+.legenda-rakan{display:inline-block;background:var(--rakan);color:var(--rakan2);font-weight:700;padding:1px 6px;border-radius:4px}
 .c-drop{outline:3px solid var(--hijau)}
+.c-pulang{outline:2px dashed var(--rakan-bayang);outline-offset:-3px;cursor:pointer}
 .c-perlu{background:#7a1f17;color:#fff;font-weight:700;cursor:pointer}
 .c-perlu.ok{background:#2c8a6e}
 .c-perlu.aktif{outline:4px solid var(--kuning)}
@@ -574,7 +575,7 @@ function lukisGuru(){
   if(!DATA) return;
   const h=hariDipilih(), q=$('cari').value.toLowerCase();
   const pilih = tidakHadir;
-  $('senaraiGuru').innerHTML = DATA.guru.map(g=>{
+  $('senaraiGuru').innerHTML = [...DATA.guru].sort((x,y)=>(tidakHadir.has(y.singkat)?1:0)-(tidakHadir.has(x.singkat)?1:0)).map(g=>{
     const n = h? DATA.kelas.filter(k=>k.hari===h&&k.guru===g.singkat).length : 0;
     const on = pilih.has(g.singkat);
     return `<label class="guru ${on?'pilih':''}" data-k="${esc(normCari(g.nama+' '+g.singkat))}"><input type="checkbox" value="${esc(g.singkat)}" ${on?'checked':''}>
@@ -584,7 +585,7 @@ function lukisGuru(){
   tapisGuru(); lukisCip();
   if(h && !DATA.hari.includes(h)) $('senaraiGuru').insertAdjacentHTML('afterbegin',`<p class="status ralat" style="grid-column:1/-1">Hari ${h} tiada dalam jadual sekolah.</p>`);
 }
-$('senaraiGuru').addEventListener('change',e=>{ if(e.target.type==='checkbox'){ const g=e.target.value; if(e.target.checked) tidakHadir.add(g); else tidakHadir.delete(g); const st=hariStatus(); st[g]={...(st[g]||{}),reason:e.target.checked?'Tidak hadir':'Hadir',ajarSendiri:[]}; simpanTetapan(); e.target.closest('.guru').classList.toggle('pilih',e.target.checked); lukisCip(); lukisTetapan(); sembunyiHasil(); }});
+$('senaraiGuru').addEventListener('change',e=>{ if(e.target.type==='checkbox'){ const g=e.target.value; if(e.target.checked) tidakHadir.add(g); else tidakHadir.delete(g); const st=hariStatus(); st[g]={...(st[g]||{}),reason:e.target.checked?'Tidak hadir':'Hadir',ajarSendiri:[]}; simpanTetapan(); e.target.closest('.guru').classList.toggle('pilih',e.target.checked); lukisGuru(); lukisTetapan(); sembunyiHasil(); }});
 function normCari(t){return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();}
 function tapisGuru(){ const q=normCari($('cari').value).split(' ').filter(Boolean); let n=0, jum=0;
   $('senaraiGuru').querySelectorAll('.guru').forEach(el=>{ jum++; const ok=q.every(w=>el.dataset.k.includes(w)); el.style.display=ok?'':'none'; if(ok)n++; });
@@ -820,6 +821,8 @@ function lukisGrid(){
       if(rel!==undefined) {const rk=ReliefEngine.coTeachers(konteks(),barisRelef[rel]).includes(g.singkat);
       return `<td class="c-relef ${rk?'c-rakan':''} ${slotAktif===rel?'aktif':''}" data-batal="${rel}" title="${rk?'Rakan sekelas guru tidak hadir · ':''}Seret untuk pindah; tekan untuk pilih, tekan sekali lagi untuk batal">RELEF${rk?' 🤝':''}<br>${barisRelef[rel].kelas}</td>`;}
       const a=ajar(g.singkat,w);
+      if(a.length){const pulang=barisRelef.some(b=>b.waktu===w&&a.some(x=>x.kelas===b.kelas)&&ReliefEngine.coTeachers(konteks(),b).includes(g.singkat));
+      if(pulang) return `<td class="c-ajar c-pulang" data-guru="${g.singkat}" data-w="${w}" title="Rakan sekelas · boleh terima semula kad relef kelas ini">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;}
       if(a.length) return `<td class="c-ajar">${a.map(x=>x.kelas+'<br><small>'+x.subjek+'</small>').join('<br>')}</td>`;
       if((hariStatus()[g.singkat]?.blocked||[]).includes(w)) return '<td class="c-tiada" title="Sekatan waktu">SEKAT</td>';
       if((DATA.free[h+'|'+w]||[]).includes(g.singkat)) return `<td class="c-free" data-guru="${g.singkat}" data-w="${w}" title="${tetapan.freeze.includes(g.singkat)?'Guru freeze · pilih secara manual':'Free'}">${tetapan.freeze.includes(g.singkat)?'❄️':''}</td>`;
@@ -832,7 +835,7 @@ function lukisGrid(){
   aturZoomGrid();
   $('arahanGrid').innerHTML = slotAktif!==null
     ? `👉 Dipilih: <b>Waktu ${barisRelef[slotAktif].waktu} · ${barisRelef[slotAktif].kelas}</b>. Sekarang tekan petak <b>kuning atau kelabu berjalur</b> pada lajur yang sama.`
-    : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relef, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal. Kad <span class="legenda-rakan">oren 🤝</span> = relef diberi kepada rakan sekelas guru tidak hadir.';
+    : 'Tekan kotak jadual guru tidak hadir untuk batalkan relef waktu itu (AJAR SENDIRI); tekan semula untuk perlukan relef. Tekan ↗ untuk pilih atau tukar guru ganti. Tekan ↗ pada kelas perlu relef, kemudian tekan petak kuning guru yang free. Kad biru boleh diseret ke petak kuning atau kelabu berjalur pada lajur yang sama. Pada telefon, boleh juga tekan kad biru kemudian tekan petak destinasi. Tekan kad biru yang dipilih sekali lagi untuk batal. Kad <span class="legenda-rakan">hijau 🤝</span> = relef diberi kepada rakan sekelas guru tidak hadir.';
 }
 function tukarKeperluan(g,w){
   const st=hariStatus();st[g] ||= {reason:'Tidak hadir'};
