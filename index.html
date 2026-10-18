@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="xlsx.full.min.js"></script>
-<script src="relief-engine.js?v=2.10.0"></script>
+<script src="relief-engine.js?v=2.11.0"></script>
 <style>
 :root{--hijau:#0f5c4a;--hijau2:#e3efe9;--kuning:#e8a33d;--krim:#faf6ec;--teks:#1d2b26;--kelabu:#5f6f68;--merah:#b3392f;--merah2:#fbe7e4;--putih:#fff}
 *{box-sizing:border-box}
@@ -282,9 +282,17 @@ function hurai(wb){
 
   // 2) Guru free setiap hari/waktu
   const av = S('Available teachers 2') || S('Available teachers'); if(!av) throw 'Helaian "Available teachers" tidak dijumpai.';
-  const free={}, hari=[], waktu={};
+  const free={}, hari=[], waktu={}, labelHari=new Map();
+  const bacaHari=value=>{
+    const raw=norm(value); if(!raw) return '';
+    const index=ReliefEngine.dayIndex(raw);
+    if(index===null) throw 'Nama hari "'+raw+'" tidak dikenali. Gunakan nama hari Bahasa Melayu atau English.';
+    if(!labelHari.has(index)) labelHari.set(index,raw);
+    return labelHari.get(index);
+  };
   av.forEach(r=>{
-    const d=norm(r[0]).toUpperCase(), w=norm(r[1]); if(!d||!w||isNaN(+w)) return;
+    const w=norm(r[1]); if(!norm(r[0])||!w||isNaN(+w)) return;
+    const d=bacaHari(r[0]);
     if(!hari.includes(d)) hari.push(d);
     (waktu[d]=waktu[d]||[]).includes(+w)||waktu[d].push(+w);
     free[d+'|'+w] = norm(r[2]).split(',').map(x=>{x=norm(x);return namaKeSingkat[x]||x;}).filter(Boolean);
@@ -311,11 +319,13 @@ function hurai(wb){
   const kelasSlot=[];
   wb.SheetNames.forEach(nm=>{
     const asas = nm.replace(/\d+$/,'').replace(/\.$/,'').trim().toUpperCase();
-    const sj = subjek.find(x=>x.penuh===asas) || subjek.find(x=>x.penuh.startsWith(asas) && asas.length>3);
+    const penuh=nm.trim().toUpperCase();
+    const sj = subjek.find(x=>x.penuh===penuh) || subjek.find(x=>x.penuh.replace(/\.$/,'').trim()===penuh.replace(/\.$/,'').trim()) || subjek.find(x=>x.penuh===asas) || subjek.find(x=>x.penuh.startsWith(asas) && asas.length>3);
     if(!sj) return;
     const rows=S(nm); const hd=cariBarisTajuk(rows,'Day'); if(!hd) return;
     for(let i=hd.r+1;i<rows.length;i++){
-      const d=norm(rows[i][hd.c]).toUpperCase(), w=norm(rows[i][hd.c+1]); if(!d||!w) continue;
+      const w=norm(rows[i][hd.c+1]); if(!norm(rows[i][hd.c])||!w||isNaN(+w)) continue;
+      const d=bacaHari(rows[i][hd.c]);
       const fr = free[d+'|'+w]||[];
       for(let j=hd.c+2;j<rows[i].length;j++){
         const sel=norm(rows[i][j]); if(!sel) continue;
@@ -337,7 +347,7 @@ function hurai(wb){
       const cs=r.findIndex(c=>/start|mula/.test(c)), ce=r.findIndex(c=>/end|tamat|akhir/.test(c)); if(cs<0||ce<0) continue;
       const cp=r.findIndex(c=>/^(period|short|waktu|no\.?|name)$/.test(c));
       rows.slice(i+1).forEach((x,k)=>{ const w=parseInt(norm(x[cp>=0?cp:0]))||k+1; const a=jamTeks(x[cs]),b=jamTeks(x[ce]); if(a&&b) masa[w]={mula:a,tamat:b}; }); break; } });
-  return {guru,hari,waktu,free,kelas,masa,dimuat:new Date().toLocaleString('ms-MY')};
+  return ReliefEngine.normalizeTimetable({guru,hari,waktu,free,kelas,masa,dimuat:new Date().toLocaleString('ms-MY')});
 }
 
 $('fail').addEventListener('change', e=>{
@@ -360,12 +370,14 @@ function muatBuffer(buf){
 }
 function tunjukStatus(m,ralat){const s=$('statusData'); s.textContent=m; s.className='status'+(ralat?' ralat':'');}
 function paparData(){
+  DATA=ReliefEngine.normalizeTimetable(DATA);
+  $('namaHari').textContent=hariDipilih()||'';
   tunjukStatus(`✅ ${DATA.guru.length} guru, ${DATA.kelas.length} slot mengajar dimuatkan (${DATA.dimuat}). Tekan kotak di atas untuk tukar fail.`);
   lukisGuru(); lukisTetapan(); lukisMinggu(); lukisMasa();
 }
 
 /* ================== TARIKH & GURU ================== */
-function hariDipilih(){ const v=$('tarikh').value; if(!v) return null; return HARI_JS[new Date(v+'T00:00:00').getDay()]; }
+function hariDipilih(){ const v=$('tarikh').value; if(!v) return null; const index=new Date(v+'T00:00:00').getDay(); return ReliefEngine.timetableDay(DATA?.hari||[],index,HARI_JS[index]); }
 $('tarikh').addEventListener('change',()=>{ const h=hariDipilih(); $('namaHari').textContent=h||''; tidakHadir.clear(); statusHarianKePilihan(); lukisGuru(); lukisTetapan(); lukisMinggu(); sembunyiHasil(); });
 
 function lukisGuru(){

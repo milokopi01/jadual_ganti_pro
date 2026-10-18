@@ -1,10 +1,40 @@
 (function(root){
 'use strict';
+const DAY_NAMES=[['AHAD','SUNDAY','SUN','SU','MINGGU'],['ISNIN','MONDAY','MON','MO','SENIN'],['SELASA','TUESDAY','TUES','TUE','TU'],['RABU','WEDNESDAY','WED','WE'],['KHAMIS','THURSDAY','THURS','THUR','THU','TH','KAMIS'],['JUMAAT','JUMAT','FRIDAY','FRI','FR'],['SABTU','SATURDAY','SAT','SA']];
+function dayIndex(value){
+ const name=String(value??'').replace(/\s+/g,' ').trim().replace(/\.$/,'').toUpperCase();
+ const index=DAY_NAMES.findIndex(names=>names.includes(name));
+ return index<0?null:index;
+}
+function timetableDay(days,index,fallback){
+ return days.find(day=>dayIndex(day)===index)??fallback;
+}
+function normalizeTimetable(data){
+ // Preserve Excel labels; aliases in other sheets share the same lookup key.
+ const days=[], labels=new Map();
+ const label=value=>{
+  const raw=String(value??'').replace(/\s+/g,' ').trim(), index=dayIndex(raw);
+  const key=index===null?raw.toUpperCase():index;
+  if(!labels.has(key)){labels.set(key,raw);days.push(raw);}
+  return labels.get(key);
+ };
+ (data.hari||[]).forEach(label);
+ const waktu={},free={};
+ Object.entries(data.waktu||{}).forEach(([day,periods])=>{
+  const key=label(day);waktu[key]=[...new Set([...(waktu[key]||[]),...periods])].sort((a,b)=>a-b);
+ });
+ Object.entries(data.free||{}).forEach(([key,teachers])=>{
+  const split=key.lastIndexOf('|'), day=label(key.slice(0,split)), period=key.slice(split+1);
+  const target=day+'|'+period;free[target]=[...new Set([...(free[target]||[]),...teachers])];
+ });
+ const kelas=(data.kelas||[]).map(row=>({...row,hari:label(row.hari)}));
+ return {...data,hari:days,waktu,free,kelas};
+}
 function schoolWeek(days=[],mode='auto'){
  if(mode==='sunday') return {startDay:0,label:'Ahad–Khamis'};
  if(mode==='monday') return {startDay:1,label:'Isnin–Jumaat'};
- const names=days.map(d=>String(d).trim().toUpperCase());
- const sunday=names.includes('AHAD'), friday=names.includes('JUMAAT');
+ const names=days.map(dayIndex);
+ const sunday=names.includes(0), friday=names.includes(5);
  if(sunday&&!friday) return {startDay:0,label:'Ahad–Khamis'};
  if(friday&&!sunday) return {startDay:1,label:'Isnin–Jumaat'};
  return null;
@@ -94,7 +124,7 @@ function assign(ctx,rows){
  }
  return result;
 }
-const api={schoolWeek,weekStart,weeklyCounts,candidates,manualCandidates,sessionForClass,needsRelief,assign};
+const api={dayIndex,timetableDay,normalizeTimetable,schoolWeek,weekStart,weeklyCounts,candidates,manualCandidates,sessionForClass,needsRelief,assign};
 if(typeof module!=='undefined'&&module.exports) module.exports=api;
 else root.ReliefEngine=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
